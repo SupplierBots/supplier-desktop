@@ -1,0 +1,56 @@
+import React from 'react';
+import styled from 'styled-components';
+
+import { ReactComponent as MinimizeIcon } from 'assets/Minimize.svg';
+import { ReactComponent as CloseIcon } from 'assets/Close.svg';
+import { colors } from 'themes/main';
+import nw from 'NW';
+
+const Wrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 5.5rem;
+  height: 2.5rem;
+  position: absolute;
+  top: 1.5rem;
+  right: 2rem;
+`;
+
+const AppControl = styled.div`
+  cursor: pointer;
+  rect,
+  path {
+    fill: ${colors.pink};
+    transition: all 0.3s;
+  }
+  :hover {
+    transform: scale(1.1);
+    rect,
+    path {
+      fill: ${colors.lightPurple};
+    }
+  }
+`;
+
+const AppControls = () => {
+  const minimizeApp = () => {
+    nw.Window.get().minimize();
+  };
+  const closeApp = () => {
+    nw.Window.get().close();
+  };
+
+  return (
+    <Wrapper>
+      <AppControl onClick={minimizeApp}>
+        <MinimizeIcon />
+      </AppControl>
+      <AppControl onClick={closeApp}>
+        <CloseIcon />
+      </AppControl>
+    </Wrapper>
+  );
+};
+
+export default AppControls;

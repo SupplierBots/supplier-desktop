@@ -1,0 +1,124 @@
+{
+  "name": "safedropbot",
+  "productName": "SafeDrop",
+  "description": "Supreme & Palace Bot",
+  "version": "1.0.0",
+  "copyright": "SafeDrop",
+  "main": "app/index.html",
+  "homepage": ".",
+  "private": true,
+  "window": {
+    "title": "SafeDrop",
+    "toolbar": true,
+    "frame": false,
+    "width": 1200,
+    "height": 750,
+    "resizable": false,
+    "show": false
+  },
+  "scripts": {
+    "start": "NODE_ENV=development concurrently \"cross-env BROWSER=none craco start\" \"wait-on http://localhost:3000 && ./NW.js/nwjs.app/Contents/MacOS/nwjs ./dev-server\" --kill-others --raw",
+    "build": "GENERATE_SOURCEMAP=false craco build",
+    "compile": "node compile",
+    "test": "craco test",
+    "run-prod": "yarn compile && ./NW.js/nwjs.app/Contents/MacOS/nwjs .",
+    "package-mac": "yarn build && yarn compile && build --tasks mac-x64 --mirror https://dl.nwjs.io/ ."
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --config .prettierrc --write",
+      "eslint --fix",
+      "stylelint 'src/**/*'",
+      "git add"
+    ]
+  },
+  "build": {
+    "nwVersion": "0.39.3",
+    "files": [
+      "app/**/*"
+    ],
+    "win": {
+      "productName": "SafeDrop",
+      "companyName": "SafeDrop",
+      "copyright": "SafeDrop",
+      "icon": "./resources/icons/icon.ico"
+    },
+    "mac": {
+      "name": "SafeDrop",
+      "displayName": "SafeDrop",
+      "copyright": "SafeDrop",
+      "icon": "./resources/icons/icon.icns"
+    }
+  },
+  "dependencies": {
+    "@craco/craco": "^5.2.3",
+    "connected-react-router": "^6.5.0",
+    "formik": "^1.5.8",
+    "fs-extra": "^8.1.0",
+    "history": "^4.9.0",
+    "puppeteer": "^1.19.0",
+    "react": "^16.8.6",
+    "react-dom": "npm:@hot-loader/react-dom",
+    "react-hot-loader": "^4.11.1",
+    "react-is": "^16.8",
+    "react-particles-js": "^2.7.0",
+    "react-redux": "^7.1.0",
+    "react-router": "^5.0.1",
+    "react-router-dom": "^5.0.1",
+    "react-scripts": "3.0.1",
+    "redux": "^4.0.1",
+    "redux-saga": "^1.0.3",
+    "uuid": "^3.3.2",
+    "yup": "^0.27.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/preset-typescript": "^7.3.3",
+    "@types/fs-extra": "^8.0.0",
+    "@types/jest": "^24.0.14",
+    "@types/node": "^12.0.8",
+    "@types/puppeteer": "^1.12.4",
+    "@types/react": "^16.8.20",
+    "@types/react-dom": "^16.8.4",
+    "@types/react-redux": "^7.1.0",
+    "@types/react-router-dom": "^4.3.4",
+    "@types/styled-components": "^4.1.16",
+    "@types/uuid": "^3.4.4",
+    "@types/yup": "^0.26.22",
+    "babel-loader": "8.0.5",
+    "babel-plugin-styled-components": "^1.10.6",
+    "concurrently": "^4.1.0",
+    "cross-env": "^5.2.0",
+    "eslint": "^5.16.0",
+    "eslint-config-prettier": "^5.0.0",
+    "husky": "^2.4.1",
+    "lint-staged": "^8.2.1",
+    "node-sass": "^4.12.0",
+    "nwjs-builder-phoenix": "^1.15.0",
+    "nwjs-types": "https://github.com/envis10n/nwjs-types.git",
+    "ora": "^3.4.0",
+    "prettier": "^1.18.2",
+    "styled-components": "^4.3.2",
+    "stylelint": "^10.1.0",
+    "stylelint-config-recommended": "^2.2.0",
+    "stylelint-config-styled-components": "^0.1.1",
+    "stylelint-processor-styled-components": "^1.8.0",
+    "typescript": "^3.4.5",
+    "wait-on": "^3.2.0",
+    "webpack": "4.29.6",
+    "webpack-cli": "^3.3.5",
+    "webpack-messages": "^2.0.4",
+    "webpack-node-externals": "^1.7.2"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ]
+}

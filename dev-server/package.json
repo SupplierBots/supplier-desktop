@@ -1,0 +1,17 @@
+{
+  "name": "safedrop-dev",
+  "main": "http://localhost:3000",
+  "node-remote": [
+    "http://localhost"
+  ],
+  "chromium-args": "--load-extension='./dev-server/react-devtools,./dev-server/redux-devtools'",
+  "window": {
+    "title": "SafeDrop",
+    "toolbar": true,
+    "frame": false,
+    "width": 1200,
+    "height": 750,
+    "resizable": false,
+    "show": true
+  }
+}
