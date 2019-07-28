@@ -14,7 +14,7 @@ const Wrapper = styled.div`
 const Login = () => {
   return (
     <Wrapper>
-      <div>login page</div>
+      <div>Login page</div>
     </Wrapper>
   );
 };

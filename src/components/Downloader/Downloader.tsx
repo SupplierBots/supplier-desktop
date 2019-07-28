@@ -6,6 +6,8 @@ import InlineLogo from '../InlineLogo/InlineLogo';
 import { colors, fonts } from 'themes/main';
 import ProgressBar from './ProgressBar';
 import verifyChromium from 'utils/verifyChromium';
+import { RouteComponentProps } from 'react-router';
+import routes from 'constants/routes';
 
 const Wrapper = styled.div`
   display: flex;
@@ -41,15 +43,13 @@ const TutLink = styled.span`
     color: ${colors.lightGrey};
   }
 `;
-type ChromiumStatus = 'unknown' | 'installed' | 'notFound';
 
-interface Props {
-  handleChromiumStatus: (state: ChromiumStatus) => void;
-}
+type Props = RouteComponentProps;
 
-const Downloader = ({ handleChromiumStatus }: Props) => {
+const Downloader = ({ history }: Props) => {
   const [progress, setProgress] = useState(0);
   const [downloaded, setDownloaded] = useState(false);
+
   const fetchChromium = () => {
     const chromiumPath = (nw as any).App.dataPath + '/.local-chromium';
     const fetcher = puppeteer.createBrowserFetcher({ path: chromiumPath });
@@ -59,8 +59,13 @@ const Downloader = ({ handleChromiumStatus }: Props) => {
       if (downloadedBytes === totalBytes) {
         setDownloaded(true);
         await new Promise(resolve => setTimeout(resolve, 10000));
-        const status = await verifyChromium();
-        handleChromiumStatus(status ? 'installed' : 'notFound');
+        const chromiumInstalled = await verifyChromium();
+
+        if (chromiumInstalled) {
+          history.push(routes.login);
+        } else {
+          history.push(routes.downloader);
+        }
       }
     });
   };

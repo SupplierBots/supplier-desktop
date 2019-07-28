@@ -1,0 +1,36 @@
+{
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    {
+      "language": "typescript",
+      "autoFix": true
+    },
+    {
+      "language": "typescriptreact",
+      "autoFix": true
+    }
+  ],
+  "editor.tabSize": 2,
+
+  //Hide files and folders which shouldn't be edited
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "v8.log": true,
+    "public": true,
+    "build": true,
+    "app": true,
+    "src/react-app-env.d.ts": true,
+    "craco.config.js": true,
+    //You can hide these too
+    "node_modules": true,
+    "dist": true,
+    "NW.js": true,
+    "dev-server": true
+  },
+  "editor.formatOnSave": true
+}

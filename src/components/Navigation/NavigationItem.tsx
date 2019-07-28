@@ -50,8 +50,7 @@ const StyledNavLink = styled(NavLink)`
 `;
 
 //Cast 'a' to string literal
-type AsStringLiteral = 'a';
-const as: AsStringLiteral = 'a';
+const as: 'a' = 'a';
 
 interface Props {
   children: ReactNode;

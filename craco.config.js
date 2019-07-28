@@ -5,6 +5,8 @@ module.exports = {
   webpack: {
     configure: webpackConfig => {
       webpackConfig.target = 'node-webkit';
+      webpackConfig.optimization.splitChunks = false;
+      webpackConfig.optimization.runtimeChunk = false;
       return webpackConfig;
     },
   },

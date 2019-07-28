@@ -12,6 +12,6 @@
     "width": 1200,
     "height": 750,
     "resizable": false,
-    "show": true
+    "show": false
   }
 }

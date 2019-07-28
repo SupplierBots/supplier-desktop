@@ -15,7 +15,7 @@ const verifyChromium = async (): Promise<boolean> => {
     const executablePath = fetcher.revisionInfo('674921').executablePath;
     const browser = await puppeteer.launch({
       executablePath,
-      headless: false,
+      //headless: false,
     });
     const page = await browser.newPage();
     await page.goto('https://www.google.com/');

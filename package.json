@@ -1,6 +1,6 @@
 {
-  "name": "safedropbot",
-  "productName": "SafeDrop",
+  "name": "safedropbot-dev",
+  "productName": "SafeDrop-Dev",
   "description": "Supreme & Palace Bot",
   "version": "1.0.0",
   "copyright": "SafeDrop",
@@ -17,12 +17,13 @@
     "show": false
   },
   "scripts": {
-    "start": "NODE_ENV=development concurrently \"cross-env BROWSER=none craco start\" \"wait-on http://localhost:3000 && ./NW.js/nwjs.app/Contents/MacOS/nwjs ./dev-server\" --kill-others --raw",
+    "start": "cross-env NODE_ENV=development concurrently \"cross-env BROWSER=none craco start\" \"wait-on http://localhost:3000 && ./NW.js/nwjs.app/Contents/MacOS/nwjs ./dev-server\" --kill-others --raw",
     "build": "GENERATE_SOURCEMAP=false craco build",
-    "compile": "node compile",
     "test": "craco test",
-    "run-prod": "yarn compile && ./NW.js/nwjs.app/Contents/MacOS/nwjs .",
-    "package-mac": "yarn build && yarn compile && build --tasks mac-x64 --mirror https://dl.nwjs.io/ ."
+    "run-prod": "./NW.js/nwjs.app/Contents/MacOS/nwjs .",
+    "compile": "node compile",
+    "start-win": "cross-env NODE_ENV=development concurrently \"cross-env BROWSER=none craco start\" \"wait-on http://localhost:3000 && ./NW.js/nw ./dev-server\" --kill-others --raw",
+    "run-prod-win": "yarn compile && ./NW.js/nw ."
   },
   "husky": {
     "hooks": {
@@ -43,15 +44,15 @@
       "app/**/*"
     ],
     "win": {
-      "productName": "SafeDrop",
-      "companyName": "SafeDrop",
-      "copyright": "SafeDrop",
+      "productName": "SafeDrop-Dev",
+      "companyName": "SafeDrop-Dev",
+      "copyright": "SafeDrop-Dev",
       "icon": "./resources/icons/icon.ico"
     },
     "mac": {
-      "name": "SafeDrop",
-      "displayName": "SafeDrop",
-      "copyright": "SafeDrop",
+      "name": "SafeDrop-Dev",
+      "displayName": "SafeDrop-Dev",
+      "copyright": "SafeDrop-Dev",
       "icon": "./resources/icons/icon.icns"
     }
   },
@@ -102,19 +103,14 @@
     "node-sass": "^4.12.0",
     "nwjs-builder-phoenix": "^1.15.0",
     "nwjs-types": "https://github.com/envis10n/nwjs-types.git",
-    "ora": "^3.4.0",
-    "prettier": "^1.18.2",
     "styled-components": "^4.3.2",
+    "prettier": "^1.18.2",
     "stylelint": "^10.1.0",
     "stylelint-config-recommended": "^2.2.0",
     "stylelint-config-styled-components": "^0.1.1",
     "stylelint-processor-styled-components": "^1.8.0",
     "typescript": "^3.4.5",
-    "wait-on": "^3.2.0",
-    "webpack": "4.29.6",
-    "webpack-cli": "^3.3.5",
-    "webpack-messages": "^2.0.4",
-    "webpack-node-externals": "^1.7.2"
+    "wait-on": "^3.2.0"
   },
   "browserslist": [
     ">0.2%",

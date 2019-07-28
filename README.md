@@ -1,7 +1,6 @@
 Todo:
--login pages (nest routers)
+
 -dynamically get chromium path
--NWJs mac/windows subfolders
 -sliders (see saved reddit post)
 -buttons
 -more
