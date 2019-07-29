@@ -15,6 +15,7 @@
 /build
 /App
 /dist
+/share/SafeDrop
 
 # misc
 .DS_Store

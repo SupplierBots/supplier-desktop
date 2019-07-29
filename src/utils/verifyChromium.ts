@@ -1,10 +1,11 @@
 import fs from 'fs-extra';
+import path from 'path';
 import nw from '../NW';
 import puppeteer from 'puppeteer';
 
 const verifyChromium = async (): Promise<boolean> => {
   // * Missing typings for App properties
-  const chromiumPath = (nw as any).App.dataPath + '/.local-chromium';
+  const chromiumPath = path.resolve((nw as any).App.dataPath, '.local-chromium');
   try {
     fs.accessSync(chromiumPath);
     const fetcher = puppeteer.createBrowserFetcher({

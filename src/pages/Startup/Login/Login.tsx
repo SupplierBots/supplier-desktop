@@ -14,7 +14,7 @@ const Wrapper = styled.div`
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  padding: 5.5rem;
+  padding: 4rem;
   z-index: 10;
   -webkit-app-region: drag;
 `;
@@ -56,17 +56,17 @@ const Login = () => {
     setError("Couldn't connect to the server");
   };
   return (
-    <Wrapper>
-      <LoginCard>
-        <StyledInlineLogo>
-          <InlineLogo />
-        </StyledInlineLogo>
-        <Formik
-          enableReinitialize
-          onSubmit={submit}
-          initialValues={initialValues}
-          validationSchema={isSignUp ? signUpSchema : signInSchema}
-          render={({ resetForm }) => (
+    <Formik
+      enableReinitialize
+      onSubmit={submit}
+      initialValues={initialValues}
+      validationSchema={isSignUp ? signUpSchema : signInSchema}
+      render={({ resetForm }) => (
+        <Wrapper>
+          <LoginCard>
+            <StyledInlineLogo>
+              <InlineLogo />
+            </StyledInlineLogo>
             <Form>
               <Input type="text " name="email" placeholder="Email" />
               <Input type="password" name="password" placeholder="Password" />
@@ -95,10 +95,10 @@ const Login = () => {
               </StyledButton>
               <Button submit>{isSignUp ? 'Create' : 'Login'}</Button>{' '}
             </Form>
-          )}
-        />
-      </LoginCard>
-    </Wrapper>
+          </LoginCard>
+        </Wrapper>
+      )}
+    />
   );
 };
 

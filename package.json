@@ -21,7 +21,7 @@
     "build": "GENERATE_SOURCEMAP=false craco build",
     "test": "craco test",
     "run-prod": "./NW.js/nwjs.app/Contents/MacOS/nwjs .",
-    "compile": "node compile",
+    "compile": "yarn build && node compile",
     "start-win": "cross-env NODE_ENV=development concurrently \"cross-env BROWSER=none craco start\" \"wait-on http://localhost:3000 && ./NW.js/nw ./dev-server\" --kill-others --raw",
     "run-prod-win": "yarn compile && ./NW.js/nw ."
   },

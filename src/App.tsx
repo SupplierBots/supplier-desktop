@@ -1,5 +1,5 @@
 import { hot } from 'react-hot-loader/root';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
 import { useSelector } from 'hooks/useSelector';
@@ -15,7 +15,6 @@ import Startup from 'pages/Startup/Startup';
 
 const App = () => {
   const activeTheme = useSelector(state => state.theme.active);
-  useEffect(() => {}, []);
   return (
     <>
       <GlobalStyle />

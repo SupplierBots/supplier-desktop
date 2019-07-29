@@ -1,7 +1,7 @@
 {
   "version": {
-    "server": "1.0.0",
+    "server": "1.0.1",
     "client": "1.0.0"
   },
-  "error": "Beta sie wyjebala na plecy"
+  "error": null
 }

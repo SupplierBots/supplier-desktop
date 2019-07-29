@@ -1,3 +1,4 @@
+import path from 'path';
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import puppeteer from 'puppeteer';
@@ -51,7 +52,7 @@ const Downloader = ({ history }: Props) => {
   const [downloaded, setDownloaded] = useState(false);
 
   const fetchChromium = () => {
-    const chromiumPath = (nw as any).App.dataPath + '/.local-chromium';
+    const chromiumPath = path.resolve((nw as any).App.dataPath, '.local-chromium');
     const fetcher = puppeteer.createBrowserFetcher({ path: chromiumPath });
     console.log(chromiumPath);
     fetcher.download('674921', async (downloadedBytes: number, totalBytes: number) => {
