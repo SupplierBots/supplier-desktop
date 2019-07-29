@@ -1,6 +1,6 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
-import InlineLogo from '../InlineLogo/InlineLogo';
+import InlineLogo from 'components/InlineLogo/InlineLogo';
 import { colors } from 'themes/main';
 
 const fadeIn = keyframes`

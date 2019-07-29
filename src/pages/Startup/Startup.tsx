@@ -3,12 +3,12 @@ import styled, { keyframes } from 'styled-components';
 import verifyChromium from 'utils/verifyChromium';
 import Particles from 'react-particles-js';
 import particlesConfig from 'constants/particlesConfig';
-import Downloader from 'components/Downloader/Downloader';
-import Login from 'components/Login/Login';
+import Downloader from './Downloader/Downloader';
+import Login from './Login/Login';
 import nw from 'NW';
 import routes from 'constants/routes';
 import { Route, RouteComponentProps } from 'react-router';
-import Loader from 'components/Loader/Loader';
+import Loader from './Loader/Loader';
 
 const fadeIn = keyframes`
   from {
@@ -31,9 +31,8 @@ const StyledParticles = styled(Particles)`
   animation: ${fadeIn} 2s forwards;
 `;
 
-type ChromiumStatus = 'unknown' | 'installed' | 'notFound';
-
 type Props = RouteComponentProps;
+
 const Startup = ({ history }: Props) => {
   const [loading, setLoading] = useState(true);
   useEffect(() => {

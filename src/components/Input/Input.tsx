@@ -22,6 +22,7 @@ const InputBorder = styled.div`
 `;
 
 const StyledField = styled(Field)`
+  font-family: 'Lato', sans-serif;
   font-size: ${fonts.regular};
   color: ${colors.lightGrey};
   outline: none;
@@ -74,7 +75,7 @@ interface Props {
 
 const Input = (props: Props) => (
   <Wrapper>
-    <StyledField {...props} />
+    <StyledField {...props} autoComplete="off" />
     <ErrorMessage name={props.name} component={Error} />
     <InputBorder />
   </Wrapper>

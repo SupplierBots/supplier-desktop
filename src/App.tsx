@@ -13,24 +13,6 @@ import { colors } from 'themes/main';
 
 import Startup from 'pages/Startup/Startup';
 
-const Wrapper = styled.div`
-  color: ${colors.lightGrey};
-  background-color: ${colors.primaryBackground};
-  height: 100vh;
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-auto-columns: 77.5%;
-  grid-auto-flow: column;
-  overflow: hidden;
-`;
-
-const Content = styled.main`
-  padding: 4.5rem 3.9rem 3.9rem 3.8rem;
-  overflow: hidden;
-  -webkit-app-region: drag;
-`;
-
 const App = () => {
   const activeTheme = useSelector(state => state.theme.active);
   useEffect(() => {}, []);
@@ -54,3 +36,21 @@ const App = () => {
 };
 
 export default hot(App);
+
+const Wrapper = styled.div`
+  color: ${colors.lightGrey};
+  background-color: ${colors.primaryBackground};
+  height: 100vh;
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-auto-columns: 77.5%;
+  grid-auto-flow: column;
+  overflow: hidden;
+`;
+
+const Content = styled.main`
+  padding: 4.5rem 3.9rem 3.9rem 3.8rem;
+  overflow: hidden;
+  -webkit-app-region: drag;
+`;
