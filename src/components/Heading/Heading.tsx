@@ -12,7 +12,7 @@ const Heading = styled.h2`
     content: '';
     position: absolute;
     height: 1px;
-    width: 140%;
+    width: calc(100% + 3.7rem);
     background: ${colors.mainGradientLR};
     bottom: -8px;
     left: 0;

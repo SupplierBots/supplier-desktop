@@ -8,6 +8,8 @@ import { fonts, colors } from 'themes/main';
 import Button from 'components/Button/Button';
 import { signInSchema, signUpSchema, initialValues, Values } from './FormDetails';
 import Error from './Error';
+import { RouteComponentProps } from 'react-router';
+import routes from 'constants/routes';
 
 const Wrapper = styled.div`
   display: flex;
@@ -47,13 +49,16 @@ const StyledButton = styled(Button)`
   width: 18rem;
 `;
 
-const Login = () => {
+type Props = RouteComponentProps;
+
+const Login = ({ history }: Props) => {
   const [isSignUp, setSignUp] = useState(false);
   const [error, setError] = useState('');
   const submit = (values: Values, actions: FormikActions<Values>) => {
     actions.setSubmitting(false);
     console.log({ values, actions });
     setError("Couldn't connect to the server");
+    history.push(routes.profiles);
   };
   return (
     <Formik
@@ -84,7 +89,9 @@ const Login = () => {
                 </Email>
               </Contact>
               <StyledButton
+                small
                 secondary
+                bgColor={colors.secondaryBackground}
                 onClick={() => {
                   setSignUp(!isSignUp);
                   setError('');
@@ -93,7 +100,9 @@ const Login = () => {
               >
                 {isSignUp ? 'Go Back' : 'Create Account'}
               </StyledButton>
-              <Button submit>{isSignUp ? 'Create' : 'Login'}</Button>{' '}
+              <Button small submit bgColor={colors.secondaryBackground}>
+                {isSignUp ? 'Create' : 'Login'}
+              </Button>
             </Form>
           </LoginCard>
         </Wrapper>

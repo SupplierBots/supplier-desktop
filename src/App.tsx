@@ -20,7 +20,7 @@ const App = () => {
       <GlobalStyle />
       <ThemeProvider theme={activeTheme}>
         <Wrapper>
-          {false && <Sidebar />}
+          {true && <Sidebar />}
           <Content>
             <Switch>
               <Route path={routes.startup} component={Startup} />

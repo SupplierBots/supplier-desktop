@@ -2,7 +2,6 @@ Todo:
 
 -dynamically get chromium path
 -sliders (see saved reddit post)
--buttons
 -more
 
 Anty debug:

@@ -8,7 +8,7 @@ const Wrapper = styled.div`
   position: relative;
   overflow: hidden;
   :not(:last-of-type) {
-    margin-bottom: 1.1rem;
+    margin-bottom: 1rem;
   }
 `;
 

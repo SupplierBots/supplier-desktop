@@ -5,8 +5,10 @@ import { colors, shadows, fonts } from 'themes/main';
 interface Props {
   children: ReactNode;
   secondary?: boolean;
+  small?: boolean;
   submit?: boolean;
   width?: string;
+  bgColor?: string;
   onClick?: () => void;
 }
 
@@ -14,8 +16,8 @@ const ButtonWrapper = styled.button<Props>`
   background: ${colors.mainGradient45};
   border: none;
   border-radius: 0.5rem;
-  height: 3.5rem;
-  width: ${({ width }) => width || '13rem'};
+  height: ${({ small }) => (small ? '3.5rem' : '4rem')};
+  width: ${({ width, small }) => (width || small ? '13rem' : '16rem')};
   outline: none;
   box-shadow: ${shadows.primary};
   z-index: 1;
@@ -32,7 +34,10 @@ const ButtonWrapper = styled.button<Props>`
     right: 0;
     bottom: 0;
     left: 0;
-    background: linear-gradient(${colors.secondaryBackground}, ${colors.secondaryBackground}),
+    background: linear-gradient(
+        ${({ bgColor }) => bgColor || colors.primaryBackground},
+        ${({ bgColor }) => bgColor || colors.primaryBackground}
+      ),
       ${colors.mainGradient45};
     background-origin: border-box;
     border: double 1px transparent;
@@ -48,12 +53,12 @@ const ButtonWrapper = styled.button<Props>`
   }
 
   /* SECONDARY  */
-  ${({ secondary }) =>
+  ${({ secondary, bgColor }) =>
     secondary &&
     css`
-      background-image: linear-gradient(
-          ${colors.secondaryBackground},
-          ${colors.secondaryBackground}
+      background: linear-gradient(
+          ${bgColor || colors.primaryBackground},
+          ${bgColor || colors.primaryBackground}
         ),
         ${colors.mainGradient45};
       background-origin: border-box;
@@ -69,7 +74,7 @@ const ButtonWrapper = styled.button<Props>`
 
 const ButtonContent = styled.p<Props>`
   font-family: 'Lato', sans-serif;
-  font-size: ${fonts.regular};
+  font-size: ${({ small }) => (small ? fonts.regular : fonts.big)};
   color: ${colors.primaryBackground};
   transition: 0.3s all;
   z-index: 10;
@@ -101,7 +106,9 @@ const ButtonContent = styled.p<Props>`
 
 const Button = (props: Props) => (
   <ButtonWrapper {...props} type={props.submit ? 'submit' : 'button'}>
-    <ButtonContent secondary={props.secondary}>{props.children}</ButtonContent>
+    <ButtonContent small={props.small} secondary={props.secondary}>
+      {props.children}
+    </ButtonContent>
   </ButtonWrapper>
 );
 
