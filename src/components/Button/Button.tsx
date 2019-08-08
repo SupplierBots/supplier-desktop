@@ -8,6 +8,7 @@ interface Props {
   small?: boolean;
   submit?: boolean;
   width?: string;
+  height?: string;
   bgColor?: string;
   onClick?: () => void;
 }
@@ -16,8 +17,8 @@ const ButtonWrapper = styled.button<Props>`
   background: ${colors.mainGradient45};
   border: none;
   border-radius: 0.5rem;
-  height: ${({ small }) => (small ? '3.5rem' : '4rem')};
-  width: ${({ width, small }) => (width || small ? '13rem' : '16rem')};
+  height: ${({ small, height }) => (height ? height : small ? '3.5rem' : '4rem')};
+  width: ${({ width, small }) => (width ? width : small ? '13rem' : '16rem')};
   outline: none;
   box-shadow: ${shadows.primary};
   z-index: 1;

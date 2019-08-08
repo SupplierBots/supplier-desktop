@@ -12,29 +12,7 @@ import Profiles from 'pages/Profiles/Profiles';
 import { colors } from 'themes/main';
 
 import Startup from 'pages/Startup/Startup';
-
-const App = () => {
-  const activeTheme = useSelector(state => state.theme.active);
-  return (
-    <>
-      <GlobalStyle />
-      <ThemeProvider theme={activeTheme}>
-        <Wrapper>
-          {true && <Sidebar />}
-          <Content>
-            <Switch>
-              <Route path={routes.startup} component={Startup} />
-              <Route path={routes.profiles} component={Profiles} />
-            </Switch>
-          </Content>
-          <AppControls />
-        </Wrapper>
-      </ThemeProvider>
-    </>
-  );
-};
-
-export default hot(App);
+import Products from 'pages/Products/Products';
 
 const Wrapper = styled.div`
   color: ${colors.lightGrey};
@@ -53,3 +31,27 @@ const Content = styled.main`
   overflow: hidden;
   -webkit-app-region: drag;
 `;
+
+const App = () => {
+  const activeTheme = useSelector(state => state.theme.active);
+  return (
+    <>
+      <GlobalStyle />
+      <ThemeProvider theme={activeTheme}>
+        <Wrapper>
+          {true && <Sidebar />}
+          <Content>
+            <Switch>
+              <Route path={routes.startup} component={Startup} />
+              <Route path={routes.profiles} component={Profiles} />
+              <Route path={routes.products} component={Products} />
+            </Switch>
+          </Content>
+          <AppControls />
+        </Wrapper>
+      </ThemeProvider>
+    </>
+  );
+};
+
+export default hot(App);

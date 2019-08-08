@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
 import { Field, ErrorMessage } from 'formik';
 import { colors, fonts } from 'themes/main';
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<Props>`
   height: 3.7rem;
   position: relative;
   overflow: hidden;
+
   :not(:last-of-type) {
     margin-bottom: 1rem;
   }
@@ -71,12 +72,21 @@ interface Props {
   name: string;
   type: string;
   placeholder: string;
+  custom?: boolean;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  value?: string;
+  customError?: string;
 }
 
 const Input = (props: Props) => (
-  <Wrapper>
-    <StyledField {...props} autoComplete="off" />
+  <Wrapper {...props}>
+    <StyledField
+      {...props}
+      autoComplete="off"
+      {...(props.custom && { as: 'input', onChange: props.onChange, value: props.value })}
+    />
     <ErrorMessage name={props.name} component={Error} />
+    {props.customError && <Error>{props.customError}</Error>}
     <InputBorder />
   </Wrapper>
 );
