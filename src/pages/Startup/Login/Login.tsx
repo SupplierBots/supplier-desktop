@@ -10,6 +10,8 @@ import { signInSchema, signUpSchema, initialValues, Values } from './FormDetails
 import Error from './Error';
 import { RouteComponentProps } from 'react-router';
 import routes from 'constants/routes';
+import { useDispatch } from 'hooks/useDispatch';
+import { changeAuthState } from 'store/auth/actions';
 
 const Wrapper = styled.div`
   display: flex;
@@ -54,11 +56,14 @@ type Props = RouteComponentProps;
 const Login = ({ history }: Props) => {
   const [isSignUp, setSignUp] = useState(false);
   const [error, setError] = useState('');
+  const dispatch = useDispatch();
+
   const submit = (values: Values, actions: FormikActions<Values>) => {
     actions.setSubmitting(false);
     console.log({ values, actions });
     setError("Couldn't connect to the server");
-    history.push(routes.profiles);
+    dispatch(changeAuthState(true));
+    history.push(routes.dashboard);
   };
   return (
     <Formik

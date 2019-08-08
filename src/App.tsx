@@ -1,18 +1,15 @@
 import { hot } from 'react-hot-loader/root';
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
-import styled, { ThemeProvider } from 'styled-components';
+import { Redirect } from 'react-router-dom';
+import styled from 'styled-components';
 import { useSelector } from 'hooks/useSelector';
 import GlobalStyle from 'themes/GlobalStyle';
 import Sidebar from 'components/Sidebar/Sidebar';
 import AppControls from 'components/AppControls/AppControls';
 import routes from 'constants/routes';
-import Profiles from 'pages/Profiles/Profiles';
 
 import { colors } from 'themes/main';
-
-import Startup from 'pages/Startup/Startup';
-import Products from 'pages/Products/Products';
+import Routes from 'routes/Routes';
 
 const Wrapper = styled.div`
   color: ${colors.lightGrey};
@@ -33,23 +30,19 @@ const Content = styled.main`
 `;
 
 const App = () => {
-  const activeTheme = useSelector(state => state.theme.active);
+  const authenticated = useSelector(state => state.auth.authenticated);
+
   return (
     <>
       <GlobalStyle />
-      <ThemeProvider theme={activeTheme}>
-        <Wrapper>
-          {true && <Sidebar />}
-          <Content>
-            <Switch>
-              <Route path={routes.startup} component={Startup} />
-              <Route path={routes.profiles} component={Profiles} />
-              <Route path={routes.products} component={Products} />
-            </Switch>
-          </Content>
-          <AppControls />
-        </Wrapper>
-      </ThemeProvider>
+      <Wrapper>
+        {authenticated && <Sidebar />}
+        {!authenticated && <Redirect to={routes.startup} />}
+        <Content>
+          <Routes />
+        </Content>
+        <AppControls />
+      </Wrapper>
     </>
   );
 };
