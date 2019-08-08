@@ -6,10 +6,11 @@ import Keyword from 'components/KeywordsManager/Keyword';
 import Button from 'components/Button/Button';
 import KeywordsContainer from './KeywordsContainer';
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ customStyle: string | undefined }>`
   :not(:first-of-type) {
     margin-top: 0.9rem;
   }
+  ${({ customStyle }) => customStyle};
 `;
 
 const ManagerName = styled.p`
@@ -33,6 +34,7 @@ const Creator = styled.div`
 const StyledInput = styled(Input)`
   width: 90%;
   margin-right: 1rem;
+  margin-bottom: 0;
 `;
 
 const Description = styled.span`
@@ -48,6 +50,7 @@ interface Keywords {
   positive: string[];
   negative: string[];
   multi?: string[];
+  keywordsAmount: number;
 }
 
 interface Props {
@@ -58,6 +61,7 @@ interface Props {
   placeholder: string;
   description?: string;
   hasMulti?: boolean;
+  customStyle?: string;
 }
 
 const KeywordsManager = ({
@@ -68,6 +72,7 @@ const KeywordsManager = ({
   error,
   setTouched,
   description,
+  customStyle,
 }: Props) => {
   const [positive, setPositive] = useState<string[]>([]);
   const [negative, setNegative] = useState<string[]>([]);
@@ -76,7 +81,10 @@ const KeywordsManager = ({
   const [value, setValue] = useState('');
 
   useEffect(() => {
-    const keywords = hasMulti ? { positive, negative, multi } : { positive, negative };
+    const keywordsAmount = positive.length + negative.length + multi.length;
+    const keywords = hasMulti
+      ? { positive, negative, multi, keywordsAmount }
+      : { positive, negative, keywordsAmount };
     onChange(name, keywords);
   }, [onChange, positive, negative, multi, name, hasMulti]);
 
@@ -126,6 +134,7 @@ const KeywordsManager = ({
     setList: Dispatch<React.SetStateAction<string[]>>,
   ) => {
     setList(list.filter(keyword => keyword !== keywordToRemove));
+    console.log(customStyle);
   };
 
   const handleKeyPress = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -136,7 +145,7 @@ const KeywordsManager = ({
   };
 
   return (
-    <Wrapper>
+    <Wrapper customStyle={customStyle}>
       <KeywordsContainer error={error}>
         <ManagerName>{name}</ManagerName>
         {positive.length === 0 && negative.length === 0 && multi.length === 0 && (
@@ -167,8 +176,6 @@ const KeywordsManager = ({
             </Keyword>
           ))}
         </List>
-
-        <div></div>
       </KeywordsContainer>
       <Creator onKeyPress={handleKeyPress}>
         <StyledInput

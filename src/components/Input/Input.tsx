@@ -8,9 +8,7 @@ const Wrapper = styled.div<Props>`
   position: relative;
   overflow: hidden;
 
-  :not(:last-of-type) {
-    margin-bottom: 1rem;
-  }
+  margin-bottom: 1rem;
 `;
 
 const InputBorder = styled.div`

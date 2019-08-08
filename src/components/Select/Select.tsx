@@ -26,11 +26,9 @@ const StyledSelect = styled(ReactSelect)<Props>`
     font: inherit;
     font-size: ${fonts.regular};
     border-radius: 0.5rem;
+    margin-bottom: 1rem;
     :focus-within {
       z-index: 100;
-    }
-    :not(:last-of-type) {
-      margin-bottom: 1rem;
     }
 
     .rs__placeholder {
