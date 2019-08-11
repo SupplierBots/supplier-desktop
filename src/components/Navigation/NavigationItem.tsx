@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
-import { colors, fonts } from 'themes/main';
+import { colors, fonts } from 'theme/main';
 import nw from 'NW';
 
 //Unfortunately kind of tricky way to style it:
@@ -66,7 +66,7 @@ const NavigationItem = ({ link, children, external }: Props) => {
   };
 
   return (
-    <StyledNavLink exact to={link} {...additionalProps}>
+    <StyledNavLink to={link} {...additionalProps}>
       <div />
       {children}
     </StyledNavLink>

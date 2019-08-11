@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { colors, fonts } from 'themes/main';
+import { colors, fonts } from 'theme/main';
 
 const Heading = styled.h2`
   color: ${colors.lightPurple};

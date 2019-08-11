@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { ReactComponent as Logo } from 'assets/logo.svg';
-import { colors } from 'themes/main';
+import { colors } from 'theme/main';
 
 const Wrapper = styled.div`
   display: flex;

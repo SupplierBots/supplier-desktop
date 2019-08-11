@@ -1,11 +1,13 @@
+import { UserDataActionTypes } from './userData/types';
 import { AuthActionTypes } from './auth/types';
 import routes from 'constants/routes';
 import { combineReducers } from 'redux';
-import { all, fork } from 'redux-saga/effects';
-import { connectRouter } from 'connected-react-router';
+import { all } from 'redux-saga/effects';
+import { connectRouter, CallHistoryMethodAction } from 'connected-react-router';
 import { createMemoryHistory } from 'history';
 
 import { authReducer } from './auth/reducers';
+import { userDataReducer } from './userData/reducers';
 
 export const history = createMemoryHistory({
   initialEntries: [routes.startup],
@@ -14,6 +16,7 @@ export const history = createMemoryHistory({
 
 export const rootReducer = combineReducers({
   auth: authReducer,
+  userData: userDataReducer,
   router: connectRouter(history),
 } as const);
 
@@ -25,4 +28,4 @@ export function* rootSaga() {
 }
 
 export type AppState = ReturnType<typeof rootReducer>;
-export type AppActions = AuthActionTypes; // | OtherActionTypes
+export type AppActions = CallHistoryMethodAction | AuthActionTypes | UserDataActionTypes; // | OtherActionTypes

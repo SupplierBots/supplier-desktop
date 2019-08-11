@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import Card from 'components/Card/Card';
-import { colors } from 'themes/main';
+import { colors } from 'theme/main';
 
 const LoginCard = styled(Card)`
   position: relative;

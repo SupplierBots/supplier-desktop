@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Logo from 'components/Logo/Logo';
 import Navigation from 'components/Navigation/Navigation';
 import ExternalLinksBox from './ExternalLinksBox';
-import { colors, shadows } from 'themes/main';
+import { colors, shadows } from 'theme/main';
 const Wrapper = styled.aside`
   color: ${colors.darkGrey};
   background-color: ${colors.secondaryBackground};
@@ -11,6 +11,7 @@ const Wrapper = styled.aside`
   display: flex;
   flex-direction: column;
   -webkit-app-region: drag;
+  z-index: 2000;
 `;
 
 const TopPolygon = styled.div`

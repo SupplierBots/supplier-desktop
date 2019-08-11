@@ -1,5 +1,10 @@
 import * as Yup from 'yup';
+import { Product } from 'types/Product';
+import { Option } from 'types/Option';
+
 export const productValidationSchema = Yup.object().shape({
+  id: Yup.string(),
+  name: Yup.string().required('Required'),
   keywords: Yup.object().shape({
     positive: Yup.array(),
     negative: Yup.array(),
@@ -20,39 +25,18 @@ export const productValidationSchema = Yup.object().shape({
     then: Yup.object().required(),
     otherwise: Yup.object().nullable(),
   }),
-  productName: Yup.string().required('Required'),
   productSite: Yup.object().required(),
 });
-export interface Option {
-  value: string;
-  label: string;
-}
 
-interface Keywords {
-  positive: string[];
-  negative: string[];
-  multi?: string[];
-  keywordsAmount: number;
-}
-
-export interface Product {
-  keywords: Keywords | null;
-  colors: Keywords | null;
-  size: Option | null;
-  anySize: boolean;
-  anyColor: boolean;
-  anySizeOption: Option | null;
-  productName: string;
-  productSite: Option | null;
-}
 export const initialProductsValues: Product = {
-  keywords: null,
-  colors: null,
+  id: '',
+  name: '',
+  keywords: { positive: [], negative: [], multi: [], keywordsAmount: 0 },
+  colors: { positive: [], negative: [], multi: [], keywordsAmount: 0 },
   size: null,
   anySize: false,
   anyColor: false,
   anySizeOption: null,
-  productName: '',
   productSite: null,
 };
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactSelect from 'react-select';
 import styled, { css } from 'styled-components';
-import { fonts, colors } from 'themes/main';
+import { fonts, colors } from 'theme/main';
 
 interface Option {
   value: string;

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { colors } from 'themes/main';
+import { colors } from 'theme/main';
 
 interface Props {
   progressPercentage: number;

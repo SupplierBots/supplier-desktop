@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
-import { colors, shadows } from 'themes/main';
+import { colors, shadows } from 'theme/main';
 
 const Wrapper = styled.div`
   background-color: ${colors.secondaryBackground};
@@ -20,7 +20,8 @@ const Wrapper = styled.div`
   Read more here: https://stackoverflow.com/questions/6421966/css-overflow-x-visible-and-overflow-y-hidden-causing-scrollbar-issue
 */
 
-const BottomPolygon = styled.div`
+const BottomPolygon = styled.div<{ disableBottomPolygon: boolean | undefined }>`
+  ${({ disableBottomPolygon }) => disableBottomPolygon && 'display: none'}
   position: absolute;
   bottom: 0;
   right: 0;
@@ -30,6 +31,7 @@ const BottomPolygon = styled.div`
   border-radius: 0.5rem;
   overflow: hidden;
   ::after {
+    ${({ disableBottomPolygon }) => disableBottomPolygon && 'display: none'}
     content: '';
     position: absolute;
     height: 2px;
@@ -43,12 +45,13 @@ const BottomPolygon = styled.div`
 
 interface Props {
   children: ReactNode;
+  disableBottomPolygon?: boolean;
 }
 
-const Card = ({ children }: Props) => (
-  <Wrapper>
-    {children}
-    <BottomPolygon />
+const Card = (props: Props) => (
+  <Wrapper {...props}>
+    {props.children}
+    <BottomPolygon disableBottomPolygon={props.disableBottomPolygon} />
   </Wrapper>
 );
 

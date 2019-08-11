@@ -3,12 +3,12 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import styled from 'styled-components';
 import { useSelector } from 'hooks/useSelector';
-import GlobalStyle from 'themes/GlobalStyle';
+import GlobalStyle from 'theme/GlobalStyle';
 import Sidebar from 'components/Sidebar/Sidebar';
 import AppControls from 'components/AppControls/AppControls';
 import routes from 'constants/routes';
 
-import { colors } from 'themes/main';
+import { colors } from 'theme/main';
 import Routes from 'routes/Routes';
 
 const Wrapper = styled.div`
@@ -27,6 +27,7 @@ const Content = styled.main`
   padding: 4.5rem 3.9rem 3.9rem 3.8rem;
   overflow: hidden;
   -webkit-app-region: drag;
+  position: relative;
 `;
 
 const App = () => {

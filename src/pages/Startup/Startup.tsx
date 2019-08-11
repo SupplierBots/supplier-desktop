@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import verifyChromium from 'utils/verifyChromium';
 import Particles from 'react-particles-js';
 import particlesConfig from 'constants/particlesConfig';
@@ -9,15 +9,7 @@ import nw from 'NW';
 import routes from 'constants/routes';
 import { Route, RouteComponentProps } from 'react-router';
 import Loader from './Loader/Loader';
-
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-  }
-  to  {
-    opacity: 1;
-  }
-`;
+import { fadeIn } from 'theme/animations';
 
 const StyledParticles = styled(Particles)`
   position: absolute;

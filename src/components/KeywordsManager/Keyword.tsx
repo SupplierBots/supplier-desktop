@@ -1,7 +1,8 @@
 import React, { ReactNode } from 'react';
 import styled, { css } from 'styled-components';
-import { colors, fonts } from 'themes/main';
+import { colors, fonts } from 'theme/main';
 import { ReactComponent as RemoveIcon } from 'assets/Close.svg';
+import { slideInFromLeft } from 'theme/animations';
 
 interface Props {
   children: ReactNode;
@@ -22,6 +23,7 @@ const Wrapper = styled.div<Props>`
   border-radius: 1.5rem;
   padding: 0 0.5rem;
   margin-bottom: 1rem;
+  animation: ${slideInFromLeft} 0.3s forwards;
   :not(:last-of-type) {
     margin-right: 0.8rem;
   }
@@ -60,7 +62,6 @@ const StyledRemoveIcon = styled(RemoveIcon)<IconProps>`
   }
   ${/* sc-selector */ Wrapper}:hover & {
     path {
-      /* fill: #d20000; */
       fill: ${colors.lightGrey};
     }
   }

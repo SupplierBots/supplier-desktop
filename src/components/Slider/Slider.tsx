@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Field } from 'formik';
-import { colors, fonts } from 'themes/main';
+import { colors, fonts } from 'theme/main';
 
 const Wrapper = styled.label`
   display: flex;

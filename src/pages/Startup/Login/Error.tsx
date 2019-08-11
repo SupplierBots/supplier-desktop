@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { fonts, colors } from 'themes/main';
+import { fonts, colors } from 'theme/main';
 
 interface Props {
   visible: boolean;

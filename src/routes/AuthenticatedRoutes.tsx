@@ -6,8 +6,10 @@ import Products from 'pages/Products/Products';
 
 const AuthenticatedRoutes = () => (
   <>
-    <Route path={routes.profiles} component={Profiles} />
-    <Route path={routes.products} component={Products} />
+    <Route path={routes.profiles + '/:id'} component={Profiles} />
+    <Route exact path={routes.profiles} component={Profiles} />
+    <Route path={routes.products + '/:id'} component={Products} />
+    <Route exact path={routes.products} component={Products} />
   </>
 );
 

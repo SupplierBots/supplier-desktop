@@ -1,13 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Formik, Form, FormikProps, FormikActions } from 'formik';
+import { RouteComponentProps } from 'react-router';
+import { push } from 'connected-react-router';
+import styled from 'styled-components';
+import uuid from 'uuid/v4';
+
+import { useDispatch } from 'hooks/useDispatch';
+import { useSelector } from 'hooks/useSelector';
+
+import ButtonsContainer from 'components/ButtonsContainer/ButtonsContainer';
+import Button from 'components/Button/Button';
 import Heading from 'components/Heading/Heading';
 import Card from 'components/Card/Card';
-import Input from 'components/Input/Input';
-import { Formik, FormikProps, Form, FormikActions } from 'formik';
+import Backdrop from 'components/Backdrop/Backdrop';
+import ChangeItemModal from 'components/ChangeItemModal/ChangeItemModal';
 import Select from 'components/Select/Select';
-import styled from 'styled-components';
-import Button from 'components/Button/Button';
+import Input from 'components/Input/Input';
+
+import { addUserDataItem, updateUserDataItem } from 'store/userData/actions';
+import { slideInFromRight } from 'theme/animations';
+import { Profile } from 'types/Profile';
+import routes from 'constants/routes';
 import {
-  Profile,
   profileValidationSchema,
   initialValues,
   countryOptions,
@@ -36,113 +50,166 @@ const StyledForm = styled(Form)`
   height: 100%;
 `;
 
-const ButtonsContainer = styled.div`
-  align-self: end;
-  grid-column: 1/3;
-  display: flex;
-  justify-content: flex-end;
-  button:not(:first-of-type) {
-    margin-left: 1.5rem;
-  }
-  button:first-of-type {
-    justify-self: flex-start;
-    margin-right: auto;
-  }
-`;
+const Profiles = ({ match }: RouteComponentProps<{ id: string }>) => {
+  const [isNew, setIsNew] = useState(!match.params.id);
+  const [modalIsOpened, setModalIsOpened] = useState(false);
+  const dispatch = useDispatch();
+  const profiles = useSelector(state => state.userData.profiles);
 
-const Profiles = () => {
-  const submit = (values: Profile, actions: FormikActions<Profile>) => {
-    console.log({ values, actions });
-    alert(JSON.stringify(values, null, 2));
+  useEffect(() => {
+    setModalIsOpened(false);
+  }, [match.params.id]);
+
+  const getInitialValues = (): Profile => {
+    if (!match.params.id) {
+      return initialValues;
+    }
+    const profileToLoad = profiles.find(profile => profile.id === match.params.id);
+
+    if (profileToLoad) return profileToLoad;
+
+    return initialValues;
+  };
+
+  const handleSubmit = (product: Profile, actions: FormikActions<Profile>) => {
+    if (isNew) {
+      const newProduct = {
+        ...product,
+        id: uuid(),
+      };
+      dispatch(addUserDataItem('profiles', newProduct));
+      setIsNew(false);
+      dispatch(push(routes.profiles + '/' + newProduct.id));
+    } else {
+      dispatch(updateUserDataItem('profiles', product));
+    }
     actions.setSubmitting(false);
   };
-  return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={profileValidationSchema}
-      onSubmit={submit}
-      render={(props: FormikProps<Profile>) => (
-        <StyledForm>
-          <Wrapper>
-            <Card>
-              <Heading>Billing detials</Heading>
-              <Input type="text" name="firstName" placeholder="First Name" />
-              <Input type="text" name="lastName" placeholder="Last Name" />
-              <Input type="text" name="email" placeholder="Email" />
-              <Input type="text" name="telephone" placeholder="Telephone" />
-              <Input type="text" name="address1" placeholder="Address 1" />
-              <Input type="text" name="address2" placeholder="Address 2" />
-              <Input type="text" name="city" placeholder="City" />
-              <Input type="text" name="postcode" placeholder="Postcode" />
-              <Select
-                name="country"
-                placeholder="Country"
-                value={props.values.country}
-                options={countryOptions}
-                onBlur={props.setFieldTouched}
-                onChange={props.setFieldValue}
-                error={!!props.errors.country && !!props.touched.country}
-              />
-            </Card>
-            <Card>
-              <Heading>Payment detials</Heading>
-              <Select
-                name="creditCardType"
-                placeholder="Credit Card Type"
-                value={props.values.creditCardType}
-                options={creditCardTypeOptions}
-                onBlur={props.setFieldTouched}
-                onChange={props.setFieldValue}
-                error={!!props.errors.creditCardType && !!props.touched.creditCardType}
-              />
-              <Input type="text" name="creditCardNumber" placeholder="Credit Card Number" />
-              <CardExpDate>
-                <Select
-                  name="month"
-                  placeholder="Month"
-                  value={props.values.month}
-                  options={monthOptions}
-                  onBlur={props.setFieldTouched}
-                  onChange={props.setFieldValue}
-                  error={!!props.errors.month && !!props.touched.month}
-                  width="48.5%"
-                />
 
+  return (
+    <>
+      <Backdrop
+        visible={modalIsOpened && profiles.length > 0}
+        onClick={() => setModalIsOpened(false)}
+      >
+        <ChangeItemModal
+          modalTitle="Select Profile"
+          type="profiles"
+          close={() => setModalIsOpened(false)}
+          active={match.params.id}
+        />
+      </Backdrop>
+
+      <Formik
+        enableReinitialize
+        initialValues={getInitialValues()}
+        validationSchema={profileValidationSchema}
+        onSubmit={handleSubmit}
+        render={(props: FormikProps<Profile>) => (
+          <StyledForm>
+            <Wrapper>
+              <Card>
+                <Heading>Billing detials</Heading>
+                <Input type="text" name="firstName" placeholder="First Name" />
+                <Input type="text" name="lastName" placeholder="Last Name" />
+                <Input type="text" name="email" placeholder="Email" />
+                <Input type="text" name="telephone" placeholder="Telephone" />
+                <Input type="text" name="address1" placeholder="Address 1" />
+                <Input type="text" name="address2" placeholder="Address 2" />
+                <Input type="text" name="city" placeholder="City" />
+                <Input type="text" name="postcode" placeholder="Postcode" />
                 <Select
-                  name="year"
-                  placeholder="Year"
-                  value={props.values.year}
-                  options={yearOptions}
+                  name="country"
+                  placeholder="Country"
+                  value={props.values.country}
+                  options={countryOptions}
                   onBlur={props.setFieldTouched}
                   onChange={props.setFieldValue}
-                  error={!!props.errors.year && !!props.touched.year}
-                  width="48.5%"
+                  error={!!props.errors.country && !!props.touched.country}
                 />
-              </CardExpDate>
-              <Input type="text" name="cvv" placeholder="CVV" />
-              <StyledHeading>Other</StyledHeading>
-              <Input type="text" name="profileName" placeholder="Profile Name" />
-              <Select
-                name="site"
-                placeholder="Site"
-                value={props.values.site}
-                options={siteOptions}
-                onBlur={props.setFieldTouched}
-                onChange={props.setFieldValue}
-                error={!!props.errors.site && !!props.touched.site}
-              />
-            </Card>
-            <ButtonsContainer>
-              <Button secondary>Change Profile</Button>
-              <Button secondary submit>
-                Save As New
-              </Button>
-              <Button submit>Save Profile</Button>
-            </ButtonsContainer>
-          </Wrapper>
-        </StyledForm>
-      )}
-    />
+              </Card>
+              <Card>
+                <Heading>Payment detials</Heading>
+                <Select
+                  name="creditCardType"
+                  placeholder="Credit Card Type"
+                  value={props.values.creditCardType}
+                  options={creditCardTypeOptions}
+                  onBlur={props.setFieldTouched}
+                  onChange={props.setFieldValue}
+                  error={!!props.errors.creditCardType && !!props.touched.creditCardType}
+                />
+                <Input type="text" name="creditCardNumber" placeholder="Credit Card Number" />
+                <CardExpDate>
+                  <Select
+                    name="month"
+                    placeholder="Month"
+                    value={props.values.month}
+                    options={monthOptions}
+                    onBlur={props.setFieldTouched}
+                    onChange={props.setFieldValue}
+                    error={!!props.errors.month && !!props.touched.month}
+                    width="48.5%"
+                  />
+
+                  <Select
+                    name="year"
+                    placeholder="Year"
+                    value={props.values.year}
+                    options={yearOptions}
+                    onBlur={props.setFieldTouched}
+                    onChange={props.setFieldValue}
+                    error={!!props.errors.year && !!props.touched.year}
+                    width="48.5%"
+                  />
+                </CardExpDate>
+                <Input type="text" name="cvv" placeholder="CVV" />
+                <StyledHeading>Other</StyledHeading>
+                <Input type="text" name="name" placeholder="Profile Name" />
+                <Select
+                  name="site"
+                  placeholder="Site"
+                  value={props.values.site}
+                  options={siteOptions}
+                  onBlur={props.setFieldTouched}
+                  onChange={props.setFieldValue}
+                  error={!!props.errors.site && !!props.touched.site}
+                />
+              </Card>
+              <ButtonsContainer>
+                {profiles.length > 0 && (
+                  <Button
+                    secondary
+                    disabled={props.dirty && !isNew}
+                    onClick={() => setModalIsOpened(true)}
+                  >
+                    Select Profile
+                  </Button>
+                )}
+                {!isNew && props.dirty && (
+                  <Button
+                    animation={slideInFromRight}
+                    secondary
+                    onClick={async () => {
+                      const errors = await props.validateForm();
+                      props.submitForm();
+
+                      if (Object.entries(errors).length !== 0) return;
+                      setIsNew(true);
+                    }}
+                  >
+                    Save As New
+                  </Button>
+                )}
+                <Button disabled={!props.dirty && !isNew} submit>
+                  {isNew ? 'Add Profile' : 'Save Changes'}
+                </Button>
+              </ButtonsContainer>
+            </Wrapper>
+          </StyledForm>
+        )}
+      />
+    </>
   );
 };
 

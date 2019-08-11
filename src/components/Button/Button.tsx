@@ -1,10 +1,12 @@
 import React, { ReactNode } from 'react';
-import styled, { css } from 'styled-components';
-import { colors, shadows, fonts } from 'themes/main';
+import styled, { css, Keyframes } from 'styled-components';
+import { colors, shadows, fonts } from 'theme/main';
 
 interface Props {
   children: ReactNode;
+  animation?: Keyframes;
   secondary?: boolean;
+  disabled?: boolean;
   small?: boolean;
   submit?: boolean;
   width?: string;
@@ -27,6 +29,12 @@ const ButtonWrapper = styled.button<Props>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  transition: .3s all;
+  ${({ animation }) =>
+    animation &&
+    css`
+      animation: ${animation} 0.3s forwards;
+    `};
 
   ::before {
     position: absolute;
@@ -71,6 +79,21 @@ const ButtonWrapper = styled.button<Props>`
         border-radius: 0;
       }
     `}
+
+    /* DISABLED  */
+  ${({ disabled, bgColor }) =>
+    disabled &&
+    css`
+      transition: none;
+      cursor: default;
+      pointer-events: none;
+      background: ${bgColor || colors.primaryBackground};
+      color: ${colors.darkGrey};
+      border: 1px solid ${colors.darkGrey};
+      ::before {
+        display: none;
+      }
+    `}
 `;
 
 const ButtonContent = styled.p<Props>`
@@ -88,6 +111,7 @@ const ButtonContent = styled.p<Props>`
     -webkit-background-clip: text;
     background-clip: text;
     text-shadow: ${shadows.primary};
+
   }
 
   /* SECONDARY  */
@@ -103,11 +127,22 @@ const ButtonContent = styled.p<Props>`
         color: ${colors.primaryBackground};
       }
     `}
+  /* DISABLED  */
+  ${({ disabled }) =>
+    disabled &&
+    css`
+      &,
+      ${/* sc-selector */ ButtonWrapper}:hover & {
+        transition: none;
+        color: ${colors.darkGrey};
+        text-shadow: ${shadows.primary};
+      }
+    `}
 `;
 
 const Button = (props: Props) => (
-  <ButtonWrapper {...props} type={props.submit ? 'submit' : 'button'}>
-    <ButtonContent small={props.small} secondary={props.secondary}>
+  <ButtonWrapper {...props} type={props.submit ? 'submit' : 'button'} tabIndex={-1}>
+    <ButtonContent small={props.small} secondary={props.secondary} disabled={props.disabled}>
       {props.children}
     </ButtonContent>
   </ButtonWrapper>

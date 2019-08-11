@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import puppeteer from 'puppeteer';
 import nw from 'NW';
 import InlineLogo from 'components/InlineLogo/InlineLogo';
-import { colors, fonts } from 'themes/main';
+import { colors, fonts } from 'theme/main';
 import ProgressBar from 'components/ProgressBar/ProgressBar';
 import verifyChromium from 'utils/verifyChromium';
 import { RouteComponentProps } from 'react-router';

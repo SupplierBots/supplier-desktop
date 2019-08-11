@@ -1,49 +1,10 @@
 import * as Yup from 'yup';
-
-export interface Option {
-  value: string;
-  label: string;
-}
-export interface Profile {
-  firstName: string;
-  lastName: string;
-  email: string;
-  telephone: string;
-  country: Option | null;
-  address1: string;
-  address2: string;
-  city: string;
-  postcode: string;
-  creditCardType: Option | null;
-  creditCardNumber: string;
-  month: Option | null;
-  year: Option | null;
-  cvv: string;
-  profileName: string;
-  site: Option | null;
-}
-
-export const initialValues: Profile = {
-  firstName: '',
-  lastName: '',
-  email: '',
-  telephone: '',
-  country: null,
-  address1: '',
-  address2: '',
-  city: '',
-  postcode: '',
-  creditCardType: null,
-  creditCardNumber: '',
-  month: null,
-  year: null,
-  cvv: '',
-  profileName: '',
-  site: null,
-};
+import { Option } from 'types/Option';
+import { Profile } from 'types/Profile';
 
 export const profileValidationSchema = Yup.object().shape({
   firstName: Yup.string().required('Required'),
+  name: Yup.string().required('Required'),
   lastName: Yup.string().required('Required'),
   email: Yup.string()
     .email('Incorrect Format')
@@ -59,9 +20,28 @@ export const profileValidationSchema = Yup.object().shape({
   month: Yup.object().required('Required'),
   year: Yup.object().required('Required'),
   cvv: Yup.string().required('Required'),
-  profileName: Yup.string().required('Required'),
   site: Yup.object().required('Required'),
 });
+
+export const initialValues: Profile = {
+  id: '',
+  name: '',
+  firstName: '',
+  lastName: '',
+  email: '',
+  telephone: '',
+  country: null,
+  address1: '',
+  address2: '',
+  city: '',
+  postcode: '',
+  creditCardType: null,
+  creditCardNumber: '',
+  month: null,
+  year: null,
+  cvv: '',
+  site: null,
+};
 
 export const countryOptions: Option[] = [
   { value: 'USA', label: 'USA' },

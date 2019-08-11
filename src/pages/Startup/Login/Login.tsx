@@ -4,7 +4,7 @@ import LoginCard from 'components/LoginCard/LoginCard';
 import InlineLogo from 'components/InlineLogo/InlineLogo';
 import Input from 'components/Input/Input';
 import { Formik, Form, FormikActions } from 'formik';
-import { fonts, colors } from 'themes/main';
+import { fonts, colors } from 'theme/main';
 import Button from 'components/Button/Button';
 import { signInSchema, signUpSchema, initialValues, Values } from './FormDetails';
 import Error from './Error';

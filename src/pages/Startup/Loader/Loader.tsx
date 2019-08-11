@@ -1,16 +1,8 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import InlineLogo from 'components/InlineLogo/InlineLogo';
-import { colors } from 'themes/main';
-
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-  }
-  to  {
-    opacity: 1;
-  }
-`;
+import { colors } from 'theme/main';
+import { fadeIn, rotate } from 'theme/animations';
 
 const Wrapper = styled.div`
   display: flex;
@@ -27,17 +19,8 @@ const SpinnerWrapper = styled.div`
   animation: ${fadeIn} 2s forwards;
 `;
 
-const loading = keyframes`
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-`;
-
 const Spinner = styled.div`
-  animation: ${loading} 1s infinite linear;
+  animation: ${rotate} 1s infinite linear;
   background: ${colors.pink};
   background: linear-gradient(to right, ${colors.pink} 10%, rgba(255, 255, 255, 0) 42%);
   border-radius: 50%;

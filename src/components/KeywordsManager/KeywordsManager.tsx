@@ -1,7 +1,7 @@
 import React, { useState, KeyboardEvent, ChangeEvent, Dispatch, useEffect } from 'react';
 import styled from 'styled-components';
 import Input from 'components/Input/Input';
-import { colors, fonts } from 'themes/main';
+import { colors, fonts } from 'theme/main';
 import Keyword from 'components/KeywordsManager/Keyword';
 import Button from 'components/Button/Button';
 import KeywordsContainer from './KeywordsContainer';
@@ -59,10 +59,13 @@ interface Props {
   onChange: (name: string, { positive, negative, multi }: Keywords) => void;
   setTouched: (name: string, value: boolean) => void;
   placeholder: string;
+  values: Keywords;
   description?: string;
   hasMulti?: boolean;
   customStyle?: string;
 }
+
+// ! TO FIX: REINITIALIZE AFTER PRODUCT CHANGE
 
 const KeywordsManager = ({
   name,
@@ -73,10 +76,11 @@ const KeywordsManager = ({
   setTouched,
   description,
   customStyle,
+  values,
 }: Props) => {
-  const [positive, setPositive] = useState<string[]>([]);
-  const [negative, setNegative] = useState<string[]>([]);
-  const [multi, setMulti] = useState<string[]>([]);
+  const [positive, setPositive] = useState<string[]>(values.positive);
+  const [negative, setNegative] = useState<string[]>(values.negative);
+  const [multi, setMulti] = useState<string[]>(values.multi || []);
   const [fieldError, setFieldError] = useState('');
   const [value, setValue] = useState('');
 

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { ReactComponent as MinimizeIcon } from 'assets/Minimize.svg';
 import { ReactComponent as CloseIcon } from 'assets/Close.svg';
-import { colors } from 'themes/main';
+import { colors } from 'theme/main';
 import nw from 'NW';
 
 const Wrapper = styled.div`
@@ -15,6 +15,7 @@ const Wrapper = styled.div`
   position: absolute;
   top: 1.5rem;
   right: 2rem;
+  z-index: 9999;
 `;
 
 const AppControl = styled.div`

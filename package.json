@@ -39,7 +39,7 @@
     ]
   },
   "build": {
-    "nwVersion": "0.39.3",
+    "nwVersion": "0.40.1",
     "files": [
       "app/**/*"
     ],
@@ -62,6 +62,7 @@
     "formik": "^1.5.8",
     "fs-extra": "^8.1.0",
     "history": "^4.9.0",
+    "path-to-regexp": "^1.7.0",
     "puppeteer": "^1.19.0",
     "react": "^16.8.6",
     "react-dom": "npm:@hot-loader/react-dom",

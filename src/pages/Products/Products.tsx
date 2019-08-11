@@ -1,21 +1,35 @@
-import React, { KeyboardEvent } from 'react';
+import React, { useState, useEffect, KeyboardEvent } from 'react';
+import { Formik, Form, FormikProps, FormikActions } from 'formik';
+import { RouteComponentProps } from 'react-router';
+import { push } from 'connected-react-router';
 import styled from 'styled-components';
-import { Formik, FormikActions, FormikProps, Form } from 'formik';
+import uuid from 'uuid/v4';
+
+import { useDispatch } from 'hooks/useDispatch';
+import { useSelector } from 'hooks/useSelector';
+
+import ButtonsContainer from 'components/ButtonsContainer/ButtonsContainer';
 import Button from 'components/Button/Button';
-import Card from 'components/Card/Card';
 import Heading from 'components/Heading/Heading';
+import Card from 'components/Card/Card';
 import KeywordsManager from 'components/KeywordsManager/KeywordsManager';
+import Backdrop from 'components/Backdrop/Backdrop';
+import ChangeItemModal from 'components/ChangeItemModal/ChangeItemModal';
+import Slider from 'components/Slider/Slider';
+import Select from 'components/Select/Select';
+import Input from 'components/Input/Input';
+
+import { addUserDataItem, updateUserDataItem } from 'store/userData/actions';
+import { slideInFromRight } from 'theme/animations';
+import { Product } from 'types/Product';
+import routes from 'constants/routes';
 import {
   initialProductsValues,
   productValidationSchema,
-  Product,
   sizeOptions,
   anySizeOptions,
   productSiteOptions,
 } from './FormDetails';
-import Select from 'components/Select/Select';
-import Slider from 'components/Slider/Slider';
-import Input from 'components/Input/Input';
 
 const Wrapper = styled.div`
   display: grid;
@@ -27,20 +41,6 @@ const StyledForm = styled(Form)`
   height: 100%;
 `;
 
-const ButtonsContainer = styled.div`
-  align-self: end;
-  grid-column: 1/3;
-  display: flex;
-  justify-content: flex-end;
-  button:not(:first-of-type) {
-    margin-left: 1.5rem;
-  }
-  button:first-of-type {
-    justify-self: flex-start;
-    margin-right: auto;
-  }
-`;
-
 const SlidersContainer = styled.div`
   display: flex;
 `;
@@ -49,9 +49,39 @@ const StyledHeading = styled(Heading)`
   margin-top: 2rem;
 `;
 
-const Products = () => {
-  const submit = (values: any, actions: FormikActions<any>) => {
-    console.log({ values, actions });
+const Products = ({ match }: RouteComponentProps<{ id: string }>) => {
+  const [isNew, setIsNew] = useState(!match.params.id);
+  const [modalIsOpened, setModalIsOpened] = useState(false);
+  const dispatch = useDispatch();
+  const products = useSelector(state => state.userData.products);
+
+  useEffect(() => {
+    setModalIsOpened(false);
+  }, [match.params.id]);
+
+  const getInitialValues = (): Product => {
+    if (!match.params.id) {
+      return initialProductsValues;
+    }
+    const productToLoad = products.find(product => product.id === match.params.id);
+
+    if (productToLoad) return productToLoad;
+
+    return initialProductsValues;
+  };
+
+  const handleSubmit = (product: Product, actions: FormikActions<Product>) => {
+    if (isNew) {
+      const newProduct = {
+        ...product,
+        id: uuid(),
+      };
+      dispatch(addUserDataItem('products', newProduct));
+      setIsNew(false);
+      dispatch(push(routes.products + '/' + newProduct.id));
+    } else {
+      dispatch(updateUserDataItem('products', product));
+    }
     actions.setSubmitting(false);
   };
 
@@ -59,85 +89,124 @@ const Products = () => {
     if (e.key === 'Enter') e.preventDefault();
   };
   return (
-    <Formik
-      initialValues={initialProductsValues}
-      validationSchema={productValidationSchema}
-      onSubmit={submit}
-      render={(props: FormikProps<Product>) => (
-        <StyledForm onKeyPress={disableEnter}>
-          <Wrapper>
-            <Card>
-              <Heading>Product detials</Heading>
-              <KeywordsManager
-                name="keywords"
-                placeholder="Add another keyword"
-                hasMulti
-                onChange={props.setFieldValue}
-                setTouched={props.setFieldTouched}
-                error={!!props.errors.keywords && !!props.touched.colors}
-                description="Press enter or click 'Add'"
-              />
-              <KeywordsManager
-                name="colors"
-                placeholder="Add another color"
-                onChange={props.setFieldValue}
-                setTouched={props.setFieldTouched}
-                error={!!props.errors.colors && !!props.touched.colors}
-                description="Press enter or click 'Add'"
-                customStyle={`
+    <>
+      <Backdrop
+        visible={modalIsOpened && products.length > 0}
+        onClick={() => setModalIsOpened(false)}
+      >
+        <ChangeItemModal
+          modalTitle="Select Product"
+          type="products"
+          close={() => setModalIsOpened(false)}
+          active={match.params.id}
+        />
+      </Backdrop>
+
+      <Formik
+        enableReinitialize
+        initialValues={getInitialValues()}
+        validationSchema={productValidationSchema}
+        onSubmit={handleSubmit}
+        render={(props: FormikProps<Product>) => (
+          <StyledForm onKeyPress={disableEnter}>
+            <Wrapper>
+              <Card>
+                <Heading>Product detials</Heading>
+                <KeywordsManager
+                  name="keywords"
+                  placeholder="+Another keyword"
+                  hasMulti
+                  onChange={props.setFieldValue}
+                  setTouched={props.setFieldTouched}
+                  error={!!props.errors.keywords && !!props.touched.keywords}
+                  description="Press enter or click 'Add'"
+                  values={props.values.keywords}
+                />
+                <KeywordsManager
+                  name="colors"
+                  placeholder="+Another color"
+                  onChange={props.setFieldValue}
+                  setTouched={props.setFieldTouched}
+                  error={!!props.errors.colors && !!props.touched.colors}
+                  description="Press enter or click 'Add'"
+                  values={props.values.colors}
+                  customStyle={`
                   margin-bottom: .7rem;
                 `}
-              />
-            </Card>
-            <Card>
-              <Heading>Additional detials</Heading>
-              <Select
-                name="size"
-                placeholder="Size"
-                value={props.values.size}
-                options={sizeOptions}
-                onBlur={props.setFieldTouched}
-                onChange={props.setFieldValue}
-                error={!!props.errors.size && !!props.touched.size}
-              />
-              <SlidersContainer>
-                <Slider name="anySize" label="Any Size" checked={props.values.anySize} />
-                <Slider name="anyColor" label="Any Color" checked={props.values.anyColor} />
-              </SlidersContainer>
-              {props.values.anySize && (
+                />
+              </Card>
+              <Card>
+                <Heading>Additional detials</Heading>
                 <Select
-                  name="anySizeOption"
-                  placeholder="If size not available select"
-                  value={props.values.anySizeOption}
-                  options={anySizeOptions}
+                  name="size"
+                  placeholder="Size"
+                  value={props.values.size}
+                  options={sizeOptions}
                   onBlur={props.setFieldTouched}
                   onChange={props.setFieldValue}
-                  error={!!props.errors.anySizeOption && !!props.touched.anySizeOption}
+                  error={!!props.errors.size && !!props.touched.size}
                 />
-              )}
-              <StyledHeading>Other</StyledHeading>
-              <Input type="text" name="productName" placeholder="Product Name" />
-              <Select
-                name="productSite"
-                placeholder="Site"
-                value={props.values.productSite}
-                options={productSiteOptions}
-                onBlur={props.setFieldTouched}
-                onChange={props.setFieldValue}
-                error={!!props.errors.productSite && !!props.touched.productSite}
-              />
-            </Card>
-            <ButtonsContainer>
-              <Button secondary>Change Product</Button>
-              <Button secondary submit>
-                Save As New
-              </Button>
-              <Button submit>Save Product</Button>
-            </ButtonsContainer>
-          </Wrapper>
-        </StyledForm>
-      )}
-    />
+                <SlidersContainer>
+                  <Slider name="anySize" label="Any Size" checked={props.values.anySize} />
+                  <Slider name="anyColor" label="Any Color" checked={props.values.anyColor} />
+                </SlidersContainer>
+                {props.values.anySize && (
+                  <Select
+                    name="anySizeOption"
+                    placeholder="If size not available select"
+                    value={props.values.anySizeOption}
+                    options={anySizeOptions}
+                    onBlur={props.setFieldTouched}
+                    onChange={props.setFieldValue}
+                    error={!!props.errors.anySizeOption && !!props.touched.anySizeOption}
+                  />
+                )}
+                <StyledHeading>Other</StyledHeading>
+                <Input type="text" name="name" placeholder="Product Name" />
+                <Select
+                  name="productSite"
+                  placeholder="Site"
+                  value={props.values.productSite}
+                  options={productSiteOptions}
+                  onBlur={props.setFieldTouched}
+                  onChange={props.setFieldValue}
+                  error={!!props.errors.productSite && !!props.touched.productSite}
+                />
+              </Card>
+              <ButtonsContainer>
+                {products.length > 0 && (
+                  <Button
+                    secondary
+                    disabled={props.dirty && !isNew}
+                    onClick={() => setModalIsOpened(true)}
+                  >
+                    Select Product
+                  </Button>
+                )}
+                {!isNew && props.dirty && (
+                  <Button
+                    animation={slideInFromRight}
+                    secondary
+                    onClick={async () => {
+                      const errors = await props.validateForm();
+                      props.submitForm();
+
+                      if (Object.entries(errors).length !== 0) return;
+                      setIsNew(true);
+                    }}
+                  >
+                    Save As New
+                  </Button>
+                )}
+                <Button disabled={!props.dirty && !isNew} submit>
+                  {isNew ? 'Add Product' : 'Save Changes'}
+                </Button>
+              </ButtonsContainer>
+            </Wrapper>
+          </StyledForm>
+        )}
+      />
+    </>
   );
 };
 

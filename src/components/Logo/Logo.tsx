@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { ReactComponent as BrandLogo } from 'assets/logo.svg';
-import { fonts, colors } from 'themes/main';
+import { fonts, colors } from 'theme/main';
 
 const Wrapper = styled.aside`
   display: flex;

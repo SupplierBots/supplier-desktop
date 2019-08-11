@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { colors } from 'themes/main';
+import { colors } from 'theme/main';
 
 const KeywordsContainer = styled.div<{ error: boolean }>`
   background-color: ${colors.tertiaryBackground};

@@ -1,7 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
 import { Field, ErrorMessage } from 'formik';
-import { colors, fonts } from 'themes/main';
+import { colors, fonts } from 'theme/main';
 
 const Wrapper = styled.div<Props>`
   height: 3.7rem;
