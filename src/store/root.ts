@@ -2,12 +2,13 @@ import { UserDataActionTypes } from './userData/types';
 import { AuthActionTypes } from './auth/types';
 import routes from 'constants/routes';
 import { combineReducers } from 'redux';
-import { all } from 'redux-saga/effects';
+import { all, fork } from 'redux-saga/effects';
 import { connectRouter, CallHistoryMethodAction } from 'connected-react-router';
 import { createMemoryHistory } from 'history';
 
 import { authReducer } from './auth/reducers';
 import { userDataReducer } from './userData/reducers';
+import { watchAuth } from './auth/sagas';
 
 export const history = createMemoryHistory({
   initialEntries: [routes.startup],
@@ -22,7 +23,7 @@ export const rootReducer = combineReducers({
 
 export function* rootSaga() {
   yield all([
-    //fork(watchExpenses),
+    fork(watchAuth),
     // * fork() any other store sagas down here...
   ]);
 }

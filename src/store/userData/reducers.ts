@@ -10,6 +10,7 @@ import { UserData } from 'types/UserData';
 const initialState: UserDataState = {
   profiles: [],
   products: [],
+  proxies: [],
 };
 
 export const userDataReducer = (

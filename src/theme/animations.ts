@@ -21,7 +21,7 @@ export const rotate = keyframes`
 export const slideInUp = keyframes`
   from {
     opacity: 0;
-    transform: translateY(-1rem);
+    transform: translateY(1rem);
   }
   to {
     opacity: 1;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import LoginCard from 'components/LoginCard/LoginCard';
 import InlineLogo from 'components/InlineLogo/InlineLogo';
@@ -9,9 +9,12 @@ import Button from 'components/Button/Button';
 import { signInSchema, signUpSchema, initialValues, Values } from './FormDetails';
 import Error from './Error';
 import { RouteComponentProps } from 'react-router';
-import routes from 'constants/routes';
 import { useDispatch } from 'hooks/useDispatch';
-import { changeAuthState } from 'store/auth/actions';
+import { createAccountAttempt, loginAttempt, setAuthError } from 'store/auth/actions';
+import { useSelector } from 'hooks/useSelector';
+import Spinner from 'components/Spinner/Spinner';
+import Fieldset from 'components/Fieldset/Fieldset';
+import nw from 'NW';
 
 const Wrapper = styled.div`
   display: flex;
@@ -51,19 +54,40 @@ const StyledButton = styled(Button)`
   width: 18rem;
 `;
 
+const StyledError = styled(Error)`
+  margin-top: 0.7rem;
+`;
+
+const SpinnerWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 5rem;
+  transform: scale(0.8);
+`;
+
 type Props = RouteComponentProps;
 
 const Login = ({ history }: Props) => {
   const [isSignUp, setSignUp] = useState(false);
-  const [error, setError] = useState('');
   const dispatch = useDispatch();
+  const { verifying, error, authenticated } = useSelector(state => state.auth);
 
-  const submit = (values: Values, actions: FormikActions<Values>) => {
+  const submit = async (values: Values, actions: FormikActions<Values>) => {
+    if (isSignUp) {
+      const credentials = {
+        email: values.email,
+        password: values.password,
+        key: values.key,
+      };
+      dispatch(createAccountAttempt(credentials));
+    } else {
+      const credentials = {
+        email: values.email,
+        password: values.password,
+      };
+      dispatch(loginAttempt(credentials));
+    }
     actions.setSubmitting(false);
-    console.log({ values, actions });
-    setError("Couldn't connect to the server");
-    dispatch(changeAuthState(true));
-    history.push(routes.dashboard);
   };
   return (
     <Formik
@@ -78,36 +102,47 @@ const Login = ({ history }: Props) => {
               <InlineLogo />
             </StyledInlineLogo>
             <Form>
-              <Input type="text " name="email" placeholder="Email" />
-              <Input type="password" name="password" placeholder="Password" />
-              {isSignUp && (
+              <Fieldset disabled={verifying}>
+                <Input type="text" name="email" placeholder="Email" />
+                <Input type="password" name="password" placeholder="Password" />
+                {isSignUp && (
+                  <>
+                    <Input type="password" name="passwordConfirm" placeholder="Confirm Password" />
+                    <Input type="text" name="key" placeholder="License Key" />
+                  </>
+                )}
+              </Fieldset>
+
+              {verifying || authenticated ? (
+                <SpinnerWrapper>
+                  <Spinner bgColor={colors.secondaryBackground} />
+                </SpinnerWrapper>
+              ) : (
                 <>
-                  <Input type="password" name="passwordConfirm" placeholder="Confirm Password" />
-                  <Input type="text" name="key" placeholder="License Key" />
+                  <StyledError visible={error !== ''}>{error || 'No error'}</StyledError>
+                  <Contact>
+                    <p>Do you have any problems?</p>
+                    <Email>
+                      Contact us: <GradientText>support@safedropbot.com</GradientText>
+                    </Email>
+                  </Contact>
+                  <StyledButton
+                    small
+                    secondary
+                    bgColor={colors.secondaryBackground}
+                    onClick={() => {
+                      setSignUp(!isSignUp);
+                      dispatch(setAuthError(''));
+                      resetForm();
+                    }}
+                  >
+                    {isSignUp ? 'Go Back' : 'Create Account'}
+                  </StyledButton>
+                  <Button small submit bgColor={colors.secondaryBackground}>
+                    {isSignUp ? 'Create' : 'Login'}
+                  </Button>
                 </>
               )}
-              <Error visible={error !== ''}>{error || 'No error'}</Error>
-              <Contact>
-                <p>Do you have any problems?</p>
-                <Email>
-                  Contact us: <GradientText>support@safedropbot.com</GradientText>
-                </Email>
-              </Contact>
-              <StyledButton
-                small
-                secondary
-                bgColor={colors.secondaryBackground}
-                onClick={() => {
-                  setSignUp(!isSignUp);
-                  setError('');
-                  resetForm();
-                }}
-              >
-                {isSignUp ? 'Go Back' : 'Create Account'}
-              </StyledButton>
-              <Button small submit bgColor={colors.secondaryBackground}>
-                {isSignUp ? 'Create' : 'Login'}
-              </Button>
             </Form>
           </LoginCard>
         </Wrapper>

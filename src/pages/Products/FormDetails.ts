@@ -4,7 +4,6 @@ import { Option } from 'types/Option';
 
 export const productValidationSchema = Yup.object().shape({
   id: Yup.string(),
-  name: Yup.string().required('Required'),
   keywords: Yup.object().shape({
     positive: Yup.array(),
     negative: Yup.array(),
@@ -25,18 +24,19 @@ export const productValidationSchema = Yup.object().shape({
     then: Yup.object().required(),
     otherwise: Yup.object().nullable(),
   }),
+  name: Yup.string().required('Required'),
   productSite: Yup.object().required(),
 });
 
 export const initialProductsValues: Product = {
   id: '',
-  name: '',
   keywords: { positive: [], negative: [], multi: [], keywordsAmount: 0 },
   colors: { positive: [], negative: [], multi: [], keywordsAmount: 0 },
   size: null,
   anySize: false,
   anyColor: false,
   anySizeOption: null,
+  name: '',
   productSite: null,
 };
 

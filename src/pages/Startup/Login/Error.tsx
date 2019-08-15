@@ -5,7 +5,7 @@ interface Props {
   visible: boolean;
 }
 const Error = styled.p<Props>`
-  visibility: ${({ visible }) => (visible ? 'visible' : 'hidden')};
+  opacity: ${({ visible }) => (visible ? '1' : '0')};
   margin-top: 1.5rem;
   margin-bottom: 1rem;
   font-size: ${fonts.regular};

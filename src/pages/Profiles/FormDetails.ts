@@ -4,7 +4,6 @@ import { Profile } from 'types/Profile';
 
 export const profileValidationSchema = Yup.object().shape({
   firstName: Yup.string().required('Required'),
-  name: Yup.string().required('Required'),
   lastName: Yup.string().required('Required'),
   email: Yup.string()
     .email('Incorrect Format')
@@ -20,12 +19,12 @@ export const profileValidationSchema = Yup.object().shape({
   month: Yup.object().required('Required'),
   year: Yup.object().required('Required'),
   cvv: Yup.string().required('Required'),
+  name: Yup.string().required('Required'),
   site: Yup.object().required('Required'),
 });
 
 export const initialValues: Profile = {
   id: '',
-  name: '',
   firstName: '',
   lastName: '',
   email: '',
@@ -40,6 +39,7 @@ export const initialValues: Profile = {
   month: null,
   year: null,
   cvv: '',
+  name: '',
   site: null,
 };
 

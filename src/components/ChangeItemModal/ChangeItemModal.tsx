@@ -76,7 +76,13 @@ const ChangeItemModal = ({ close, type, modalTitle, active }: Props) => {
         </CloseButton>
         <Heading>{modalTitle}</Heading>
         {userData.map(item => (
-          <Item name={item.name} id={item.id} type={type} active={item.id === active} />
+          <Item
+            key={item.id}
+            id={item.id}
+            name={item.name}
+            type={type}
+            active={item.id === active}
+          />
         ))}
       </StyledCard>
     </Wrapper>

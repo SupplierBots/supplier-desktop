@@ -65,8 +65,6 @@ interface Props {
   customStyle?: string;
 }
 
-// ! TO FIX: REINITIALIZE AFTER PRODUCT CHANGE
-
 const KeywordsManager = ({
   name,
   hasMulti,
@@ -91,6 +89,12 @@ const KeywordsManager = ({
       : { positive, negative, keywordsAmount };
     onChange(name, keywords);
   }, [onChange, positive, negative, multi, name, hasMulti]);
+
+  useEffect(() => {
+    setPositive(values.positive);
+    setNegative(values.negative);
+    if (values.multi) setMulti(values.multi);
+  }, [values]);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);

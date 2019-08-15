@@ -1,5 +1,5 @@
 import { hot } from 'react-hot-loader/root';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 import styled from 'styled-components';
 import { useSelector } from 'hooks/useSelector';
@@ -30,15 +30,25 @@ const Content = styled.main`
   position: relative;
 `;
 
+declare const chrome: any;
+
 const App = () => {
-  const authenticated = useSelector(state => state.auth.authenticated);
+  const disableAutofill = () => {
+    try {
+      chrome.settingsPrivate.setPref('autofill.credit_card_enabled', false);
+      chrome.settingsPrivate.setPref('autofill.profile_enabled', false);
+    } catch {}
+  };
+
+  useEffect(disableAutofill, []);
+  const authState = useSelector(state => state.auth);
 
   return (
     <>
       <GlobalStyle />
       <Wrapper>
-        {authenticated && <Sidebar />}
-        {!authenticated && <Redirect to={routes.startup} />}
+        {authState.authenticated && <Sidebar />}
+        {!authState.authenticated && <Redirect to={routes.startup} />}
         <Content>
           <Routes />
         </Content>

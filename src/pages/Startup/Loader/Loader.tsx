@@ -1,8 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import InlineLogo from 'components/InlineLogo/InlineLogo';
-import { colors } from 'theme/main';
-import { fadeIn, rotate } from 'theme/animations';
+
+import { fadeIn } from 'theme/animations';
+import Spinner from 'components/Spinner/Spinner';
 
 const Wrapper = styled.div`
   display: flex;
@@ -19,47 +20,12 @@ const SpinnerWrapper = styled.div`
   animation: ${fadeIn} 2s forwards;
 `;
 
-const Spinner = styled.div`
-  animation: ${rotate} 1s infinite linear;
-  background: ${colors.pink};
-  background: linear-gradient(to right, ${colors.pink} 10%, rgba(255, 255, 255, 0) 42%);
-  border-radius: 50%;
-
-  height: 5em;
-  margin-top: 25rem;
-  position: relative;
-  width: 5em;
-
-  &:before {
-    background: ${colors.pink};
-    border-radius: 100% 0 0 0;
-    content: '';
-    position: absolute;
-    height: 50%;
-    width: 50%;
-    top: 0;
-    left: 0;
-  }
-
-  &:after {
-    content: '';
-    background: ${colors.primaryBackground};
-    position: absolute;
-    height: 75%;
-    width: 75%;
-    border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-`;
-
 const Loader = () => {
   return (
     <Wrapper>
       <InlineLogo />
       <SpinnerWrapper>
-        <Spinner />
+        <Spinner main />
       </SpinnerWrapper>
     </Wrapper>
   );

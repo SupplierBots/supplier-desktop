@@ -7,7 +7,8 @@ import { ReactComponent as TwitterIcon } from 'assets/Twitter.svg';
 import { colors } from 'theme/main';
 import nw from 'NW';
 import { useDispatch } from 'hooks/useDispatch';
-import { changeAuthState } from 'store/auth/actions';
+import { initiateUserLogout } from 'store/auth/actions';
+import { useSelector } from 'hooks/useSelector';
 
 const Wrapper = styled.div`
   display: flex;
@@ -34,13 +35,11 @@ const ExternalLink = styled.a`
 
 const ExternalLinksBox = () => {
   const dispatch = useDispatch();
-  const logout = () => {
-    dispatch(changeAuthState(false));
-  };
+  const uid = useSelector(state => state.auth.uid);
 
   return (
     <Wrapper>
-      <ExternalLink onClick={logout}>
+      <ExternalLink onClick={() => dispatch(initiateUserLogout(uid))}>
         <LogoutIcon />
       </ExternalLink>
 

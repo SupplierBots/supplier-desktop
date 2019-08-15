@@ -1,8 +1,8 @@
 Todo:
 
 -dynamically get chromium path
--sliders (see saved reddit post)
--more
+-KeywordManager placeholder render component
+-additional regions/states
 
 Anty debug:
 Close on win.opendevTools (hook)

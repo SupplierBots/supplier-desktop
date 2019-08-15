@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { fadeIn } from 'theme/animations';
+import { slideInUp } from 'theme/animations';
 
 interface Props {
   visible: boolean;
@@ -18,7 +18,7 @@ const Backdrop = styled.div<Props>`
   backdrop-filter: blur(0.2rem);
   justify-content: center;
   opacity: 0;
-  animation: ${fadeIn} 0.5s forwards;
+  animation: ${slideInUp} 0.5s forwards;
 `;
 
 export default Backdrop;

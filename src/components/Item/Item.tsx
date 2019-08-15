@@ -13,6 +13,7 @@ import { Profile } from 'types/Profile';
 import routes from 'constants/routes';
 import { useDispatch } from 'hooks/useDispatch';
 import { push } from 'connected-react-router';
+import { Proxy } from 'types/Proxy';
 
 interface Props {
   name: string;
@@ -31,11 +32,12 @@ const Wrapper = styled.div<Props>`
   border: 1px solid ${colors.darkGrey};
   padding: 0 1.75rem;
   margin-bottom: 1rem;
-  transition: 0.3s all;
+
   position: relative;
   :hover {
     cursor: pointer;
     background: ${colors.secondaryBackground};
+    transition: 0.3s background;
   }
 
   ${({ active }) =>
@@ -91,7 +93,7 @@ const IconsContainer = styled.div<Props>`
       active &&
       css`
         path {
-          fill: url(#iconGradient);
+          fill: url(#iconGradient45);
         }
       `}
   }
@@ -124,6 +126,9 @@ const Item = (props: Props) => {
       }
       if (props.type === 'profiles') {
         dispatch(addUserDataItem(props.type, newItem as Profile));
+      }
+      if (props.type === 'proxies') {
+        dispatch(addUserDataItem(props.type, newItem as Proxy));
       }
     }
   };
