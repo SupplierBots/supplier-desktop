@@ -37,11 +37,18 @@ const WebsiteIconWrapper = styled.div`
 
 const Action = styled.div`
   margin-right: 1.3rem;
+
+  transition: 0.3s all;
   svg {
     height: 1.5rem;
     path {
       fill: url(#iconGradient45);
     }
+  }
+  :hover {
+    cursor: pointer;
+    transform: scale(1.15);
+    filter: grayscale(85%);
   }
 `;
 

@@ -20,17 +20,15 @@ const Wrapper = styled.div`
 
 const AppControl = styled.div`
   cursor: pointer;
+  transition: all 0.3s;
   rect,
   path {
-    fill: ${colors.pink};
+    fill: url(#appControlSVGGrandient);
     transition: all 0.3s;
   }
   :hover {
     transform: scale(1.1);
-    rect,
-    path {
-      fill: ${colors.lightPurple};
-    }
+    filter: grayscale(75%);
   }
 `;
 

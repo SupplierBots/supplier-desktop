@@ -38,7 +38,7 @@ const CustomSlider = styled.div<{ checked: boolean }>`
     width: 1rem;
     top: 0.2rem;
     left: 0.2rem;
-    transition: 0.4s;
+    transition: 0.3s;
     background-color: ${colors.lightGrey};
     transform: ${({ checked }) => (checked ? 'translateX(1.3rem)' : 'translateX(0)')};
   }
