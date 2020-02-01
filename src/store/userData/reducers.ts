@@ -29,7 +29,15 @@ export const userDataReducer = (
     case UPDATE_USER_DATA_ITEM:
       return {
         ...state,
-        [action.itemType]: [...dataItems.filter(item => item.id !== action.item.id), action.item],
+        [action.itemType]: dataItems.map(item => {
+          if (item.id !== action.item.id) {
+            return item;
+          }
+          return {
+            ...item,
+            ...action.item,
+          };
+        }),
       };
     case REMOVE_USER_DATA_ITEM:
       return {
