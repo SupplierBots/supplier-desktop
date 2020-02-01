@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Formik, Form, FormikProps, FormikActions } from 'formik';
+import React, { useState } from 'react';
+import { Formik, Form, FormikProps, FormikHelpers } from 'formik';
 import { RouteComponentProps } from 'react-router';
 import { push } from 'connected-react-router';
 import styled from 'styled-components';
@@ -12,18 +12,15 @@ import ButtonsContainer from 'components/ButtonsContainer/ButtonsContainer';
 import Button from 'components/Button/Button';
 import Heading from 'components/Heading/Heading';
 import Card from 'components/Card/Card';
-import Backdrop from 'components/Backdrop/Backdrop';
-import ChangeItemModal from 'components/ChangeItemModal/ChangeItemModal';
 import Select from 'components/Select/Select';
 import Input from 'components/Input/Input';
 
 import { addUserDataItem, updateUserDataItem } from 'store/userData/actions';
-import { slideInFromRight } from 'theme/animations';
 import routes from 'constants/routes';
 import { proxyValidationSchema, initialProxyValues, siteOptions } from './FormDetails';
 import Slider from 'components/Slider/Slider';
 import { Proxy } from 'types/Proxy';
-import Item from 'components/Item/Item';
+import Item from 'components/ChangeItemModal/SelectableItem';
 import { colors, fonts } from 'theme/main';
 
 const Wrapper = styled.div`
@@ -73,7 +70,7 @@ const StyledButton = styled(Button)`
   }
 `;
 
-const Proxies = ({ match }: RouteComponentProps<{ id: string }>) => {
+const Proxies = ({ match, history }: RouteComponentProps<{ id: string }>) => {
   const [isNew, setIsNew] = useState(!match.params.id);
   const dispatch = useDispatch();
   const proxies = useSelector(state => state.userData.proxies);
@@ -89,7 +86,7 @@ const Proxies = ({ match }: RouteComponentProps<{ id: string }>) => {
     return initialProxyValues;
   };
 
-  const handleSubmit = (proxy: Proxy, actions: FormikActions<Proxy>) => {
+  const handleSubmit = (proxy: Proxy, actions: FormikHelpers<Proxy>) => {
     if (isNew) {
       const newProxy = {
         ...proxy,
@@ -130,17 +127,17 @@ const Proxies = ({ match }: RouteComponentProps<{ id: string }>) => {
               <StyledHeading>Other</StyledHeading>
               <Input type="text" name="name" placeholder="Proxy Name" />
               <Select
-                name="proxySite"
+                name="site"
                 placeholder="Site"
-                value={props.values.proxySite}
+                value={props.values.site}
                 options={siteOptions}
                 onBlur={props.setFieldTouched}
                 onChange={props.setFieldValue}
-                error={!!props.errors.proxySite && !!props.touched.proxySite}
+                error={!!props.errors.site && !!props.touched.site}
               />
             </Card>
             <Card>
-              <Heading>Select Proxy</Heading>
+              <Heading>Select proxy</Heading>
               {proxies.length > 0 ? (
                 <ProxiesList scrollEnabled={proxies.length > 9}>
                   {proxies.map(item => (
@@ -158,16 +155,20 @@ const Proxies = ({ match }: RouteComponentProps<{ id: string }>) => {
               )}
             </Card>
             <ButtonsContainer>
+              {!isNew && !props.dirty && (
+                <StyledButton secondary onClick={() => history.push(routes.proxies)}>
+                  Create new
+                </StyledButton>
+              )}
               {!isNew && props.dirty && (
                 <StyledButton
-                  animation={slideInFromRight}
                   secondary
                   onClick={async () => {
                     const errors = await props.validateForm();
-                    props.submitForm();
 
                     if (Object.entries(errors).length !== 0) return;
                     setIsNew(true);
+                    props.submitForm();
                   }}
                 >
                   Save As New

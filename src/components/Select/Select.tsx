@@ -16,9 +16,10 @@ interface Props {
   onBlur: (name: string, value: boolean) => void;
   error: boolean;
   width?: string;
+  specialPlaceholder?: boolean;
 }
 
-const StyledSelect = styled(ReactSelect)<Props>`
+const StyledSelect = styled(ReactSelect)<Props & { isTouched: boolean }>`
   &.rs-container {
     height: 3.7rem;
     width: ${({ width }) => width || '100%'};
@@ -33,6 +34,13 @@ const StyledSelect = styled(ReactSelect)<Props>`
 
     .rs__placeholder {
       color: ${colors.darkGrey};
+      ${({ specialPlaceholder }) =>
+        specialPlaceholder &&
+        css`
+          color: transparent;
+          background: ${colors.mainGradient45};
+          -webkit-background-clip: text;
+        `}
     }
 
     .rs__input {
@@ -47,6 +55,8 @@ const StyledSelect = styled(ReactSelect)<Props>`
         height: 1.5rem;
         width: 3rem;
         color: ${({ error }) => (error ? '#890000' : colors.darkGrey)};
+        color: ${({ specialPlaceholder, isTouched }) =>
+          specialPlaceholder && !isTouched && colors.pink};
       }
       cursor: pointer;
       border: double 1px transparent;
@@ -136,7 +146,17 @@ const StyledSelect = styled(ReactSelect)<Props>`
   }
 `;
 
-const Select = ({ options, placeholder, name, value, onChange, onBlur, error, width }: Props) => {
+const Select = ({
+  options,
+  placeholder,
+  name,
+  value,
+  onChange,
+  onBlur,
+  error,
+  width,
+  specialPlaceholder,
+}: Props) => {
   const handleChange = (value: Option) => {
     onChange(name, value);
   };
@@ -147,6 +167,7 @@ const Select = ({ options, placeholder, name, value, onChange, onBlur, error, wi
 
   return (
     <StyledSelect
+      specialPlaceholder={specialPlaceholder}
       options={options}
       placeholder={placeholder}
       name={name}
@@ -158,6 +179,7 @@ const Select = ({ options, placeholder, name, value, onChange, onBlur, error, wi
       error={error}
       width={width}
       maxMenuHeight="15rem"
+      isTouched={value}
     />
   );
 };

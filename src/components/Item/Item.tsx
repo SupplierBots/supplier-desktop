@@ -1,37 +1,30 @@
-import React, { MouseEvent } from 'react';
-import styled, { css } from 'styled-components';
-import { colors, fonts } from 'theme/main';
-import { ReactComponent as DuplicateIcon } from 'assets/Duplicate.svg';
-import { ReactComponent as RemoveIcon } from 'assets/Remove.svg';
-import { UserDataItemType } from 'store/userData/types';
-import { useSelector } from 'hooks/useSelector';
-import { UserData } from 'types/UserData';
-import uuid from 'uuid/v4';
-import { addUserDataItem, removeUserDataItem } from 'store/userData/actions';
-import { Product } from 'types/Product';
-import { Profile } from 'types/Profile';
-import routes from 'constants/routes';
-import { useDispatch } from 'hooks/useDispatch';
-import { push } from 'connected-react-router';
-import { Proxy } from 'types/Proxy';
+import React, { ReactNode } from 'react';
+import styled, { css, Keyframes } from 'styled-components';
+import { fonts, colors } from 'theme/main';
 
 interface Props {
   name: string;
-  id: string;
-  type: UserDataItemType;
   active?: boolean;
+  selectable?: boolean;
+  children?: ReactNode;
+  onClick?: (...args: any[]) => void;
+  animation?: Keyframes;
 }
-
 const Wrapper = styled.div<Props>`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: ${({ selectable }) => (selectable ? 'space-between' : 'center')};
   border-radius: 0.5rem;
   height: 3.7rem;
   background: ${colors.tertiaryBackground};
   border: 1px solid ${colors.darkGrey};
   padding: 0 1.75rem;
   margin-bottom: 1rem;
+  ${({ animation }) =>
+    animation &&
+    css`
+      animation: ${animation} 0.3s forwards;
+    `}
 
   position: relative;
   :hover {
@@ -53,50 +46,17 @@ const Wrapper = styled.div<Props>`
         background-clip: padding-box, border-box;
       }
     `}
-`;
-const IconCaption = styled.span<Props>`
-  color: ${colors.lightGrey};
-  background-color: ${({ active }) =>
-    active ? colors.tertiaryBackground : colors.secondaryBackground};
-  font: inherit;
-  font-size: ${fonts.small};
-  opacity: 0;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  right: 7rem;
-  transition: 0.3s all;
-  padding: 1rem 0 1rem 1.5rem;
-`;
 
-const IconsContainer = styled.div<Props>`
-  display: flex;
-  align-items: center;
-
-  svg {
-    height: 1.2rem;
-    cursor: pointer;
-    path {
-      fill: ${colors.darkGrey};
-      transition: 0.3s all;
-    }
-
-    :hover path {
-      fill: ${colors.lightGrey};
-    }
-
-    :hover + ${IconCaption} {
-      opacity: 1;
-    }
-
-    ${({ active }) =>
-      active &&
-      css`
-        path {
-          fill: url(#iconGradient45);
-        }
-      `}
-  }
+  ${({ selectable }) =>
+    !selectable &&
+    css`
+      filter: brightness(100%);
+      transition: filter 0.3s;
+      &:hover {
+        cursor: pointer;
+        filter: brightness(90%);
+      }
+    `}
 `;
 
 const Name = styled.span<Props>`
@@ -111,50 +71,11 @@ const Name = styled.span<Props>`
     `}
 `;
 
-const Item = (props: Props) => {
-  const dispatch = useDispatch();
-  const userDataItems = useSelector(state => state.userData[props.type]) as UserData[];
-
-  const duplicateItem = (event: MouseEvent<HTMLOrSVGElement>) => {
-    event.stopPropagation();
-    const itemToDuplicate = userDataItems.find(item => item.id === props.id);
-
-    if (itemToDuplicate) {
-      const newItem = { ...itemToDuplicate, id: uuid() };
-      if (props.type === 'products') {
-        dispatch(addUserDataItem(props.type, newItem as Product));
-      }
-      if (props.type === 'profiles') {
-        dispatch(addUserDataItem(props.type, newItem as Profile));
-      }
-      if (props.type === 'proxies') {
-        dispatch(addUserDataItem(props.type, newItem as Proxy));
-      }
-    }
-  };
-
-  const removeItem = (event: MouseEvent<HTMLOrSVGElement>) => {
-    event.stopPropagation();
-    dispatch(removeUserDataItem(props.type, props.id));
-    if (props.active) dispatch(push(routes[props.type]));
-  };
-
-  const loadItem = () => {
-    if (!props.active) dispatch(push(routes[props.type] + '/' + props.id));
-  };
-
-  return (
-    <Wrapper {...props} onClick={loadItem}>
-      <Name {...props}>{props.name}</Name>
-      <IconsContainer {...props}>
-        <DuplicateIcon onClick={duplicateItem} />
-        <IconCaption {...props}>Duplicate</IconCaption>
-
-        <RemoveIcon onClick={removeItem} />
-        <IconCaption {...props}>Remove</IconCaption>
-      </IconsContainer>
-    </Wrapper>
-  );
-};
+const Item = (props: Props) => (
+  <Wrapper {...props}>
+    <Name {...props}>{props.name}</Name>
+    {props.children}
+  </Wrapper>
+);
 
 export default Item;

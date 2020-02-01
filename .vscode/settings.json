@@ -22,15 +22,16 @@
     "**/.DS_Store": true,
     "v8.log": true,
     "public": true,
-    "build": true,
+    //"build": true,
     "app": true,
     "src/react-app-env.d.ts": true,
     "craco.config.js": true,
     //You can hide these too
-    "node_modules": true,
+    //"node_modules": true,
     "dist": true,
     "NW.js": true
     //"dev-server": true
   },
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

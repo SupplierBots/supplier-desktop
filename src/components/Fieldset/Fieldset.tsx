@@ -6,6 +6,7 @@ const Fieldset = styled.fieldset`
   margin: 0;
   transition: 0.3s all;
   :disabled {
+    pointer-events: none;
     opacity: 0.5;
   }
 `;

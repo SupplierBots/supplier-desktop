@@ -11,6 +11,7 @@ const initialState: UserDataState = {
   profiles: [],
   products: [],
   proxies: [],
+  tasks: [],
 };
 
 export const userDataReducer = (

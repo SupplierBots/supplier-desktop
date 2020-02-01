@@ -1,5 +1,5 @@
 import React, { useState, useEffect, KeyboardEvent } from 'react';
-import { Formik, Form, FormikProps, FormikActions } from 'formik';
+import { Formik, Form, FormikProps, FormikHelpers } from 'formik';
 import { RouteComponentProps } from 'react-router';
 import { push } from 'connected-react-router';
 import styled from 'styled-components';
@@ -20,7 +20,6 @@ import Select from 'components/Select/Select';
 import Input from 'components/Input/Input';
 
 import { addUserDataItem, updateUserDataItem } from 'store/userData/actions';
-import { slideInFromRight } from 'theme/animations';
 import { Product } from 'types/Product';
 import routes from 'constants/routes';
 import {
@@ -49,7 +48,7 @@ const StyledHeading = styled(Heading)`
   margin-top: 2rem;
 `;
 
-const Products = ({ match }: RouteComponentProps<{ id: string }>) => {
+const Products = ({ history, match }: RouteComponentProps<{ id: string }>) => {
   const [isNew, setIsNew] = useState(!match.params.id);
   const [modalIsOpened, setModalIsOpened] = useState(false);
   const dispatch = useDispatch();
@@ -70,7 +69,7 @@ const Products = ({ match }: RouteComponentProps<{ id: string }>) => {
     return initialProductsValues;
   };
 
-  const handleSubmit = (product: Product, actions: FormikActions<Product>) => {
+  const handleSubmit = (product: Product, actions: FormikHelpers<Product>) => {
     if (isNew) {
       const newProduct = {
         ...product,
@@ -90,17 +89,19 @@ const Products = ({ match }: RouteComponentProps<{ id: string }>) => {
   };
   return (
     <>
-      <Backdrop
-        visible={modalIsOpened && products.length > 0}
-        onClick={() => setModalIsOpened(false)}
-      >
-        <ChangeItemModal
-          modalTitle="Select Product"
-          type="products"
-          close={() => setModalIsOpened(false)}
-          active={match.params.id}
-        />
-      </Backdrop>
+      {modalIsOpened && (
+        <Backdrop
+          visible={modalIsOpened && products.length > 0}
+          onClick={() => setModalIsOpened(false)}
+        >
+          <ChangeItemModal
+            modalTitle="Select Product"
+            type="products"
+            close={() => setModalIsOpened(false)}
+            active={match.params.id}
+          />
+        </Backdrop>
+      )}
 
       <Formik
         enableReinitialize
@@ -164,13 +165,13 @@ const Products = ({ match }: RouteComponentProps<{ id: string }>) => {
                 <StyledHeading>Other</StyledHeading>
                 <Input type="text" name="name" placeholder="Product Name" />
                 <Select
-                  name="productSite"
+                  name="site"
                   placeholder="Site"
-                  value={props.values.productSite}
+                  value={props.values.site}
                   options={productSiteOptions}
                   onBlur={props.setFieldTouched}
                   onChange={props.setFieldValue}
-                  error={!!props.errors.productSite && !!props.touched.productSite}
+                  error={!!props.errors.site && !!props.touched.site}
                 />
               </Card>
               <ButtonsContainer>
@@ -183,16 +184,20 @@ const Products = ({ match }: RouteComponentProps<{ id: string }>) => {
                     Select Product
                   </Button>
                 )}
+                {!isNew && !props.dirty && (
+                  <Button secondary onClick={() => history.push(routes.products)}>
+                    Create new
+                  </Button>
+                )}
                 {!isNew && props.dirty && (
                   <Button
-                    animation={slideInFromRight}
                     secondary
                     onClick={async () => {
                       const errors = await props.validateForm();
-                      props.submitForm();
 
                       if (Object.entries(errors).length !== 0) return;
                       setIsNew(true);
+                      props.submitForm();
                     }}
                   >
                     Save As New

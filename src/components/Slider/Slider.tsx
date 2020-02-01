@@ -51,7 +51,7 @@ interface Props {
 }
 
 const Slider = (props: Props) => (
-  <Wrapper>
+  <Wrapper {...props}>
     <HiddenField {...props} name={props.name} type="checkbox" />
     <CustomSlider checked={props.checked} />
     <Label>{props.label}</Label>

@@ -8,6 +8,7 @@ interface Props {
   secondary?: boolean;
   disabled?: boolean;
   small?: boolean;
+  medium?: boolean;
   submit?: boolean;
   width?: string;
   height?: string;
@@ -19,8 +20,10 @@ const ButtonWrapper = styled.button<Props>`
   background: ${colors.mainGradient45};
   border: none;
   border-radius: 0.5rem;
-  height: ${({ small, height }) => (height ? height : small ? '3.5rem' : '4rem')};
-  width: ${({ width, small }) => (width ? width : small ? '13rem' : '16rem')};
+  height: ${({ small, medium, height }) =>
+    height ? height : small ? '3.5rem' : medium ? '3.8rem' : '4rem'};
+  width: ${({ width, medium, small }) =>
+    width ? width : small ? '13rem' : medium ? '15rem' : '16rem'};
   outline: none;
   box-shadow: ${shadows.primary};
   z-index: 1;
@@ -98,7 +101,7 @@ const ButtonWrapper = styled.button<Props>`
 
 const ButtonContent = styled.p<Props>`
   font-family: 'Lato', sans-serif;
-  font-size: ${({ small }) => (small ? fonts.regular : fonts.big)};
+  font-size: ${({ small, medium }) => (small ? fonts.regular : medium ? '1.5rem' : fonts.big)};
   color: ${colors.primaryBackground};
   transition: 0.3s all;
   z-index: 10;
@@ -142,7 +145,12 @@ const ButtonContent = styled.p<Props>`
 
 const Button = (props: Props) => (
   <ButtonWrapper {...props} type={props.submit ? 'submit' : 'button'} tabIndex={-1}>
-    <ButtonContent small={props.small} secondary={props.secondary} disabled={props.disabled}>
+    <ButtonContent
+      small={props.small}
+      medium={props.medium}
+      secondary={props.secondary}
+      disabled={props.disabled}
+    >
       {props.children}
     </ButtonContent>
   </ButtonWrapper>

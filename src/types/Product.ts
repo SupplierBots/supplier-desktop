@@ -9,5 +9,5 @@ export interface Product extends UserData {
   anySize: boolean;
   anyColor: boolean;
   anySizeOption: Option | null;
-  productSite: Option | null;
+  site: Option | null;
 }

@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, MouseEvent } from 'react';
 import styled from 'styled-components';
 import { colors, shadows } from 'theme/main';
 
@@ -46,6 +46,7 @@ const BottomPolygon = styled.div<{ disableBottomPolygon: boolean | undefined }>`
 interface Props {
   children: ReactNode;
   disableBottomPolygon?: boolean;
+  onClick?: (event: MouseEvent<HTMLDivElement>) => void;
 }
 
 const Card = (props: Props) => (

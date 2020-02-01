@@ -5,6 +5,7 @@ export default {
   downloader: '/startup/downloader',
   dashboard: '/dashboard',
   tasks: '/tasks',
+  tasksEditor: '/tasks/editor',
   products: '/products',
   profiles: '/profiles',
   proxies: '/proxies',

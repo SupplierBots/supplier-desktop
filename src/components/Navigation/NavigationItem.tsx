@@ -49,9 +49,6 @@ const StyledNavLink = styled(NavLink)`
   }
 `;
 
-//Cast 'a' to string literal
-const as: 'a' = 'a';
-
 interface Props {
   children: ReactNode;
   link: string;
@@ -61,7 +58,6 @@ interface Props {
 
 const NavigationItem = ({ link, children, external }: Props) => {
   const additionalProps = external && {
-    as,
     onClick: () => nw.Shell.openExternal(link),
   };
 

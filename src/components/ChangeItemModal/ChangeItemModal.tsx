@@ -5,7 +5,7 @@ import Card from 'components/Card/Card';
 import Heading from 'components/Heading/Heading';
 import { ReactComponent as CloseIcon } from 'assets/Close.svg';
 import { colors } from 'theme/main';
-import Item from '../Item/Item';
+import Item from './SelectableItem';
 import { UserDataItemType } from 'store/userData/types';
 import { useSelector } from 'hooks/useSelector';
 import { UserData } from 'types/UserData';

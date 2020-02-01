@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import LoginCard from 'components/LoginCard/LoginCard';
 import InlineLogo from 'components/InlineLogo/InlineLogo';
 import Input from 'components/Input/Input';
-import { Formik, Form, FormikActions } from 'formik';
+import { Formik, Form, FormikHelpers } from 'formik';
 import { fonts, colors } from 'theme/main';
 import Button from 'components/Button/Button';
 import { signInSchema, signUpSchema, initialValues, Values } from './FormDetails';
@@ -72,7 +72,7 @@ const Login = ({ history }: Props) => {
   const dispatch = useDispatch();
   const { verifying, error, authenticated } = useSelector(state => state.auth);
 
-  const submit = async (values: Values, actions: FormikActions<Values>) => {
+  const submit = async (values: Values, actions: FormikHelpers<Values>) => {
     if (isSignUp) {
       const credentials = {
         email: values.email,

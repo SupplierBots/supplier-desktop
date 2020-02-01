@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Formik, Form, FormikProps, FormikActions } from 'formik';
+import { Formik, Form, FormikProps, FormikHelpers } from 'formik';
 import { RouteComponentProps } from 'react-router';
 import { push } from 'connected-react-router';
 import styled from 'styled-components';
@@ -50,7 +50,7 @@ const StyledForm = styled(Form)`
   height: 100%;
 `;
 
-const Profiles = ({ match }: RouteComponentProps<{ id: string }>) => {
+const Profiles = ({ match, history }: RouteComponentProps<{ id: string }>) => {
   const [isNew, setIsNew] = useState(!match.params.id);
   const [modalIsOpened, setModalIsOpened] = useState(false);
   const dispatch = useDispatch();
@@ -71,7 +71,7 @@ const Profiles = ({ match }: RouteComponentProps<{ id: string }>) => {
     return initialValues;
   };
 
-  const handleSubmit = (product: Profile, actions: FormikActions<Profile>) => {
+  const handleSubmit = (product: Profile, actions: FormikHelpers<Profile>) => {
     if (isNew) {
       const newProduct = {
         ...product,
@@ -88,17 +88,19 @@ const Profiles = ({ match }: RouteComponentProps<{ id: string }>) => {
 
   return (
     <>
-      <Backdrop
-        visible={modalIsOpened && profiles.length > 0}
-        onClick={() => setModalIsOpened(false)}
-      >
-        <ChangeItemModal
-          modalTitle="Select Profile"
-          type="profiles"
-          close={() => setModalIsOpened(false)}
-          active={match.params.id}
-        />
-      </Backdrop>
+      {modalIsOpened && (
+        <Backdrop
+          visible={modalIsOpened && profiles.length > 0}
+          onClick={() => setModalIsOpened(false)}
+        >
+          <ChangeItemModal
+            modalTitle="Select Profile"
+            type="profiles"
+            close={() => setModalIsOpened(false)}
+            active={match.params.id}
+          />
+        </Backdrop>
+      )}
 
       <Formik
         enableReinitialize
@@ -139,7 +141,7 @@ const Profiles = ({ match }: RouteComponentProps<{ id: string }>) => {
                   onChange={props.setFieldValue}
                   error={!!props.errors.creditCardType && !!props.touched.creditCardType}
                 />
-                <Input type="text" name="creditCardNumber" placeholder="Credit Card Number" />
+                <Input type="number" name="creditCardNumber" placeholder="Credit Card Number" />
                 <CardExpDate>
                   <Select
                     name="month"
@@ -186,16 +188,21 @@ const Profiles = ({ match }: RouteComponentProps<{ id: string }>) => {
                     Select Profile
                   </Button>
                 )}
+                {!isNew && !props.dirty && (
+                  <Button secondary onClick={() => history.push(routes.profiles)}>
+                    Create new
+                  </Button>
+                )}
                 {!isNew && props.dirty && (
                   <Button
                     animation={slideInFromRight}
                     secondary
                     onClick={async () => {
                       const errors = await props.validateForm();
-                      props.submitForm();
 
                       if (Object.entries(errors).length !== 0) return;
                       setIsNew(true);
+                      props.submitForm();
                     }}
                   >
                     Save As New

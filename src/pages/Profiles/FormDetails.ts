@@ -11,7 +11,7 @@ export const profileValidationSchema = Yup.object().shape({
   telephone: Yup.string().required('Required'),
   country: Yup.object().required('Required'),
   address1: Yup.string().required('Required'),
-  address2: Yup.string().required('Required'),
+  address2: Yup.string(),
   city: Yup.string().required('Required'),
   postcode: Yup.string().required('Required'),
   creditCardType: Yup.object().required('Required'),

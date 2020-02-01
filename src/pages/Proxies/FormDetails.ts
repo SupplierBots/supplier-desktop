@@ -3,7 +3,9 @@ import * as Yup from 'yup';
 import { Proxy } from 'types/Proxy';
 
 export const proxyValidationSchema = Yup.object().shape({
-  ipPort: Yup.string().required('Required'),
+  ipPort: Yup.string()
+    .required('Required')
+    .matches(/.*:.*/, 'Incorrect format'),
   userPassAuth: Yup.boolean(),
   username: Yup.string().when('userPassAuth', {
     is: true,
@@ -16,7 +18,7 @@ export const proxyValidationSchema = Yup.object().shape({
     otherwise: Yup.string(),
   }),
   name: Yup.string().required('Required'),
-  proxySite: Yup.object().required(),
+  site: Yup.object().required(),
 });
 
 export const initialProxyValues: Proxy = {
@@ -26,7 +28,7 @@ export const initialProxyValues: Proxy = {
   username: '',
   password: '',
   name: '',
-  proxySite: null,
+  site: null,
 };
 
 export const siteOptions: Option[] = [

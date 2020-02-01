@@ -7,8 +7,8 @@ const Wrapper = styled.div<Props>`
   height: 3.7rem;
   position: relative;
   overflow: hidden;
-
   margin-bottom: 1rem;
+  width: ${({ width }) => width || '100%'};
 `;
 
 const InputBorder = styled.div`
@@ -43,6 +43,12 @@ const StyledField = styled(Field)`
   ::placeholder {
     color: ${colors.darkGrey};
   }
+
+  ::-webkit-inner-spin-button,
+  ::-webkit-outer-spin-button {
+    appearance: none;
+    margin: 0;
+  }
 `;
 
 const Error = styled.div`
@@ -74,6 +80,8 @@ interface Props {
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   value?: string;
   customError?: string;
+  width?: string;
+  step?: string;
 }
 
 const Input = (props: Props) => (

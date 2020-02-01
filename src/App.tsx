@@ -28,6 +28,7 @@ const Content = styled.main`
   overflow: hidden;
   -webkit-app-region: drag;
   position: relative;
+  z-index: 10;
 `;
 
 declare const chrome: any;

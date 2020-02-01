@@ -5,6 +5,12 @@ import { ReactComponent as SupremeIcon } from 'assets/SupremeLogo.svg';
 import { ReactComponent as PalaceIcon } from 'assets/PalaceLogo.svg';
 import { ReactComponent as EditIcon } from 'assets/Edit.svg';
 import { ReactComponent as RemoveIcon } from 'assets/Remove.svg';
+import { Task as TaskType } from 'components/TaskEditor/FormDetails';
+import { useDispatch } from 'hooks/useDispatch';
+import { push } from 'connected-react-router';
+import routes from 'constants/routes';
+import { fadeIn } from 'theme/animations';
+import { removeUserDataItem } from 'store/userData/actions';
 
 const Wrapper = styled.div`
   display: grid;
@@ -14,6 +20,7 @@ const Wrapper = styled.div`
   align-items: center;
   color: ${colors.lightGrey};
   font-size: ${fonts.medium};
+  animation: ${fadeIn} 0.3s forwards;
   :nth-child(odd) {
     background: ${colors.tertiaryBackground};
   }
@@ -62,22 +69,27 @@ const ActionsContainer = styled.div`
   align-items: center;
   margin-top: 0.3rem;
 `;
-const Task = () => {
+
+interface Props {
+  details: TaskType;
+}
+const Task = ({ details }: Props) => {
+  const dispatch = useDispatch();
   return (
     <Wrapper>
       <WebsiteIconWrapper>
-        <PalaceIcon />
+        {details.site && details.site.label === 'Palace' ? <PalaceIcon /> : <SupremeIcon />}
       </WebsiteIconWrapper>
-      <Text>Box Logo Sweatshirt</Text>
-      <Text>Mastercard PKO</Text>
-      <Text>Localhost</Text>
+      <Text>{details.name}</Text>
+      <Text>{details.profile && details.profile.label}</Text>
+      <Text>{details.proxy && details.proxy.label}</Text>
       <Text>Waiting For Product</Text>
       <ActionsContainer>
         <Action>
-          <EditIcon />
+          <EditIcon onClick={() => dispatch(push(routes.tasksEditor + '/' + details.id))} />
         </Action>
         <Action>
-          <StyledRemoveIcon />
+          <StyledRemoveIcon onClick={() => dispatch(removeUserDataItem('tasks', details.id))} />
         </Action>
       </ActionsContainer>
     </Wrapper>
