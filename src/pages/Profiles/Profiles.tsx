@@ -30,6 +30,7 @@ import {
   yearOptions,
   siteOptions,
 } from './FormDetails';
+import { setLastVisited } from 'store/lastVisited/actions';
 
 const Wrapper = styled.div`
   display: grid;
@@ -66,8 +67,10 @@ const Profiles = ({ match, history }: RouteComponentProps<{ id: string }>) => {
     }
     const profileToLoad = profiles.find(profile => profile.id === match.params.id);
 
-    if (profileToLoad) return profileToLoad;
-
+    if (profileToLoad) {
+      dispatch(setLastVisited('profiles', profileToLoad.id));
+      return profileToLoad;
+    }
     return initialValues;
   };
 

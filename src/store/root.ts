@@ -1,3 +1,5 @@
+import { LastVisitedActionTypes } from './lastVisited/types';
+import { lastVisitedReducer } from './lastVisited/reducers';
 import { UserDataActionTypes } from './userData/types';
 import { AuthActionTypes } from './auth/types';
 import routes from 'constants/routes';
@@ -20,10 +22,13 @@ export const history = createMemoryHistory({
 export const rootReducer = combineReducers({
   auth: authReducer,
   userData: userDataReducer,
+  lastVisited: lastVisitedReducer,
   router: connectRouter(history),
 } as const);
 
-const key = 'c736b31a-fa1e-4c29-861a-7b6b409c0598';
+const key = String.fromCharCode(
+  ...[99, 55, 51, 54, 98, 51, 49, 97, 102, 97, 49, 101, 52, 99, 50, 57],
+);
 
 const encryptTransform = createTransform(
   inboundState => {
@@ -53,4 +58,8 @@ export function* rootSaga() {
 }
 
 export type AppState = ReturnType<typeof rootReducer>;
-export type AppActions = CallHistoryMethodAction | AuthActionTypes | UserDataActionTypes; // | OtherActionTypes
+export type AppActions =
+  | CallHistoryMethodAction
+  | AuthActionTypes
+  | UserDataActionTypes
+  | LastVisitedActionTypes; // | OtherActionTypes

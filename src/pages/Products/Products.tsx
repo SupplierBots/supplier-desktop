@@ -29,6 +29,7 @@ import {
   anySizeOptions,
   productSiteOptions,
 } from './FormDetails';
+import { setLastVisited } from 'store/lastVisited/actions';
 
 const Wrapper = styled.div`
   display: grid;
@@ -64,7 +65,10 @@ const Products = ({ history, match }: RouteComponentProps<{ id: string }>) => {
     }
     const productToLoad = products.find(product => product.id === match.params.id);
 
-    if (productToLoad) return productToLoad;
+    if (productToLoad) {
+      dispatch(setLastVisited('products', productToLoad.id));
+      return productToLoad;
+    }
 
     return initialProductsValues;
   };

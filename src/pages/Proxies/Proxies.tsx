@@ -22,6 +22,7 @@ import Slider from 'components/Slider/Slider';
 import { Proxy } from 'types/Proxy';
 import Item from 'components/ChangeItemModal/SelectableItem';
 import { colors, fonts } from 'theme/main';
+import { setLastVisited } from 'store/lastVisited/actions';
 
 const Wrapper = styled.div`
   display: grid;
@@ -81,7 +82,10 @@ const Proxies = ({ match, history }: RouteComponentProps<{ id: string }>) => {
     }
     const proxyToLoad = proxies.find(proxy => proxy.id === match.params.id);
 
-    if (proxyToLoad) return proxyToLoad;
+    if (proxyToLoad) {
+      dispatch(setLastVisited('proxies', proxyToLoad.id));
+      return proxyToLoad;
+    }
 
     return initialProxyValues;
   };

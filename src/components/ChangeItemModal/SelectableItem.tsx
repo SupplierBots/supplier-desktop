@@ -15,6 +15,7 @@ import { useDispatch } from 'hooks/useDispatch';
 import { push } from 'connected-react-router';
 import { Proxy } from 'types/Proxy';
 import Item from 'components/Item/Item';
+import { setLastVisited } from 'store/lastVisited/actions';
 
 interface Props {
   name: string;
@@ -93,7 +94,13 @@ const SelectableItem = (props: Props) => {
   const removeItem = (event: MouseEvent<HTMLOrSVGElement>) => {
     event.stopPropagation();
     dispatch(removeUserDataItem(props.type, props.id));
-    if (props.active) dispatch(push(routes[props.type]));
+
+    if (props.active) {
+      if (props.type !== 'tasks' && props.type !== 'harvesters') {
+        dispatch(setLastVisited(props.type, ''));
+      }
+      dispatch(push(routes[props.type]));
+    }
   };
 
   const loadItem = () => {
