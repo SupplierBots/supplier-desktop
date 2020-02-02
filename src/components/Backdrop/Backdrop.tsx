@@ -18,6 +18,7 @@ const Backdrop = styled.div<Props>`
   justify-content: center;
   opacity: 0;
   animation: ${slideInUp} 0.5s forwards;
+  backdrop-filter: blur(0.15rem);
 `;
 
 export default Backdrop;

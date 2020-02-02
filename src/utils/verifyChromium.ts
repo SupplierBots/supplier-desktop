@@ -13,7 +13,7 @@ const verifyChromium = async (): Promise<boolean> => {
     });
     const versions = await fetcher.localRevisions();
     if (versions.length < 1) return false;
-    const executablePath = fetcher.revisionInfo('674921').executablePath;
+    const executablePath = fetcher.revisionInfo('706915').executablePath;
     const browser = await puppeteer.launch({
       executablePath,
       //headless: false,

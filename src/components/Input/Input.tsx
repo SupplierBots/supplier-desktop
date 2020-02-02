@@ -1,7 +1,8 @@
 import React, { ChangeEvent } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Field, ErrorMessage } from 'formik';
 import { colors, fonts } from 'theme/main';
+import InputMask from 'react-input-mask';
 
 const Wrapper = styled.div<Props>`
   height: 3.7rem;
@@ -20,7 +21,7 @@ const InputBorder = styled.div`
   background: ${colors.tertiaryBackground};
 `;
 
-const StyledField = styled(Field)`
+const styledInput = css`
   font-family: 'Lato', sans-serif;
   font-size: ${fonts.regular};
   color: ${colors.lightGrey};
@@ -49,6 +50,14 @@ const StyledField = styled(Field)`
     appearance: none;
     margin: 0;
   }
+`;
+
+const StyledField = styled(Field)`
+  ${styledInput}
+`;
+
+const StyledMask = styled(InputMask)`
+  ${styledInput}
 `;
 
 const Error = styled.div`
@@ -82,15 +91,22 @@ interface Props {
   customError?: string;
   width?: string;
   step?: string;
+  masked?: boolean;
+  mask?: string | (string | RegExp)[];
+  maskPlaceholder?: string;
 }
 
 const Input = (props: Props) => (
   <Wrapper {...props}>
-    <StyledField
-      {...props}
-      autoComplete="off"
-      {...(props.custom && { as: 'input', onChange: props.onChange, value: props.value })}
-    />
+    {props.masked && props.mask ? (
+      <Field {...props} as={StyledMask} />
+    ) : (
+      <StyledField
+        {...props}
+        autoComplete="off"
+        {...(props.custom && { as: 'input', onChange: props.onChange, value: props.value })}
+      />
+    )}
     <ErrorMessage name={props.name} component={Error} />
     {props.customError && <Error>{props.customError}</Error>}
     <InputBorder />

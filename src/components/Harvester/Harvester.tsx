@@ -1,8 +1,15 @@
-import React from 'react';
-import styled from 'styled-components';
+import React, { ReactNode } from 'react';
+import styled, { css } from 'styled-components';
 import { colors, fonts } from 'theme/main';
 import Button from 'components/Button/Button';
 import { ReactComponent as RemoveIcon } from 'assets/Remove.svg';
+
+interface Props {
+  children: ReactNode;
+  path: string;
+  deleteAction: () => void;
+  canBeRemoved?: boolean;
+}
 
 const Wrapper = styled.div`
   height: 7rem;
@@ -23,40 +30,43 @@ const Wrapper = styled.div`
   }
 `;
 
-const StyledRemoveIcon = styled(RemoveIcon)`
+const StyledRemoveIcon = styled(RemoveIcon)<{ canBeRemoved?: boolean }>`
   margin: 0 3rem;
   width: 1.6rem;
   transition: all 0.3s;
   path {
-    fill: url(#iconGradient);
+    fill: ${({ canBeRemoved }) => (canBeRemoved ? 'url(#iconGradient)' : colors.darkGrey)};
   }
 
-  :hover {
-    color: ${colors.lightGrey};
-    cursor: pointer;
-    transform: scale(1.1);
-    path {
-      fill: ${colors.lightGrey};
-    }
-  }
+  ${({ canBeRemoved }) =>
+    canBeRemoved &&
+    css`
+      :hover {
+        color: ${colors.lightGrey};
+        cursor: pointer;
+        transform: scale(1.1);
+        path {
+          fill: ${colors.lightGrey};
+        }
+      }
+    `}
 `;
+
 const Name = styled.p`
   font-size: ${fonts.regular};
   color: ${colors.lightGrey};
   margin-right: auto;
 `;
 
-const Harvester = () => {
-  return (
-    <Wrapper>
-      <div />
-      <Name>Captcha Harvester 1</Name>
-      <Button secondary small bgColor={colors.tertiaryBackground}>
-        Open To Login
-      </Button>
-      <StyledRemoveIcon />
-    </Wrapper>
-  );
-};
+const Harvester = ({ children, deleteAction, canBeRemoved }: Props) => (
+  <Wrapper>
+    <div />
+    <Name>{children}</Name>
+    <Button secondary small bgColor={colors.tertiaryBackground}>
+      Open To Login
+    </Button>
+    {canBeRemoved ? <StyledRemoveIcon canBeRemoved onClick={deleteAction} /> : <StyledRemoveIcon />}
+  </Wrapper>
+);
 
 export default Harvester;

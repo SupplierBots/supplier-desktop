@@ -141,7 +141,13 @@ const Profiles = ({ match, history }: RouteComponentProps<{ id: string }>) => {
                   onChange={props.setFieldValue}
                   error={!!props.errors.creditCardType && !!props.touched.creditCardType}
                 />
-                <Input type="number" name="creditCardNumber" placeholder="Credit Card Number" />
+                <Input
+                  type="text"
+                  name="creditCardNumber"
+                  placeholder="Credit Card Number"
+                  masked
+                  mask="9999 9999 9999 9999"
+                />
                 <CardExpDate>
                   <Select
                     name="month"
@@ -165,7 +171,7 @@ const Profiles = ({ match, history }: RouteComponentProps<{ id: string }>) => {
                     width="48.5%"
                   />
                 </CardExpDate>
-                <Input type="text" name="cvv" placeholder="CVV" />
+                <Input type="number" name="cvv" placeholder="CVV" />
                 <StyledHeading>Other</StyledHeading>
                 <Input type="text" name="name" placeholder="Profile Name" />
                 <Select

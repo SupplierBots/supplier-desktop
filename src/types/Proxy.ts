@@ -1,5 +1,5 @@
-import { UserData } from './UserData';
-export interface Proxy extends UserData {
+import { DetailedUserData } from './DetailedUsedData';
+export interface Proxy extends DetailedUserData {
   ipPort: string;
   userPassAuth: boolean;
   username: string;

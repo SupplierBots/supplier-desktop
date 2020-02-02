@@ -5,7 +5,7 @@ import { combineReducers } from 'redux';
 import { all, fork } from 'redux-saga/effects';
 import { connectRouter, CallHistoryMethodAction } from 'connected-react-router';
 import { createMemoryHistory } from 'history';
-import { persistReducer, createTransform } from 'redux-persist';
+import { persistReducer, createTransform, PersistConfig } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { authReducer } from './auth/reducers';
 import { userDataReducer } from './userData/reducers';
@@ -35,11 +35,12 @@ const encryptTransform = createTransform(
   },
 );
 
-const persistConfig = {
+const persistConfig: PersistConfig<AppState> = {
   key: 'root',
   blacklist: ['auth', 'router'],
   transforms: [encryptTransform],
   storage,
+  throttle: 1000,
 };
 
 export const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -1,7 +1,6 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { routerMiddleware } from 'connected-react-router';
-// import isDev from 'electron-is-dev';
 import { rootSaga, history, persistedReducer } from './root';
 import { persistStore } from 'redux-persist';
 

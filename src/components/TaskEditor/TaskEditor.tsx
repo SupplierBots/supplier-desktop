@@ -1,5 +1,5 @@
-import React, { useEffect, MouseEvent, useState } from 'react';
-import styled, { css } from 'styled-components';
+import React, { MouseEvent, useState } from 'react';
+import styled from 'styled-components';
 import Heading from 'components/Heading/Heading';
 import { colors, fonts } from 'theme/main';
 import Card from 'components/Card/Card';
@@ -16,7 +16,6 @@ import ProductSelector from 'components/ProductSelector/ProductSelector';
 import { UserDataItemType } from 'store/userData/types';
 import { Option } from 'types/Option';
 import { useSelector } from 'hooks/useSelector';
-import { UserData } from 'types/UserData';
 import { proxySiteOptions, initialTaskValues, Task, taskValidationSchema } from './FormDetails';
 import { RouteComponentProps } from 'react-router';
 import routes from 'constants/routes';
@@ -24,6 +23,7 @@ import { useDispatch } from 'hooks/useDispatch';
 import uuid from 'uuid/v4';
 import { addUserDataItem, updateUserDataItem } from 'store/userData/actions';
 import { push } from 'connected-react-router';
+import { DetailedUserData } from 'types/DetailedUsedData';
 const StyledHeading = styled(Heading)`
   color: ${colors.lightPurple};
   font-size: 2.2rem;
@@ -113,7 +113,7 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
   const [isNew, setIsNew] = useState(match.params.id && match.params.id === 'new');
 
   const getOptions = (type: UserDataItemType, site: Option | null): Option[] => {
-    const dataArr = userData[type] as UserData[];
+    const dataArr = userData[type] as DetailedUserData[];
 
     const options = dataArr
       .filter(
@@ -237,13 +237,19 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
                         type="text"
                         name="scheduledDate"
                         placeholder="DD/MM/YYYY"
+                        maskPlaceholder="DD/MM/YYYY"
                         width="48.5%"
+                        masked
+                        mask="99/99/9999"
                       />
                       <StyledInput
                         type="text"
                         name="scheduledTime"
-                        placeholder="11:59:55          (24h)"
+                        placeholder="HH:MM:SS (24h)"
+                        maskPlaceholder="HH:MM:SS"
                         width="48.5%"
+                        masked
+                        mask="99:99:99"
                       />
                     </InlineInputsContainer>
                   )}
