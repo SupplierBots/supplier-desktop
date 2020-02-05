@@ -96,21 +96,24 @@ interface Props {
   maskPlaceholder?: string;
 }
 
-const Input = (props: Props) => (
-  <Wrapper {...props}>
-    {props.masked && props.mask ? (
-      <Field {...props} as={StyledMask} />
-    ) : (
-      <StyledField
-        {...props}
-        autoComplete="off"
-        {...(props.custom && { as: 'input', onChange: props.onChange, value: props.value })}
-      />
-    )}
-    <ErrorMessage name={props.name} component={Error} />
-    {props.customError && <Error>{props.customError}</Error>}
-    <InputBorder />
-  </Wrapper>
-);
+const Input = (props: Props) => {
+  const { masked, ...rest } = props;
+  return (
+    <Wrapper {...rest}>
+      {props.masked && props.mask ? (
+        <Field {...rest} as={StyledMask} />
+      ) : (
+        <StyledField
+          {...rest}
+          autoComplete="off"
+          {...(props.custom && { as: 'input', onChange: props.onChange, value: props.value })}
+        />
+      )}
+      <ErrorMessage name={props.name} component={Error} />
+      {props.customError && <Error>{props.customError}</Error>}
+      <InputBorder />
+    </Wrapper>
+  );
+};
 
 export default Input;

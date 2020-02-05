@@ -64,9 +64,9 @@ const Dashboard = () => {
       <StyledCard>
         <Heading>Droplists</Heading>
         <Container>
-          <Droplist available />
+          <Droplist data-available />
           <Droplist />
-          <Droplist isPalace available />
+          <Droplist isPalace data-available />
           <Droplist isPalace />
         </Container>
         <StyledHeading>Sellout times</StyledHeading>

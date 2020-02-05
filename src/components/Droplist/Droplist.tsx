@@ -5,7 +5,7 @@ import { ReactComponent as SupremeLogo } from 'assets/SupremeLogo.svg';
 import { ReactComponent as PalaceLogo } from 'assets/PalaceLogo.svg';
 
 interface Props {
-  available?: boolean;
+  'data-available'?: boolean;
   isPalace?: boolean;
 }
 
@@ -31,7 +31,7 @@ const Wrapper = styled.div<Props>`
     cursor: pointer;
   }
 
-  ${({ available }) =>
+  ${({ 'data-available': available }) =>
     available &&
     css`
       border: 1px double transparent;
@@ -58,7 +58,7 @@ const StyledSupremeLogo = styled(SupremeLogo)<Props>`
   top: 1.5rem;
   left: 1.5rem;
 
-  ${({ available }) =>
+  ${({ 'data-available': available }) =>
     !available &&
     css`
       path {
@@ -72,7 +72,7 @@ const StyledPalaceLogo = styled(PalaceLogo)<Props>`
   top: 1.5rem;
   left: 1.5rem;
 
-  ${({ available }) =>
+  ${({ 'data-available': available }) =>
     !available &&
     css`
       path {
@@ -82,10 +82,10 @@ const StyledPalaceLogo = styled(PalaceLogo)<Props>`
 `;
 
 const Droplist = (props: Props) => {
-  //Redux useSelector
+  const { isPalace, ...rest } = props;
   return (
-    <Wrapper {...props}>
-      {props.isPalace ? <StyledPalaceLogo {...props} /> : <StyledSupremeLogo {...props} />}
+    <Wrapper {...rest}>
+      {props.isPalace ? <StyledPalaceLogo {...rest} /> : <StyledSupremeLogo {...rest} />}
       <Week>Week 20</Week>
       <Date>11th July 19</Date>
     </Wrapper>
