@@ -112,7 +112,8 @@ const Products = ({ history, match }: RouteComponentProps<{ id: string }>) => {
         initialValues={getInitialValues()}
         validationSchema={productValidationSchema}
         onSubmit={handleSubmit}
-        render={(props: FormikProps<Product>) => (
+      >
+        {(props: FormikProps<Product>) => (
           <StyledForm onKeyPress={disableEnter}>
             <Wrapper>
               <Card>
@@ -214,7 +215,7 @@ const Products = ({ history, match }: RouteComponentProps<{ id: string }>) => {
             </Wrapper>
           </StyledForm>
         )}
-      />
+      </Formik>
     </>
   );
 };

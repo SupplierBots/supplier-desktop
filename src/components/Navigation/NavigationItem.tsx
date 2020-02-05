@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, MouseEvent } from 'react';
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
 import { colors, fonts } from 'theme/main';
@@ -58,7 +58,10 @@ interface Props {
 
 const NavigationItem = ({ link, children, external }: Props) => {
   const additionalProps = external && {
-    onClick: () => nw.Shell.openExternal(link),
+    onClick: (e: MouseEvent) => {
+      e.preventDefault();
+      nw.Shell.openExternal(link);
+    },
   };
 
   return (

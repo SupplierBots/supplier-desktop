@@ -40,6 +40,7 @@ const Harvesters = () => {
         <Heading>Harvesters</Heading>
         {harvesters.map((h, index) => (
           <Harvester
+            key={h.id}
             path={h.path}
             deleteAction={() => dispatch(removeUserDataItem('harvesters', h.id))}
             canBeRemoved={harvesters.length > 2}

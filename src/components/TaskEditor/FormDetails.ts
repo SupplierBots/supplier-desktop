@@ -15,10 +15,14 @@ export const taskValidationSchema = Yup.object().shape({
     .required('Required')
     .moreThan(750, '> 750ms')
     .lessThan(10000, '< 10000ms'),
-  checkoutDelay: Yup.number()
-    .required('Required')
-    .moreThan(750, '> 750ms')
-    .lessThan(10000, '< 10000ms'),
+  checkoutDelay: Yup.number().when('site', {
+    is: (site: Option) => site?.value === 'supreme',
+    then: Yup.number()
+      .required('Required')
+      .moreThan(750, '> 750ms')
+      .lessThan(10000, '< 10000ms'),
+    otherwise: Yup.number(),
+  }),
   products: Yup.array().min(1),
   schedule: Yup.boolean(),
   scheduledDate: Yup.string().when('schedule', {

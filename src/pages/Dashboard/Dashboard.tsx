@@ -49,7 +49,8 @@ const ContactDescription = styled.p`
   margin: 1rem 0;
 `;
 
-const ContactEmail = styled.p`
+const ContactEmail = styled.span`
+  display: block;
   background: ${colors.mainGradientLR};
   /* stylelint-disable-next-line */ /* prefix is necessary: background-clip doesn't work in Chromium */
   -webkit-background-clip: text;

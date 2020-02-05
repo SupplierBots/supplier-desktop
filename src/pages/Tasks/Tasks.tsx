@@ -54,7 +54,7 @@ const Tasks = ({ history }: RouteComponentProps) => {
         <TasksList>
           <TasksHeader />
           {tasks.map(task => (
-            <Task details={task} />
+            <Task key={task.id} details={task} />
           ))}
           {tasks.length === 0 && <NoTaskInformation>You don't have any tasks</NoTaskInformation>}
         </TasksList>

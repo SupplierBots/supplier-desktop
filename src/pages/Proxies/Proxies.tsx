@@ -111,7 +111,8 @@ const Proxies = ({ match, history }: RouteComponentProps<{ id: string }>) => {
       initialValues={getInitialValues()}
       validationSchema={proxyValidationSchema}
       onSubmit={handleSubmit}
-      render={(props: FormikProps<Proxy>) => (
+    >
+      {(props: FormikProps<Proxy>) => (
         <StyledForm>
           <Wrapper>
             <Card>
@@ -185,7 +186,7 @@ const Proxies = ({ match, history }: RouteComponentProps<{ id: string }>) => {
           </Wrapper>
         </StyledForm>
       )}
-    />
+    </Formik>
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import { Formik, Form, FormikProps, FormikHelpers } from 'formik';
 import { RouteComponentProps } from 'react-router';
 import { push } from 'connected-react-router';
@@ -29,8 +29,11 @@ import {
   monthOptions,
   yearOptions,
   siteOptions,
+  getRegions,
+  isCountryWithRegions,
 } from './FormDetails';
 import { setLastVisited } from 'store/lastVisited/actions';
+import { InlineInputsContainer } from 'components/TaskEditor/TaskEditor';
 
 const Wrapper = styled.div`
   display: grid;
@@ -110,7 +113,8 @@ const Profiles = ({ match, history }: RouteComponentProps<{ id: string }>) => {
         initialValues={getInitialValues()}
         validationSchema={profileValidationSchema}
         onSubmit={handleSubmit}
-        render={(props: FormikProps<Profile>) => (
+      >
+        {(props: FormikProps<Profile>) => (
           <StyledForm autoComplete="new-password">
             <Wrapper>
               <Card>
@@ -123,15 +127,33 @@ const Profiles = ({ match, history }: RouteComponentProps<{ id: string }>) => {
                 <Input type="text" name="address2" placeholder="Address 2" />
                 <Input type="text" name="city" placeholder="City" />
                 <Input type="text" name="postcode" placeholder="Postcode" />
-                <Select
-                  name="country"
-                  placeholder="Country"
-                  value={props.values.country}
-                  options={countryOptions}
-                  onBlur={props.setFieldTouched}
-                  onChange={props.setFieldValue}
-                  error={!!props.errors.country && !!props.touched.country}
-                />
+                <InlineInputsContainer>
+                  <Select
+                    name="country"
+                    placeholder="Country"
+                    value={props.values.country}
+                    options={countryOptions}
+                    onBlur={props.setFieldTouched}
+                    onChange={(name, value) => {
+                      props.setFieldValue(name, value);
+                      props.setFieldValue('region', null);
+                    }}
+                    error={!!props.errors.country && !!props.touched.country}
+                    width={isCountryWithRegions(props.values.country?.value) ? '48.5%' : '100%'}
+                  />
+                  {isCountryWithRegions(props.values.country?.value) && (
+                    <Select
+                      name="region"
+                      placeholder="State/Region"
+                      value={props.values.region}
+                      options={getRegions(props.values.country?.value)}
+                      onBlur={props.setFieldTouched}
+                      onChange={props.setFieldValue}
+                      error={!!props.errors.region && !!props.touched.region}
+                      width="48.5%"
+                    />
+                  )}
+                </InlineInputsContainer>
               </Card>
               <Card>
                 <Heading>Payment detials</Heading>
@@ -224,7 +246,7 @@ const Profiles = ({ match, history }: RouteComponentProps<{ id: string }>) => {
             </Wrapper>
           </StyledForm>
         )}
-      />
+      </Formik>
     </>
   );
 };

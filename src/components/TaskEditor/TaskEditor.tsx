@@ -24,6 +24,7 @@ import uuid from 'uuid/v4';
 import { addUserDataItem, updateUserDataItem } from 'store/userData/actions';
 import { push } from 'connected-react-router';
 import { DetailedUserData } from 'types/DetailedUsedData';
+
 const StyledHeading = styled(Heading)`
   color: ${colors.lightPurple};
   font-size: 2.2rem;
@@ -85,7 +86,7 @@ const GradientText = styled.span`
   background-clip: text;
 `;
 
-const InlineInputsContainer = styled.div`
+export const InlineInputsContainer = styled.div`
   display: flex;
   justify-content: space-between;
 `;
@@ -164,7 +165,8 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
         initialValues={getInitialValues()}
         validationSchema={taskValidationSchema}
         onSubmit={handleSubmit}
-        render={(props: FormikProps<Task>) => (
+      >
+        {(props: FormikProps<Task>) => (
           <StyledCard disableBottomPolygon onClick={handleCardClick}>
             <CloseButton onClick={() => history.push(routes.tasks)}>
               <CloseIcon />
@@ -281,7 +283,6 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
                     animation={slideInFromRight}
                     onClick={async () => {
                       const errors = await props.validateForm();
-
                       if (Object.entries(errors).length !== 0) return;
                       setIsNew(true);
                       props.submitForm();
@@ -297,7 +298,7 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
             </StyledForm>
           </StyledCard>
         )}
-      />
+      </Formik>
     </Backdrop>
   );
 };

@@ -7,6 +7,7 @@ export interface Profile extends DetailedUserData {
   email: string;
   telephone: string;
   country: Option | null;
+  region: Option | null;
   address1: string;
   address2: string;
   city: string;

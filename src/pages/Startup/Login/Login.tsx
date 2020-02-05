@@ -95,7 +95,8 @@ const Login = ({ history }: Props) => {
       onSubmit={submit}
       initialValues={initialValues}
       validationSchema={isSignUp ? signUpSchema : signInSchema}
-      render={({ resetForm }) => (
+    >
+      {({ resetForm }) => (
         <Wrapper>
           <LoginCard>
             <StyledInlineLogo>
@@ -147,7 +148,7 @@ const Login = ({ history }: Props) => {
           </LoginCard>
         </Wrapper>
       )}
-    />
+    </Formik>
   );
 };
 

@@ -2,6 +2,8 @@ import * as Yup from 'yup';
 import { Option } from 'types/Option';
 import { Profile } from 'types/Profile';
 
+const coutriesWithRegions = ['USA', 'Canada'];
+
 export const profileValidationSchema = Yup.object().shape({
   firstName: Yup.string().required('Required'),
   lastName: Yup.string().required('Required'),
@@ -10,6 +12,11 @@ export const profileValidationSchema = Yup.object().shape({
     .required('Required'),
   telephone: Yup.string().required('Required'),
   country: Yup.object().required('Required'),
+  region: Yup.object().when('country', {
+    is: (country: Option) => isCountryWithRegions(country?.value),
+    then: Yup.object().required(),
+    otherwise: Yup.object(),
+  }),
   address1: Yup.string().required('Required'),
   address2: Yup.string(),
   city: Yup.string().required('Required'),
@@ -30,6 +37,7 @@ export const initialValues: Profile = {
   email: '',
   telephone: '',
   country: null,
+  region: null,
   address1: '',
   address2: '',
   city: '',
@@ -51,6 +59,33 @@ export const countryOptions: Option[] = [
   { value: 'Germany', label: 'Germany' },
   { value: 'France', label: 'France' },
 ];
+
+const usStates: Option[] = [
+  { value: 'Ustate1', label: 'Ustate1' },
+  { value: 'Ustate2', label: 'Ustate2' },
+  { value: 'Ustate3', label: 'Ustate3' },
+];
+
+const canadaStates: Option[] = [
+  { value: 'cstate1', label: 'cstate1' },
+  { value: 'cstate2', label: 'cstate2' },
+  { value: 'cstate3', label: 'cstate3' },
+];
+
+export const isCountryWithRegions = (country: string | undefined) =>
+  country && coutriesWithRegions.includes(country);
+
+export const getRegions = (country: string | undefined): Option[] => {
+  if (!country) return [];
+  switch (country) {
+    case 'Canada':
+      return canadaStates;
+    case 'USA':
+      return usStates;
+    default:
+      return [];
+  }
+};
 
 export const creditCardTypeOptions: Option[] = [
   { value: 'visa', label: 'Visa' },
