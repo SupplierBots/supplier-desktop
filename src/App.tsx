@@ -11,7 +11,7 @@ import routes from 'constants/routes';
 import { colors } from 'theme/main';
 import Routes from 'routes/Routes';
 
-const Wrapper = styled.div`
+const GlobalWrapper = styled.div`
   color: ${colors.lightGrey};
   background-color: ${colors.primaryBackground};
   height: 100vh;
@@ -47,14 +47,14 @@ const App = () => {
   return (
     <>
       <GlobalStyle />
-      <Wrapper>
+      <GlobalWrapper>
         {authState.authenticated && <Sidebar />}
         {!authState.authenticated && <Redirect to={routes.startup} />}
         <Content>
           <Routes />
         </Content>
         <AppControls />
-      </Wrapper>
+      </GlobalWrapper>
     </>
   );
 };

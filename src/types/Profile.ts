@@ -1,7 +1,7 @@
-import { DetailedUserData } from './DetailedUsedData';
+import { SelectableUserData } from './SelectableUserData';
 import { Option } from './Option';
 
-export interface Profile extends DetailedUserData {
+export interface Profile extends SelectableUserData {
   firstName: string;
   lastName: string;
   email: string;

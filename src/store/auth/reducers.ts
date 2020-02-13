@@ -6,6 +6,7 @@ import {
   START_VERIFYING_CREDENTIALS,
   USER_LOGGED_OUT,
 } from './types';
+import * as R from 'ramda';
 
 const initialState: AuthState = {
   verifying: false,
@@ -32,6 +33,7 @@ export const authReducer = (state = initialState, action: AuthActionTypes): Auth
         ...state,
         verifying: true,
       };
+
     default:
       return state;
   }

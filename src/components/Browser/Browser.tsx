@@ -3,21 +3,28 @@ import styled, { css } from 'styled-components';
 import { colors, fonts } from 'theme/main';
 import Button from 'components/Button/Button';
 import { ReactComponent as RemoveIcon } from 'assets/Remove.svg';
+import { BrowserData } from 'types/BrowserData';
 
 interface Props {
   children: ReactNode;
-  path: string;
+  data: BrowserData;
   deleteAction: () => void;
+  openAction: () => void;
   canBeRemoved?: boolean;
 }
 
 const Wrapper = styled.div`
   height: 7rem;
-  width: 100%;
+  width: 49%;
   background-color: ${colors.tertiaryBackground};
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  :nth-of-type(odd) {
+    margin-right: 1rem;
+  }
+
   :not(:last-of-type) {
     margin-bottom: 1rem;
   }
@@ -56,17 +63,27 @@ const Name = styled.p`
   font-size: ${fonts.regular};
   color: ${colors.lightGrey};
   margin-right: auto;
+  margin-top: 0.1rem;
 `;
 
-const Harvester = ({ children, deleteAction, canBeRemoved }: Props) => (
+const Browser = ({ children, deleteAction, canBeRemoved, openAction, data }: Props) => (
   <Wrapper>
     <div />
     <Name>{children}</Name>
-    <Button secondary small bgColor={colors.tertiaryBackground}>
-      Open To Login
-    </Button>
+    {!data.isLogged && (
+      <Button
+        secondary
+        small
+        disabled={data.isActive}
+        bgColor={colors.tertiaryBackground}
+        onClick={openAction}
+      >
+        {data.isActive ? 'Active' : 'Open To Login'}
+      </Button>
+    )}
+
     {canBeRemoved ? <StyledRemoveIcon canBeRemoved onClick={deleteAction} /> : <StyledRemoveIcon />}
   </Wrapper>
 );
 
-export default Harvester;
+export default Browser;

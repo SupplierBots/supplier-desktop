@@ -1,4 +1,4 @@
-import { DetailedUserData } from './../../types/DetailedUsedData';
+import { SelectableUserData } from '../../types/SelectableUserData';
 import * as Yup from 'yup';
 import { Product } from 'types/Product';
 import { Option } from 'types/Option';
@@ -43,7 +43,7 @@ export const taskValidationSchema = Yup.object().shape({
   site: Yup.object().required(),
 });
 
-export interface Task extends DetailedUserData {
+export interface Task extends SelectableUserData {
   site: Option | null;
   profile: Option | null;
   proxy: Option | null;

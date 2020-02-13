@@ -8,7 +8,7 @@ import { colors } from 'theme/main';
 import Item from './SelectableItem';
 import { UserDataItemType } from 'store/userData/types';
 import { useSelector } from 'hooks/useSelector';
-import { DetailedUserData } from 'types/DetailedUsedData';
+import { UserData } from 'types/UserData';
 
 const CloseButton = styled.div`
   position: absolute;
@@ -62,7 +62,7 @@ interface Props {
 }
 
 const ChangeItemModal = ({ close, type, modalTitle, active }: Props) => {
-  const userData = useSelector(state => state.userData[type]) as DetailedUserData[];
+  const userData = useSelector(state => state.userData[type]) as UserData[];
 
   const handleCardClick = (event: MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();

@@ -96,7 +96,7 @@ const SelectableItem = (props: Props) => {
     dispatch(removeUserDataItem(props.type, props.id));
 
     if (props.active) {
-      if (props.type !== 'tasks' && props.type !== 'harvesters') {
+      if (props.type !== 'tasks') {
         dispatch(setLastVisited(props.type, ''));
       }
       dispatch(push(routes[props.type]));

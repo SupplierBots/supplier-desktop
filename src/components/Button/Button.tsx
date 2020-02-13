@@ -33,6 +33,9 @@ const ButtonWrapper = styled.button<Props>`
   align-items: center;
   justify-content: center;
   transition: .3s all;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-tap-highlight-color: transparent;
+
   ${({ animation }) =>
     animation &&
     css`

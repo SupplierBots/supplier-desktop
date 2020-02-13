@@ -1,3 +1,7 @@
+import { BrowserDataActionTypes } from './browsers/types';
+import { browsersReducer } from './browsers/reducers';
+import { controllerReducer } from './controller/reducers';
+import { ControllerActionTypes } from './controller/types';
 import { LastVisitedActionTypes } from './lastVisited/types';
 import { lastVisitedReducer } from './lastVisited/reducers';
 import { UserDataActionTypes } from './userData/types';
@@ -23,6 +27,8 @@ export const rootReducer = combineReducers({
   auth: authReducer,
   userData: userDataReducer,
   lastVisited: lastVisitedReducer,
+  controller: controllerReducer,
+  browsers: browsersReducer,
   router: connectRouter(history),
 } as const);
 
@@ -42,7 +48,7 @@ const encryptTransform = createTransform(
 
 const persistConfig: PersistConfig<AppState> = {
   key: 'root',
-  blacklist: ['auth', 'router'],
+  blacklist: ['auth', 'router', 'controller'],
   transforms: [encryptTransform],
   storage,
   throttle: 1000,
@@ -62,4 +68,6 @@ export type AppActions =
   | CallHistoryMethodAction
   | AuthActionTypes
   | UserDataActionTypes
-  | LastVisitedActionTypes; // | OtherActionTypes
+  | LastVisitedActionTypes
+  | ControllerActionTypes
+  | BrowserDataActionTypes; // | OtherActionTypes

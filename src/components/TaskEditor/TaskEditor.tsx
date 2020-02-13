@@ -23,7 +23,7 @@ import { useDispatch } from 'hooks/useDispatch';
 import uuid from 'uuid/v4';
 import { addUserDataItem, updateUserDataItem } from 'store/userData/actions';
 import { push } from 'connected-react-router';
-import { DetailedUserData } from 'types/DetailedUsedData';
+import { SelectableUserData } from 'types/SelectableUserData';
 
 const StyledHeading = styled(Heading)`
   color: ${colors.lightPurple};
@@ -114,7 +114,7 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
   const [isNew, setIsNew] = useState(match.params.id && match.params.id === 'new');
 
   const getOptions = (type: UserDataItemType, site: Option | null): Option[] => {
-    const dataArr = userData[type] as DetailedUserData[];
+    const dataArr = userData[type] as SelectableUserData[];
 
     const options = dataArr
       .filter(
@@ -189,7 +189,12 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
                   value={props.values.site}
                   options={proxySiteOptions}
                   onBlur={props.setFieldTouched}
-                  onChange={props.setFieldValue}
+                  //onChange={props.setFieldValue}
+                  onChange={(name, value) => {
+                    props.setFieldValue(name, value);
+                    props.setFieldValue('profile', null);
+                    props.setFieldValue('proxy', null);
+                  }}
                   error={!!props.errors.site && !!props.touched.site}
                 />
                 <Fieldset disabled={!props.values.site}>

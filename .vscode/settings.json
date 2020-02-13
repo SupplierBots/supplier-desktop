@@ -25,7 +25,7 @@
     //"build": true,
     "app": true,
     "src/react-app-env.d.ts": true,
-    "craco.config.js": true,
+    //"craco.config.js": true,
     //You can hide these too
     //"node_modules": true,
     "dist": true,

@@ -1,8 +1,8 @@
-import { DetailedUserData } from './DetailedUsedData';
+import { SelectableUserData } from './SelectableUserData';
 import { Option } from './Option';
 import { Keywords } from './Keywords';
 
-export interface Product extends DetailedUserData {
+export interface Product extends SelectableUserData {
   keywords: Keywords;
   colors: Keywords;
   size: Option | null;

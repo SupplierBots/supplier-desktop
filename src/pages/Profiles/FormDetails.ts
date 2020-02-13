@@ -15,7 +15,7 @@ export const profileValidationSchema = Yup.object().shape({
   region: Yup.object().when('country', {
     is: (country: Option) => isCountryWithRegions(country?.value),
     then: Yup.object().required(),
-    otherwise: Yup.object(),
+    otherwise: Yup.object().nullable(),
   }),
   address1: Yup.string().required('Required'),
   address2: Yup.string(),

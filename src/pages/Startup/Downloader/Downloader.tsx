@@ -55,7 +55,7 @@ const Downloader = ({ history }: Props) => {
     const chromiumPath = path.resolve((nw as any).App.dataPath, '.local-chromium');
     const fetcher = puppeteer.createBrowserFetcher({ path: chromiumPath });
     console.log(chromiumPath);
-    fetcher.download('706915', async (downloadedBytes: number, totalBytes: number) => {
+    fetcher.download('662092', async (downloadedBytes: number, totalBytes: number) => {
       setProgress(Math.round((downloadedBytes / totalBytes) * 100));
       if (downloadedBytes === totalBytes) {
         setDownloaded(true);

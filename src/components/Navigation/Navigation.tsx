@@ -7,7 +7,7 @@ import { ReactComponent as TasksIcon } from 'assets/Tasks.svg';
 import { ReactComponent as ProductsIcon } from 'assets/Products.svg';
 import { ReactComponent as ProfilesIcon } from 'assets/Profiles.svg';
 import { ReactComponent as ProxiesIcon } from 'assets/Proxies.svg';
-import { ReactComponent as HarvestersIcon } from 'assets/Harvesters.svg';
+import { ReactComponent as BrowsersIcon } from 'assets/Harvesters.svg';
 import { ReactComponent as HelpIcon } from 'assets/Help.svg';
 import routes from 'constants/routes';
 import { useSelector } from 'hooks/useSelector';
@@ -49,9 +49,9 @@ const Navigation = () => {
           Proxies
         </NavigationItem>
 
-        <NavigationItem link={routes.harvesters}>
-          <HarvestersIcon />
-          Harvesters
+        <NavigationItem link={routes.browsers}>
+          <BrowsersIcon />
+          Browsers
         </NavigationItem>
 
         <NavigationItem external link={'https://safedropbot.com/'}>

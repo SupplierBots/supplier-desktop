@@ -12,10 +12,6 @@ const initialState: UserDataState = {
   products: [],
   proxies: [],
   tasks: [],
-  harvesters: [
-    { id: 'defaultHarvester1', path: 'defaultHarvester1' },
-    { id: 'defaultHarvester2', path: 'defaultHarvester2' },
-  ],
 };
 
 export const userDataReducer = (
