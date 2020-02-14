@@ -11,7 +11,13 @@ import * as R from 'ramda';
 
 const createNewBrowser = () => {
   const id = uuid().replace(/-/g, '');
-  return { id, accountEmail: `Not-Logged-${R.takeLast(5, id)}`, isActive: false, isLogged: false };
+  return {
+    id,
+    accountEmail: `Not-Logged-${R.takeLast(5, id)}`,
+    isActive: false,
+    isLogged: false,
+    loadedTask: null,
+  };
 };
 const initialState: BrowsersState = [createNewBrowser(), createNewBrowser()];
 
@@ -45,6 +51,7 @@ export const browsersReducer = (
     case REMOVE_BROWSER: {
       return state.filter(browser => browser.id !== action.id);
     }
+
     default:
       return state;
   }

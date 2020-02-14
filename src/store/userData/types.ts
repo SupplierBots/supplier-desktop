@@ -17,6 +17,7 @@ export interface UserDataState {
 export const ADD_USER_DATA_ITEM = 'ADD_DATA_ITEM';
 export const UPDATE_USER_DATA_ITEM = 'UPDATE_DATA_ITEM';
 export const REMOVE_USER_DATA_ITEM = 'REMOVE_DATA_ITEM';
+export const REMOVE_ALL_ITEMS = 'REMOVE_ALL_ITEMS';
 
 export interface AddUserDataItemAction extends Action {
   type: typeof ADD_USER_DATA_ITEM;
@@ -36,7 +37,13 @@ export interface RemoveUserDataItemAction extends Action {
   itemID: string;
 }
 
+export interface RemoveAllItemsAction extends Action {
+  type: typeof REMOVE_ALL_ITEMS;
+  itemType: UserDataItemType;
+}
+
 export type UserDataActionTypes =
   | AddUserDataItemAction
   | UpdateUserDataItemAction
-  | RemoveUserDataItemAction;
+  | RemoveUserDataItemAction
+  | RemoveAllItemsAction;

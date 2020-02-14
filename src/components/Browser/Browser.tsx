@@ -15,7 +15,7 @@ interface Props {
 
 const Wrapper = styled.div`
   height: 7rem;
-  width: 49%;
+  width: 49.25%;
   background-color: ${colors.tertiaryBackground};
   display: flex;
   justify-content: space-between;

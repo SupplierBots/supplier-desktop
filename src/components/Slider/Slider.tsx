@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 import { Field } from 'formik';
 import { colors, fonts } from 'theme/main';
+import { GradientText } from 'components/TaskEditor/TaskEditor';
 
 const Wrapper = styled.label`
   display: flex;
@@ -45,17 +46,20 @@ const CustomSlider = styled.div<{ checked: boolean }>`
 `;
 
 interface Props {
-  label: string;
   name: string;
   checked: boolean;
+  children: ReactNode;
 }
 
-const Slider = (props: Props) => (
-  <Wrapper {...props}>
-    <HiddenField {...props} name={props.name} type="checkbox" />
-    <CustomSlider checked={props.checked} />
-    <Label>{props.label}</Label>
-  </Wrapper>
-);
+const Slider = (props: Props) => {
+  const { children, ...rest } = props;
+  return (
+    <Wrapper {...rest}>
+      <HiddenField {...rest} name={rest.name} type="checkbox" />
+      <CustomSlider checked={rest.checked} />
+      <Label>{children}</Label>
+    </Wrapper>
+  );
+};
 
 export default Slider;

@@ -4,6 +4,7 @@ import {
   ADD_USER_DATA_ITEM,
   UPDATE_USER_DATA_ITEM,
   REMOVE_USER_DATA_ITEM,
+  REMOVE_ALL_ITEMS,
 } from './types';
 import { UserData } from 'types/UserData';
 
@@ -44,6 +45,12 @@ export const userDataReducer = (
         ...state,
         [action.itemType]: dataItems.filter(item => item.id !== action.itemID),
       };
+    case REMOVE_ALL_ITEMS: {
+      return {
+        ...state,
+        [action.itemType]: [],
+      };
+    }
     default:
       return state;
   }

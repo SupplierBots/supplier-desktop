@@ -33,7 +33,7 @@ const Logo = () => (
   <Wrapper>
     <BrandLogo />
     <BrandName>
-      Safe<PrimarySpan>drop</PrimarySpan>
+      <PrimarySpan></PrimarySpan>SUPPLIER
     </BrandName>
   </Wrapper>
 );

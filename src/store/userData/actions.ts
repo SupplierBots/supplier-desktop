@@ -5,6 +5,7 @@ import {
   ADD_USER_DATA_ITEM,
   UPDATE_USER_DATA_ITEM,
   REMOVE_USER_DATA_ITEM,
+  REMOVE_ALL_ITEMS,
 } from './types';
 
 export const addUserDataItem = (
@@ -32,4 +33,9 @@ export const removeUserDataItem = (
   type: REMOVE_USER_DATA_ITEM,
   itemType,
   itemID,
+});
+
+export const removeAllItems = (itemType: UserDataItemType): UserDataActionTypes => ({
+  type: REMOVE_ALL_ITEMS,
+  itemType,
 });

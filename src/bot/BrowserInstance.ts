@@ -1,12 +1,11 @@
 import { setActive } from './../store/browsers/actions';
-import { BrowserData } from '../types/BrowserData';
 import store from 'store/configureStore';
 import path from 'path';
 import puppeteer from 'puppeteer-extra';
 import devices from 'puppeteer/DeviceDescriptors';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 
-const BrowserInstance = async ({ id }: BrowserData) => {
+const BrowserInstance = async (id: string, index = 0) => {
   const executablePath = store.getState().controller.chromiumPath;
   const userDataDirectory = path.resolve(store.getState().controller.appData, id);
   const { width, height, deviceScaleFactor } = devices['Pixel 2'].viewport;
@@ -21,8 +20,9 @@ const BrowserInstance = async ({ id }: BrowserData) => {
       '--disable-infobars',
       '--no-first-run',
       '--enable-features=NetworkService',
-      `--window-size=${width},${height + 82}`,
       `--user-data-dir=${userDataDirectory}`,
+      `--window-size=${width},${height + 82}`,
+      `--window-position=${0 + 500 * index},0`,
     ],
     executablePath,
   });

@@ -16,7 +16,7 @@ import ProductSelector from 'components/ProductSelector/ProductSelector';
 import { UserDataItemType } from 'store/userData/types';
 import { Option } from 'types/Option';
 import { useSelector } from 'hooks/useSelector';
-import { proxySiteOptions, initialTaskValues, Task, taskValidationSchema } from './FormDetails';
+import { taskSiteOptions, initialTaskValues, Task, taskValidationSchema } from './FormDetails';
 import { RouteComponentProps } from 'react-router';
 import routes from 'constants/routes';
 import { useDispatch } from 'hooks/useDispatch';
@@ -37,9 +37,9 @@ const StyledHeading = styled(Heading)`
 
 const StyledCard = styled(Card)`
   width: 80rem;
-  height: 63rem;
+  height: 66rem;
   padding: 5rem 7rem;
-  margin-top: 5.5rem;
+  margin-top: 5rem;
   z-index: 2000;
 `;
 
@@ -78,7 +78,7 @@ const ItemsCounter = styled.p`
   margin-right: 1rem;
 `;
 
-const GradientText = styled.span`
+export const GradientText = styled.span`
   color: transparent;
   background: ${colors.mainGradient45};
   /* stylelint-disable-next-line */ /* prefix is necessary: background-clip doesn't work in Chromium */
@@ -103,14 +103,14 @@ const ButtonsContainer = styled.div`
   justify-content: flex-end;
   grid-row: 3;
   grid-column: 1 / 3;
-  margin-top: 7rem;
+  margin-top: 2.5rem;
   button:not(:last-child) {
     margin-right: 1rem;
   }
 `;
 const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => {
   const dispatch = useDispatch();
-  const userData = useSelector(state => state.userData);
+  const { userData, browsers } = useSelector(state => state);
   const [isNew, setIsNew] = useState(match.params.id && match.params.id === 'new');
 
   const getOptions = (type: UserDataItemType, site: Option | null): Option[] => {
@@ -130,6 +130,13 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
     }
     return options;
   };
+
+  const getAvailableBrowsers = (): Option[] => {
+    return browsers
+      .filter(b => !userData.tasks.some(t => t.browser && t.browser.value === b.id))
+      .map(b => ({ label: b.accountEmail, value: b.id }));
+  };
+
   const getInitialValues = (): Task => {
     if (!match.params.id) {
       return initialTaskValues;
@@ -184,12 +191,21 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
               <Fieldset>
                 <Select
                   specialPlaceholder
+                  name="browser"
+                  placeholder="Browser"
+                  value={props.values.browser}
+                  options={getAvailableBrowsers()}
+                  onBlur={props.setFieldTouched}
+                  onChange={props.setFieldValue}
+                  error={!!props.errors.site && !!props.touched.site}
+                />
+                <Select
+                  specialPlaceholder
                   name="site"
                   placeholder="Site"
                   value={props.values.site}
-                  options={proxySiteOptions}
+                  options={taskSiteOptions}
                   onBlur={props.setFieldTouched}
-                  //onChange={props.setFieldValue}
                   onChange={(name, value) => {
                     props.setFieldValue(name, value);
                     props.setFieldValue('profile', null);
@@ -233,11 +249,12 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
                       />
                     )}
                   </InlineInputsContainer>
-                  <StyledSlider
-                    name="schedule"
-                    label="Schedule Task"
-                    checked={props.values.schedule}
-                  />
+                  <StyledSlider name="stopIfSoldOut" checked={props.values.stopIfSoldOut}>
+                    Stop if any product sold out
+                  </StyledSlider>
+                  <StyledSlider name="schedule" checked={props.values.schedule}>
+                    Schedule Task <GradientText>(Recommended)</GradientText>
+                  </StyledSlider>
                   {props.values.schedule && (
                     <InlineInputsContainer>
                       <StyledInput
@@ -264,7 +281,7 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
               </Fieldset>
               <ItemsCounter>
                 {!props.values.site && (
-                  <GradientText>Firstly, you need to select the site</GradientText>
+                  <GradientText>Firstly, select the browser and site</GradientText>
                 )}
                 {props.values.site && props.values.products.length > 0 && (
                   <span>

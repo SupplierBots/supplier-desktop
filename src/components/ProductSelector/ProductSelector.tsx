@@ -21,7 +21,7 @@ const Title = styled.p`
 
 const Wrapper = styled.div<{ error: boolean }>`
   width: 29.5rem;
-  height: 32rem;
+  height: 40.15rem;
   border-radius: 0.5rem;
   background-color: ${colors.tertiaryBackground};
   padding: 1.5rem 3.6rem 0 3.6rem;

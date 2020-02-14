@@ -3,12 +3,10 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { ServerStyleSheet } from 'styled-components';
 import BrowserSetupPage from './BrowserSetupPage';
 import React from 'react';
-
-import { BrowserData } from 'types/BrowserData';
 import { Page } from 'puppeteer';
 import { setAccountEmail } from 'store/browsers/actions';
 
-const setupBrowser = async (page: Page, { id }: BrowserData) => {
+const setupBrowser = async (page: Page, id: string) => {
   const browser = page.browser();
   if (!page) {
     browser.close();

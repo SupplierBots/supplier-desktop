@@ -24,6 +24,7 @@ export const taskValidationSchema = Yup.object().shape({
     otherwise: Yup.number(),
   }),
   products: Yup.array().min(1),
+  stopIfSoldOut: Yup.boolean(),
   schedule: Yup.boolean(),
   scheduledDate: Yup.string().when('schedule', {
     is: true,
@@ -41,15 +42,18 @@ export const taskValidationSchema = Yup.object().shape({
   }),
   name: Yup.string().required('Required'),
   site: Yup.object().required(),
+  browser: Yup.object().required(),
 });
 
 export interface Task extends SelectableUserData {
   site: Option | null;
   profile: Option | null;
   proxy: Option | null;
+  browser: Option | null;
   products: Product[];
   refreshRate: number | string;
   checkoutDelay: number | string;
+  stopIfSoldOut: boolean;
   schedule: boolean;
   scheduledDate: string;
   scheduledTime: string;
@@ -60,16 +64,18 @@ export const initialTaskValues: Task = {
   site: null,
   profile: null,
   proxy: null,
+  browser: null,
   products: [],
   refreshRate: '',
   checkoutDelay: '',
+  stopIfSoldOut: false,
   schedule: false,
   scheduledDate: '',
   scheduledTime: '',
   name: '',
 };
 
-export const proxySiteOptions: Option[] = [
+export const taskSiteOptions: Option[] = [
   { value: 'supreme', label: 'Supreme' },
   { value: 'palace', label: 'Palace' },
 ];

@@ -153,8 +153,12 @@ const Products = ({ history, match }: RouteComponentProps<{ id: string }>) => {
                   error={!!props.errors.size && !!props.touched.size}
                 />
                 <SlidersContainer>
-                  <Slider name="anySize" label="Any Size" checked={props.values.anySize} />
-                  <Slider name="anyColor" label="Any Color" checked={props.values.anyColor} />
+                  <Slider name="anySize" checked={props.values.anySize}>
+                    Any Size
+                  </Slider>
+                  <Slider name="anyColor" checked={props.values.anyColor}>
+                    Any Color
+                  </Slider>
                 </SlidersContainer>
                 {props.values.anySize && (
                   <Select

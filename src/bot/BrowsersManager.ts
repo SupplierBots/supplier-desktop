@@ -5,6 +5,7 @@ import { setupBrowser } from './setup/BrowserSetup';
 import { BrowserData } from 'types/BrowserData';
 import { Browser } from 'puppeteer';
 import * as R from 'ramda';
+import { Task } from 'components/TaskEditor/FormDetails';
 
 class BrowsersManager {
   private static instance: BrowsersManager;
@@ -19,7 +20,7 @@ class BrowsersManager {
   public async setup(data: BrowserData) {
     store.dispatch(setActive(data.id, true));
     try {
-      const browser = await BrowserInstance(data);
+      const browser = await BrowserInstance(data.id);
       this.browsers.push(browser);
       const pages = await browser.pages();
       const page = R.last(pages);
@@ -27,10 +28,17 @@ class BrowsersManager {
         browser.close();
         return;
       }
-      setupBrowser(page, data);
+      setupBrowser(page, data.id);
     } catch {
       store.dispatch(setActive(data.id, false));
     }
+  }
+
+  public async startTasks(tasks: Task[]) {
+    tasks.forEach(async (task, index) => {
+      if (!task.browser) return;
+      const browser = BrowserInstance(task.browser?.value, index);
+    });
   }
 
   public async closeAll() {
