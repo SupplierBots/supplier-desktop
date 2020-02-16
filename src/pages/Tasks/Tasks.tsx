@@ -13,6 +13,9 @@ import { useSelector } from 'hooks/useSelector';
 import { useDispatch } from 'hooks/useDispatch';
 import { removeUserDataItem, removeAllItems as removeAllDataItems } from 'store/userData/actions';
 import BrowsersManager from 'bot/BrowsersManager';
+import { monitor } from 'bot/palace/entry';
+import autoRetryRequest from 'bot/autoRetryRequest';
+import { fetchOnce } from 'bot/fetchOnce';
 
 const Wrapper = styled.div`
   display: grid;
@@ -66,6 +69,16 @@ const Tasks = ({ history }: RouteComponentProps) => {
     history.push(routes.tasksEditor + '/new');
   };
 
+  const showTime = async () => {
+    const time = await monitor.fetchProducts();
+    console.log(time);
+  };
+
+  const shotTimeRefresh = async () => {
+    const time = await monitor.fetchProducts(true);
+    console.log(time);
+  };
+
   return (
     <Wrapper>
       <Route path={routes.tasksEditor + '/:id'} component={TaskEditor} />
@@ -82,8 +95,11 @@ const Tasks = ({ history }: RouteComponentProps) => {
         </TasksList>
       </Main>
       <ButtonsContainer>
-        <Button secondary onClick={removeAllTasks}>
+        <Button secondary onClick={showTime}>
           Remove All
+        </Button>
+        <Button secondary onClick={shotTimeRefresh}>
+          Remove sd
         </Button>
         <Button secondary onClick={() => BrowsersManager.getInstance().startTasks(userData.tasks)}>
           Start All Tasks
