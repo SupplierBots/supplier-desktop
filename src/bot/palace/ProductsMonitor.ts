@@ -1,8 +1,11 @@
 import cheerio from 'cheerio';
 import * as R from 'ramda';
-import autoRetryRequest from 'bot/autoRetryRequest';
+import autoRetryRequest from 'bot/requests/autoRetryRequest';
 import { Palace } from 'types/Palace';
-import { fetchOnce } from '../fetchOnce';
+import { fetchOnce } from '../requests/fetchOnce';
+import ProductFetcher from './ProductFetcher';
+import { Keywords } from 'types/Keywords';
+import { isMatch } from 'bot/keywordsManager';
 
 export enum PageRegion {
   Us,
@@ -61,6 +64,14 @@ class ProductsMonitor {
     const $ = cheerio.load(response);
     const html = $('.product-grid-item');
     this.parseProductsHtml($, html);
+  };
+
+  public getProductFetcher = async (keywords: Keywords) => {
+    await this.fetchProducts();
+    const product = this.products.find(p => isMatch(p.name, keywords));
+    if (!product) return null;
+    if (!product.fetcher) product.fetcher = new ProductFetcher(product.url);
+    return product.fetcher;
   };
 
   private parseProductsHtml = ($: CheerioStatic, html: Cheerio) => {

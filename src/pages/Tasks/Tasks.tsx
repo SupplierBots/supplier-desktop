@@ -14,8 +14,9 @@ import { useDispatch } from 'hooks/useDispatch';
 import { removeUserDataItem, removeAllItems as removeAllDataItems } from 'store/userData/actions';
 import BrowsersManager from 'bot/BrowsersManager';
 import { monitor } from 'bot/palace/entry';
-import autoRetryRequest from 'bot/autoRetryRequest';
-import { fetchOnce } from 'bot/fetchOnce';
+import autoRetryRequest from 'bot/requests/autoRetryRequest';
+import { fetchOnce } from 'bot/requests/fetchOnce';
+import { isMatch } from 'bot/keywordsManager';
 
 const Wrapper = styled.div`
   display: grid;
@@ -69,13 +70,29 @@ const Tasks = ({ history }: RouteComponentProps) => {
     history.push(routes.tasksEditor + '/new');
   };
 
-  const showTime = async () => {
-    const time = await monitor.fetchProducts();
-    console.log(time);
+  const testKeywords = () => {
+    const result = isMatch('BASICALLY A HOOD BLACK', userData.products[0].keywords);
+    console.log(result);
   };
 
-  const shotTimeRefresh = async () => {
-    const time = await monitor.fetchProducts(true);
+  const getFetcher = async () => {
+    const start = Date.now();
+    const fetcher = await monitor.getProductFetcher(userData.products[0].keywords);
+    const details = await fetcher?.getVariants();
+    console.log(details);
+    console.log(Date.now() - start);
+  };
+
+  const getTimeOnce = fetchOnce(async () => {
+    const time = await autoRetryRequest(
+      'http://slowwly.robertomurray.co.uk/delay/2000/url/http://worldtimeapi.org/api/ip',
+      true,
+    );
+    return time;
+  });
+
+  const showTime = async () => {
+    const time = await getTimeOnce(true);
     console.log(time);
   };
 
@@ -98,7 +115,7 @@ const Tasks = ({ history }: RouteComponentProps) => {
         <Button secondary onClick={showTime}>
           Remove All
         </Button>
-        <Button secondary onClick={shotTimeRefresh}>
+        <Button secondary onClick={getFetcher}>
           Remove sd
         </Button>
         <Button secondary onClick={() => BrowsersManager.getInstance().startTasks(userData.tasks)}>

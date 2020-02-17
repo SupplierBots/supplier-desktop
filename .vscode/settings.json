@@ -29,7 +29,8 @@
     //You can hide these too
     //"node_modules": true,
     "dist": true,
-    "NW.js": true
+    "NW.js": true,
+    "patches": true
     //"dev-server": true
   },
   "editor.formatOnSave": true,

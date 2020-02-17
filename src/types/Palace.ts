@@ -1,3 +1,5 @@
+import ProductFetcher from 'bot/palace/ProductFetcher';
+
 export namespace Palace {
   export interface Collection {
     collection: {
@@ -15,6 +17,7 @@ export namespace Palace {
   export interface ProductLocation {
     name: string;
     url: string;
+    fetcher?: ProductFetcher;
   }
 
   export interface ProductDetails {
@@ -42,6 +45,11 @@ export namespace Palace {
     options: Option[];
     url: string;
     media: Medium[];
+  }
+
+  export interface CompactVariant {
+    id: string;
+    size: string;
   }
 
   interface Variant {

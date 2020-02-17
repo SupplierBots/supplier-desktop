@@ -23,7 +23,8 @@
     "run-prod": "./NW.js/nwjs.app/Contents/MacOS/nwjs .",
     "compile": "yarn build && node compile",
     "start-win": "cross-env NODE_ENV=development concurrently \"cross-env BROWSER=none craco start\" \"wait-on http://localhost:3000 && ./NW.js/nw ./dev-server\" --kill-others --raw",
-    "run-prod-win": "yarn compile && ./NW.js/nw ."
+    "run-prod-win": "yarn compile && ./NW.js/nw .",
+    "postinstall": "patch-package"
   },
   "husky": {
     "hooks": {
@@ -125,6 +126,8 @@
     "node-sass": "^4.13.1",
     "nwjs-builder-phoenix": "^1.15.0",
     "nwjs-types": "https://github.com/envis10n/nwjs-types.git",
+    "patch-package": "^6.2.0",
+    "postinstall-postinstall": "^2.0.0",
     "prettier": "^1.19.1",
     "string-replace-loader": "^2.2.0",
     "styled-components": "^5.0.0",
