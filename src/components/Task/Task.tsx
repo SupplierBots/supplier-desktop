@@ -1,16 +1,17 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { colors, fonts } from 'theme/main';
 import { ReactComponent as SupremeIcon } from 'assets/SupremeLogo.svg';
 import { ReactComponent as PalaceIcon } from 'assets/PalaceLogo.svg';
 import { ReactComponent as EditIcon } from 'assets/Edit.svg';
 import { ReactComponent as RemoveIcon } from 'assets/Remove.svg';
-import { Task as TaskType } from 'components/TaskEditor/FormDetails';
+import { Task as TaskType } from 'types/Task';
 import { useDispatch } from 'hooks/useDispatch';
 import { push } from 'connected-react-router';
 import routes from 'constants/routes';
 import { fadeIn } from 'theme/animations';
 import { removeUserDataItem } from 'store/userData/actions';
+import { useSelector } from 'hooks/useSelector';
 
 const Wrapper = styled.div`
   display: grid;
@@ -42,7 +43,7 @@ const WebsiteIconWrapper = styled.div`
   justify-content: center;
 `;
 
-const Action = styled.div`
+const Action = styled.div<{ disabled?: boolean }>`
   margin-right: 1.3rem;
 
   transition: 0.3s all;
@@ -57,6 +58,16 @@ const Action = styled.div`
     transform: scale(1.15);
     filter: grayscale(85%);
   }
+
+  ${({ disabled }) =>
+    disabled &&
+    css`
+      filter: grayscale(85%);
+      :hover {
+        cursor: not-allowed;
+        transform: scale(1);
+      }
+    `};
 `;
 
 const StyledRemoveIcon = styled(RemoveIcon)`
@@ -75,6 +86,25 @@ interface Props {
 }
 const Task = ({ details }: Props) => {
   const dispatch = useDispatch();
+  const browsers = useSelector(state => state.browsers);
+
+  const isBrowserActive = () => {
+    const browser = browsers.find(b => b.id === details.browser?.value);
+    if (!browser) return false;
+    if (browser.isActive) return true;
+    return false;
+  };
+
+  const deleteTask = () => {
+    if (isBrowserActive()) return;
+    dispatch(removeUserDataItem('tasks', details.id));
+  };
+
+  const editTask = () => {
+    if (isBrowserActive()) return;
+    dispatch(push(routes.tasksEditor + '/' + details.id));
+  };
+
   return (
     <Wrapper>
       <WebsiteIconWrapper>
@@ -85,11 +115,11 @@ const Task = ({ details }: Props) => {
       <Text>{details.proxy && details.proxy.label}</Text>
       <Text>Waiting For Product</Text>
       <ActionsContainer>
-        <Action>
-          <EditIcon onClick={() => dispatch(push(routes.tasksEditor + '/' + details.id))} />
+        <Action disabled={isBrowserActive()}>
+          <EditIcon onClick={editTask} />
         </Action>
-        <Action>
-          <StyledRemoveIcon onClick={() => dispatch(removeUserDataItem('tasks', details.id))} />
+        <Action disabled={isBrowserActive()}>
+          <StyledRemoveIcon onClick={deleteTask} />
         </Action>
       </ActionsContainer>
     </Wrapper>

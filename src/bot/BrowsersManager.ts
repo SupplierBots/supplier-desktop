@@ -5,7 +5,10 @@ import { setupBrowser } from './setup/BrowserSetup';
 import { BrowserData } from 'types/BrowserData';
 import { Browser } from 'puppeteer';
 import * as R from 'ramda';
-import { Task } from 'components/TaskEditor/FormDetails';
+import { Task } from 'types/Task';
+import ProductsMonitor, { PageRegion } from './palace/ProductsMonitor';
+import { palaceTask } from './palace/palaceTask';
+import { PalaceMonitors } from 'types/PalaceMonitors';
 
 class BrowsersManager {
   private static instance: BrowsersManager;
@@ -18,7 +21,6 @@ class BrowsersManager {
   }
 
   public async setup(data: BrowserData) {
-    store.dispatch(setActive(data.id, true));
     try {
       const browser = await BrowserInstance(data.id);
       this.browsers.push(browser);
@@ -35,13 +37,22 @@ class BrowsersManager {
   }
 
   public async startTasks(tasks: Task[]) {
+    const monitors: PalaceMonitors = {
+      eu: new ProductsMonitor(PageRegion.Eu),
+      us: new ProductsMonitor(PageRegion.Us),
+    };
+
     tasks.forEach(async (task, index) => {
       if (!task.browser) return;
-      const browser = BrowserInstance(task.browser?.value, index);
+      const browser = await BrowserInstance(task.browser?.value, index);
+      this.browsers.push(browser);
+      if (task.site?.value === 'palace') {
+        palaceTask(browser, task, monitors);
+      }
     });
   }
 
-  public async closeAll() {
+  public async stopAll() {
     const cleanUps: Promise<void>[] = [];
     this.browsers.forEach(b => {
       if (!b.isConnected()) return;

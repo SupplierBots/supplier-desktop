@@ -14,6 +14,7 @@ const isMatch = (name: string, keywords: Keywords) => {
     const words = keyword.split(' | ');
     if (R.none(R.includes(R.__, name))(words)) return false;
   }
+
   return true;
 };
 

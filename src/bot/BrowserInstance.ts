@@ -6,6 +6,7 @@ import devices from 'puppeteer/DeviceDescriptors';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 
 const BrowserInstance = async (id: string, index = 0) => {
+  store.dispatch(setActive(id, true));
   const executablePath = store.getState().controller.chromiumPath;
   const userDataDirectory = path.resolve(store.getState().controller.appData, id);
   const { width, height, deviceScaleFactor } = devices['Pixel 2'].viewport;

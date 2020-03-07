@@ -21,10 +21,16 @@ const NavigationList = styled.ul`
 
 const Navigation = () => {
   const lastVisited = useSelector(state => state.lastVisited);
+  const browsers = useSelector(state => state.browsers);
+  const router = useSelector(state => state.router);
+
+  const isAnyTaskActive = () =>
+    router.location.pathname.includes('tasks') && browsers.some(b => b.isActive);
+
   return (
     <Wrapper>
       <NavigationList>
-        <NavigationItem link={routes.dashboard}>
+        <NavigationItem link={routes.dashboard} disabled={isAnyTaskActive()}>
           <DashboardIcon />
           Dashboard
         </NavigationItem>
@@ -34,22 +40,31 @@ const Navigation = () => {
           Tasks
         </NavigationItem>
 
-        <NavigationItem link={routes.products + `/${lastVisited.products}`}>
+        <NavigationItem
+          link={routes.products + `/${lastVisited.products}`}
+          disabled={isAnyTaskActive()}
+        >
           <ProductsIcon />
           Products
         </NavigationItem>
 
-        <NavigationItem link={routes.profiles + `/${lastVisited.profiles}`}>
+        <NavigationItem
+          link={routes.profiles + `/${lastVisited.profiles}`}
+          disabled={isAnyTaskActive()}
+        >
           <ProfilesIcon />
           Profiles
         </NavigationItem>
 
-        <NavigationItem link={routes.proxies + `/${lastVisited.proxies}`}>
+        <NavigationItem
+          link={routes.proxies + `/${lastVisited.proxies}`}
+          disabled={isAnyTaskActive()}
+        >
           <ProxiesIcon />
           Proxies
         </NavigationItem>
 
-        <NavigationItem link={routes.browsers}>
+        <NavigationItem link={routes.browsers} disabled={isAnyTaskActive()}>
           <BrowsersIcon />
           Browsers
         </NavigationItem>

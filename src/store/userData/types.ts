@@ -2,7 +2,7 @@ import { Action } from 'redux';
 import { Product } from 'types/Product';
 import { Profile } from 'types/Profile';
 import { Proxy } from 'types/Proxy';
-import { Task } from 'components/TaskEditor/FormDetails';
+import { Task } from 'types/Task';
 
 export type UserDataItemType = 'products' | 'profiles' | 'proxies' | 'tasks';
 export type UserDataItem = Product | Profile | Proxy | Task;

@@ -2,7 +2,6 @@ import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 import { Field } from 'formik';
 import { colors, fonts } from 'theme/main';
-import { GradientText } from 'components/TaskEditor/TaskEditor';
 
 const Wrapper = styled.label`
   display: flex;

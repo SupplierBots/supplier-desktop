@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import ButtonsContainer from 'components/ButtonsContainer/ButtonsContainer';
 import Button from 'components/Button/Button';
@@ -13,9 +13,8 @@ import { useSelector } from 'hooks/useSelector';
 import { useDispatch } from 'hooks/useDispatch';
 import { removeUserDataItem, removeAllItems as removeAllDataItems } from 'store/userData/actions';
 import BrowsersManager from 'bot/BrowsersManager';
-import { monitor } from 'bot/palace/entry';
 import autoRetryRequest from 'bot/requests/autoRetryRequest';
-import { fetchOnce } from 'bot/requests/fetchOnce';
+import { createFetcher } from 'bot/requests/createFetcher';
 import { isMatch } from 'bot/keywordsManager';
 
 const Wrapper = styled.div`
@@ -70,30 +69,21 @@ const Tasks = ({ history }: RouteComponentProps) => {
     history.push(routes.tasksEditor + '/new');
   };
 
-  const testKeywords = () => {
-    const result = isMatch('BASICALLY A HOOD BLACK', userData.products[0].keywords);
-    console.log(result);
-  };
+  const isAnyTaskActive = () => browsers.some(b => b.isActive);
 
-  const getFetcher = async () => {
-    const start = Date.now();
-    const fetcher = await monitor.getProductFetcher(userData.products[0].keywords);
-    const details = await fetcher?.getVariants();
-    console.log(details);
-    console.log(Date.now() - start);
-  };
+  useEffect(
+    () => () => {
+      BrowsersManager.getInstance().stopAll();
+    },
+    [],
+  );
 
-  const getTimeOnce = fetchOnce(async () => {
-    const time = await autoRetryRequest(
-      'http://slowwly.robertomurray.co.uk/delay/2000/url/http://worldtimeapi.org/api/ip',
-      true,
-    );
-    return time;
-  });
-
-  const showTime = async () => {
-    const time = await getTimeOnce(true);
-    console.log(time);
+  const handleTasks = async () => {
+    if (isAnyTaskActive()) {
+      await BrowsersManager.getInstance().stopAll();
+      return;
+    }
+    await BrowsersManager.getInstance().startTasks(userData.tasks);
   };
 
   return (
@@ -112,16 +102,15 @@ const Tasks = ({ history }: RouteComponentProps) => {
         </TasksList>
       </Main>
       <ButtonsContainer>
-        <Button secondary onClick={showTime}>
+        <Button disabled={isAnyTaskActive()} secondary onClick={removeAllTasks}>
           Remove All
         </Button>
-        <Button secondary onClick={getFetcher}>
-          Remove sd
+
+        <Button secondary onClick={handleTasks}>
+          {isAnyTaskActive() ? 'Stop All' : 'Start All'}
         </Button>
-        <Button secondary onClick={() => BrowsersManager.getInstance().startTasks(userData.tasks)}>
-          Start All Tasks
-        </Button>
-        <Button disabled={!isAnyBrowserAvailable()} onClick={createNewTask}>
+
+        <Button disabled={!isAnyBrowserAvailable() || isAnyTaskActive()} onClick={createNewTask}>
           {!isAnyBrowserAvailable() ? 'All Browsers Used' : 'Create Task'}
         </Button>
       </ButtonsContainer>

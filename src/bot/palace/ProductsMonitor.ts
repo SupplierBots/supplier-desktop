@@ -1,19 +1,26 @@
 import cheerio from 'cheerio';
 import * as R from 'ramda';
 import autoRetryRequest from 'bot/requests/autoRetryRequest';
-import { Palace } from 'types/Palace';
-import { fetchOnce } from '../requests/fetchOnce';
+import { createFetcher } from '../requests/createFetcher';
 import ProductFetcher from './ProductFetcher';
 import { Keywords } from 'types/Keywords';
 import { isMatch } from 'bot/keywordsManager';
+import { Product } from 'types/Product';
+import { Collection } from 'types/Palace';
 
 export enum PageRegion {
   Us,
   Eu,
 }
 
+interface ProductLocation {
+  name: string;
+  url: string;
+  fetcher?: ProductFetcher;
+}
+
 class ProductsMonitor {
-  private products: Palace.ProductLocation[] = [];
+  private products: ProductLocation[] = [];
   private productsPerPage = 30;
 
   private frontpageStatusUrl = `${this.websiteUrl}collections/frontpage.json`;
@@ -30,7 +37,7 @@ class ProductsMonitor {
 
   constructor(private readonly region: PageRegion) {}
 
-  public fetchProducts = fetchOnce(async () => {
+  public fetchProducts = createFetcher(async () => {
     const productsAmount = await this.getProductsAmount();
     const pages = Math.ceil(productsAmount / this.productsPerPage);
 
@@ -47,14 +54,11 @@ class ProductsMonitor {
   });
 
   private getProductsAmount = async () => {
-    const productsStatus = await autoRetryRequest<Palace.Collection>(this.productsStatusUrl, true);
+    const productsStatus = await autoRetryRequest<Collection>(this.productsStatusUrl, true);
     const productsCount = productsStatus.collection.products_count;
     if (productsCount > 0) return productsCount;
 
-    const frontpageStatus = await autoRetryRequest<Palace.Collection>(
-      this.frontpageStatusUrl,
-      true,
-    );
+    const frontpageStatus = await autoRetryRequest<Collection>(this.frontpageStatusUrl, true);
     return frontpageStatus.collection.products_count;
   };
 
@@ -66,12 +70,15 @@ class ProductsMonitor {
     this.parseProductsHtml($, html);
   };
 
-  public getProductFetcher = async (keywords: Keywords) => {
-    await this.fetchProducts();
-    const product = this.products.find(p => isMatch(p.name, keywords));
+  public getProductFetcher = async ({ keywords, colors, anyColor }: Product) => {
+    await this.fetchProducts.get();
+    const product = this.products.find(
+      p => isMatch(p.name, keywords) && (isMatch(p.name, colors) || anyColor),
+    );
     if (!product) return null;
     if (!product.fetcher) product.fetcher = new ProductFetcher(product.url);
-    return product.fetcher;
+
+    return product.fetcher.variantsFetcher;
   };
 
   private parseProductsHtml = ($: CheerioStatic, html: Cheerio) => {

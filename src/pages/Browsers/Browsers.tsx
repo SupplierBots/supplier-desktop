@@ -33,7 +33,7 @@ const Browsers = () => {
 
   useEffect(
     () => () => {
-      BrowsersManager.getInstance().closeAll();
+      BrowsersManager.getInstance().stopAll();
     },
     [],
   );

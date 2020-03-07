@@ -10,6 +10,9 @@ import routes from 'constants/routes';
 import { Route, RouteComponentProps } from 'react-router';
 import Loader from './Loader/Loader';
 import { fadeIn } from 'theme/animations';
+import { useDispatch } from 'hooks/useDispatch';
+import { useSelector } from 'hooks/useSelector';
+import { setActive } from 'store/browsers/actions';
 
 const StyledParticles = styled(Particles)`
   position: absolute;
@@ -27,10 +30,23 @@ type Props = RouteComponentProps;
 
 const Startup = ({ history }: Props) => {
   const [loading, setLoading] = useState(true);
+  const browsers = useSelector(state => state.browsers);
+  const dispatch = useDispatch();
+
+  const resetBrowsers = () => {
+    browsers.forEach(b => {
+      dispatch(setActive(b.id, false));
+    });
+  };
+
+  useEffect(resetBrowsers, []);
+
   useEffect(() => {
     (async () => {
+      console.log(nw);
       nw.Window.get().show();
       const chromiumInstalled = await verifyChromium();
+
       setLoading(false);
 
       if (chromiumInstalled) {

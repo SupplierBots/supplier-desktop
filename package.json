@@ -6,6 +6,7 @@
   "copyright": "SafeDrop",
   "main": "app/index.html",
   "homepage": ".",
+  "node-remote": "http://localhost/*",
   "private": true,
   "window": {
     "title": "SafeDrop",
@@ -98,6 +99,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",
+    "@babel/plugin-transform-runtime": "^7.8.3",
     "@babel/preset-env": "^7.8.4",
     "@babel/preset-typescript": "^7.8.3",
     "@types/cheerio": "^0.22.16",
@@ -135,12 +137,11 @@
     "stylelint-config-recommended": "^3.0.0",
     "stylelint-config-styled-components": "^0.1.1",
     "stylelint-processor-styled-components": "^1.9.0",
-    "typescript": "^3.7.5",
+    "typescript": "^3.8.2",
     "wait-on": "^4.0.0"
   },
   "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not op_mini all"
+    "Chrome > 70",
+    "Node > 8"
   ]
 }

@@ -1,5 +1,5 @@
 import React, { ReactNode, MouseEvent } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { NavLink } from 'react-router-dom';
 import { colors, fonts } from 'theme/main';
 import nw from 'NW';
@@ -7,7 +7,15 @@ import nw from 'NW';
 //Unfortunately kind of tricky way to style it:
 //svgs with gradients, react-router and styled-components don't like each other
 
-const StyledNavLink = styled(NavLink)`
+interface Props {
+  children: ReactNode;
+  link: string;
+  external?: boolean;
+  disabled?: boolean;
+  click?: (url: string) => void;
+}
+
+const StyledNavLink = styled(NavLink)<{ disabled?: boolean }>`
   color: ${colors.darkGrey};
   font-size: ${fonts.big};
   height: 5rem;
@@ -47,16 +55,19 @@ const StyledNavLink = styled(NavLink)`
       fill: url(#iconGradient);
     }
   }
+
+  ${({ disabled }) =>
+    disabled &&
+    css`
+      pointer-events: none;
+      opacity: 0.3;
+      :hover {
+        cursor: not-allowed;
+      }
+    `};
 `;
 
-interface Props {
-  children: ReactNode;
-  link: string;
-  external?: boolean;
-  click?: (url: string) => void;
-}
-
-const NavigationItem = ({ link, children, external }: Props) => {
+const NavigationItem = ({ link, children, external, disabled }: Props) => {
   const additionalProps = external && {
     onClick: (e: MouseEvent) => {
       e.preventDefault();
@@ -65,7 +76,7 @@ const NavigationItem = ({ link, children, external }: Props) => {
   };
 
   return (
-    <StyledNavLink to={link} {...additionalProps}>
+    <StyledNavLink to={link} {...additionalProps} disabled={disabled}>
       <div />
       {children}
     </StyledNavLink>
