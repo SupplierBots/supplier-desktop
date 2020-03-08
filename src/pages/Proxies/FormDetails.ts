@@ -1,4 +1,4 @@
-import { Option } from './../../types/Option';
+import { Option } from 'types/Option';
 import * as Yup from 'yup';
 import { Proxy } from 'types/Proxy';
 

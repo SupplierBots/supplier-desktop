@@ -4,7 +4,7 @@ module.exports = {
   },
   webpack: {
     configure: webpackConfig => {
-      webpackConfig.target = 'node-webkit';
+      webpackConfig.target = 'electron-renderer';
       webpackConfig.optimization.splitChunks = false;
       webpackConfig.optimization.runtimeChunk = false;
       webpackConfig.module.rules = [

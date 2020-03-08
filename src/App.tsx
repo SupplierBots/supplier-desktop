@@ -10,6 +10,7 @@ import routes from 'constants/routes';
 
 import { colors } from 'theme/main';
 import Routes from 'routes/Routes';
+import { setupListeners } from 'IPCRendererHandler';
 
 const GlobalWrapper = styled.div`
   color: ${colors.lightGrey};
@@ -42,11 +43,12 @@ const App = () => {
   };
 
   useEffect(disableAutofill, []);
+  useEffect(setupListeners, []);
+
   const authState = useSelector(state => state.auth);
 
   return (
     <>
-      <GlobalStyle />
       <GlobalWrapper>
         {authState.authenticated && <Sidebar />}
         {!authState.authenticated && <Redirect to={routes.startup} />}
@@ -54,6 +56,7 @@ const App = () => {
           <Routes />
         </Content>
         <AppControls />
+        <GlobalStyle />
       </GlobalWrapper>
     </>
   );

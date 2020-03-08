@@ -17,7 +17,7 @@ import { UserDataItemType } from 'store/userData/types';
 import { Option } from 'types/Option';
 import { useSelector } from 'hooks/useSelector';
 import { taskSiteOptions, initialTaskValues, taskValidationSchema } from './FormDetails';
-import { Task } from '../../types/Task';
+import { Task } from 'types/Task';
 import { RouteComponentProps } from 'react-router';
 import routes from 'constants/routes';
 import { useDispatch } from 'hooks/useDispatch';

@@ -2,13 +2,15 @@ import path from 'path';
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import puppeteer from 'puppeteer';
-import nw from 'NW';
 import InlineLogo from 'components/InlineLogo/InlineLogo';
 import { colors, fonts } from 'theme/main';
 import ProgressBar from 'components/ProgressBar/ProgressBar';
-import verifyChromium from 'utils/verifyChromium';
 import { RouteComponentProps } from 'react-router';
 import routes from 'constants/routes';
+import { ipcRenderer, IpcRendererEvent } from 'electron';
+import { VERIFY_CHROME, ChromiumVerifiedPayload } from 'IPCEvents';
+import { useDispatch } from 'hooks/useDispatch';
+import { setChromiumPath } from 'store/controller/actions';
 
 const Wrapper = styled.div`
   display: flex;
@@ -50,25 +52,36 @@ type Props = RouteComponentProps;
 const Downloader = ({ history }: Props) => {
   const [progress, setProgress] = useState(0);
   const [downloaded, setDownloaded] = useState(false);
+  const dispatch = useDispatch();
+
+  const handleDownloadProgress = (
+    e: IpcRendererEvent,
+    status: { done: boolean; progress: number },
+  ) => {
+    setProgress(status.progress);
+    if (!status.done) return;
+    ipcRenderer.removeListener('CHROMIUM_DOWNLOAD_PROGRESS', handleDownloadProgress);
+    setDownloaded(true);
+    verifyChromium();
+  };
+
+  const verifyChromium = async () => {
+    await new Promise(resolve => setTimeout(resolve, 10000));
+    const { success, executablePath } = (await ipcRenderer.invoke(
+      VERIFY_CHROME,
+    )) as ChromiumVerifiedPayload;
+
+    if (success) {
+      dispatch(setChromiumPath(executablePath));
+      history.push(routes.login);
+    } else {
+      history.push(routes.downloader);
+    }
+  };
 
   const fetchChromium = () => {
-    const chromiumPath = path.resolve((nw as any).App.dataPath, '.local-chromium');
-    const fetcher = puppeteer.createBrowserFetcher({ path: chromiumPath });
-    console.log(chromiumPath);
-    fetcher.download('662092', async (downloadedBytes: number, totalBytes: number) => {
-      setProgress(Math.round((downloadedBytes / totalBytes) * 100));
-      if (downloadedBytes === totalBytes) {
-        setDownloaded(true);
-        await new Promise(resolve => setTimeout(resolve, 10000));
-        const chromiumInstalled = await verifyChromium();
-
-        if (chromiumInstalled) {
-          history.push(routes.login);
-        } else {
-          history.push(routes.downloader);
-        }
-      }
-    });
+    ipcRenderer.send('DOWNLOAD_CHROMIUM');
+    ipcRenderer.on('CHROMIUM_DOWNLOAD_PROGRESS', handleDownloadProgress);
   };
 
   useEffect(fetchChromium, []);
@@ -81,10 +94,7 @@ const Downloader = ({ history }: Props) => {
       </ProgressMessage>
       <ProgressBar progressPercentage={progress} />
       <TutorialMessage>
-        In the meantime you can read our{' '}
-        <TutLink onClick={() => nw.Shell.openExternal('https://twitter.com/safedropbot')}>
-          detailed tutorial
-        </TutLink>
+        In the meantime you can read our <TutLink>detailed tutorial</TutLink>
       </TutorialMessage>
     </Wrapper>
   );

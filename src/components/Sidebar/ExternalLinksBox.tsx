@@ -5,7 +5,6 @@ import { ReactComponent as LogoutIcon } from 'assets/Logout.svg';
 import { ReactComponent as DiscordIcon } from 'assets/Discord.svg';
 import { ReactComponent as TwitterIcon } from 'assets/Twitter.svg';
 import { colors } from 'theme/main';
-import nw from 'NW';
 import { useDispatch } from 'hooks/useDispatch';
 import { initiateUserLogout } from 'store/auth/actions';
 import { useSelector } from 'hooks/useSelector';
@@ -43,11 +42,11 @@ const ExternalLinksBox = () => {
         <LogoutIcon />
       </ExternalLink>
 
-      <ExternalLink onClick={() => nw.Shell.openExternal('https://discordapp.com/')}>
+      <ExternalLink>
         <DiscordIcon />
       </ExternalLink>
 
-      <ExternalLink onClick={() => nw.Shell.openExternal('https://twitter.com/safedropbot')}>
+      <ExternalLink>
         <TwitterIcon />
       </ExternalLink>
     </Wrapper>

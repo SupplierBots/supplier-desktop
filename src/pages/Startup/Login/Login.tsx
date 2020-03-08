@@ -14,7 +14,6 @@ import { createAccountAttempt, loginAttempt, setAuthError } from 'store/auth/act
 import { useSelector } from 'hooks/useSelector';
 import Spinner from 'components/Spinner/Spinner';
 import Fieldset from 'components/Fieldset/Fieldset';
-import nw from 'NW';
 
 const Wrapper = styled.div`
   display: flex;

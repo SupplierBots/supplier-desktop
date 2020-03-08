@@ -12,10 +12,6 @@ import routes from 'constants/routes';
 import { useSelector } from 'hooks/useSelector';
 import { useDispatch } from 'hooks/useDispatch';
 import { removeUserDataItem, removeAllItems as removeAllDataItems } from 'store/userData/actions';
-import BrowsersManager from 'bot/BrowsersManager';
-import autoRetryRequest from 'bot/requests/autoRetryRequest';
-import { createFetcher } from 'bot/requests/createFetcher';
-import { isMatch } from 'bot/keywordsManager';
 
 const Wrapper = styled.div`
   display: grid;
@@ -73,17 +69,17 @@ const Tasks = ({ history }: RouteComponentProps) => {
 
   useEffect(
     () => () => {
-      BrowsersManager.getInstance().stopAll();
+      // BrowsersManager.getInstance().stopAll();
     },
     [],
   );
 
   const handleTasks = async () => {
-    if (isAnyTaskActive()) {
-      await BrowsersManager.getInstance().stopAll();
-      return;
-    }
-    await BrowsersManager.getInstance().startTasks(userData.tasks);
+    // if (isAnyTaskActive()) {
+    //   await BrowsersManager.getInstance().stopAll();
+    //   return;
+    // }
+    // await BrowsersManager.getInstance().startTasks(userData.tasks);
   };
 
   return (

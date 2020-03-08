@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import verifyChromium from 'utils/verifyChromium';
 import Particles from 'react-particles-js';
 import particlesConfig from 'constants/particlesConfig';
 import Downloader from './Downloader/Downloader';
 import Login from './Login/Login';
-import nw from 'NW';
 import routes from 'constants/routes';
 import { Route, RouteComponentProps } from 'react-router';
 import Loader from './Loader/Loader';
@@ -13,6 +11,9 @@ import { fadeIn } from 'theme/animations';
 import { useDispatch } from 'hooks/useDispatch';
 import { useSelector } from 'hooks/useSelector';
 import { setActive } from 'store/browsers/actions';
+import { ipcRenderer } from 'electron';
+import { VERIFY_CHROME, ChromiumVerifiedPayload } from 'IPCEvents';
+import { setChromiumPath } from 'store/controller/actions';
 
 const StyledParticles = styled(Particles)`
   position: absolute;
@@ -43,30 +44,24 @@ const Startup = ({ history }: Props) => {
 
   useEffect(() => {
     (async () => {
-      console.log(nw);
-      nw.Window.get().show();
-      const chromiumInstalled = await verifyChromium();
+      console.log('started verufy');
+
+      const { success, executablePath } = (await ipcRenderer.invoke(
+        VERIFY_CHROME,
+      )) as ChromiumVerifiedPayload;
+
+      console.log('response: ' + success + executablePath);
 
       setLoading(false);
 
-      if (chromiumInstalled) {
+      if (success) {
+        dispatch(setChromiumPath(executablePath));
         history.push(routes.login);
       } else {
         history.push(routes.downloader);
       }
-
-      //console.log(nw.Window.get().showDevTools);
-      // (nw as any).Window.get().showDevTools = nw.App.quit;
-      // console.log(nw.Window.get().showDevTools);
-      // nw.Window.get().showDevTools();
-      // if (
-      //   (process as any).versions['nw-flavor'] === 'chuj' ||
-      //   (process as any).versions['node-webkit'] !== '0.39.3'
-      // ) {
-      //   nw.Window.get().close();
-      // }
     })();
-  }, [history]);
+  }, [history, dispatch]);
 
   return (
     <>

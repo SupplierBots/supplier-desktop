@@ -7,9 +7,8 @@ import ButtonsContainer from 'components/ButtonsContainer/ButtonsContainer';
 import Button from 'components/Button/Button';
 import { useSelector } from 'hooks/useSelector';
 import { useDispatch } from 'hooks/useDispatch';
-
-import BrowsersManager from 'bot/BrowsersManager';
 import { createBrowser, removeBrowser } from 'store/browsers/actions';
+import { ipcRenderer } from 'electron';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -33,7 +32,7 @@ const Browsers = () => {
 
   useEffect(
     () => () => {
-      BrowsersManager.getInstance().stopAll();
+      //BrowsersManager.getInstance().stopAll();
     },
     [],
   );
@@ -49,7 +48,7 @@ const Browsers = () => {
               data={b}
               deleteAction={() => dispatch(removeBrowser(b.id))}
               canBeRemoved={browsers.length > 2 && !b.isActive}
-              openAction={() => BrowsersManager.getInstance().setup(b)}
+              openAction={() => ipcRenderer.send('SETUP_BROWSER', b)}
             >
               {b.accountEmail}
             </Browser>
