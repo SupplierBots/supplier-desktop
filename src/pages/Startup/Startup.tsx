@@ -11,9 +11,8 @@ import { fadeIn } from 'theme/animations';
 import { useDispatch } from 'hooks/useDispatch';
 import { useSelector } from 'hooks/useSelector';
 import { setActive } from 'store/browsers/actions';
-import { ipcRenderer } from 'electron';
-import { VERIFY_CHROME, ChromiumVerifiedPayload } from 'IPCEvents';
 import { setChromiumPath } from 'store/controller/actions';
+import { IPCRenderer } from 'IPCRenderer';
 
 const StyledParticles = styled(Particles)`
   position: absolute;
@@ -44,13 +43,7 @@ const Startup = ({ history }: Props) => {
 
   useEffect(() => {
     (async () => {
-      console.log('started verufy');
-
-      const { success, executablePath } = (await ipcRenderer.invoke(
-        VERIFY_CHROME,
-      )) as ChromiumVerifiedPayload;
-
-      console.log('response: ' + success + executablePath);
+      const { success, executablePath } = await IPCRenderer.verifyChromium();
 
       setLoading(false);
 

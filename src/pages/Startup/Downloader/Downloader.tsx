@@ -1,16 +1,15 @@
-import path from 'path';
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import puppeteer from 'puppeteer';
 import InlineLogo from 'components/InlineLogo/InlineLogo';
 import { colors, fonts } from 'theme/main';
 import ProgressBar from 'components/ProgressBar/ProgressBar';
 import { RouteComponentProps } from 'react-router';
 import routes from 'constants/routes';
-import { ipcRenderer, IpcRendererEvent } from 'electron';
-import { VERIFY_CHROME, ChromiumVerifiedPayload } from 'IPCEvents';
+import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { useDispatch } from 'hooks/useDispatch';
 import { setChromiumPath } from 'store/controller/actions';
+import { IPCRenderer } from 'IPCRenderer';
+import { CHROMIUM_DOWNLOAD_PROGRESS } from '../../../IPC/IPCEvents';
 
 const Wrapper = styled.div`
   display: flex;
@@ -60,17 +59,16 @@ const Downloader = ({ history }: Props) => {
   ) => {
     setProgress(status.progress);
     if (!status.done) return;
-    ipcRenderer.removeListener('CHROMIUM_DOWNLOAD_PROGRESS', handleDownloadProgress);
+    ipc.removeListener(CHROMIUM_DOWNLOAD_PROGRESS, handleDownloadProgress);
     setDownloaded(true);
     verifyChromium();
   };
 
   const verifyChromium = async () => {
+    //* Wait to install
     await new Promise(resolve => setTimeout(resolve, 10000));
-    const { success, executablePath } = (await ipcRenderer.invoke(
-      VERIFY_CHROME,
-    )) as ChromiumVerifiedPayload;
 
+    const { success, executablePath } = await IPCRenderer.verifyChromium();
     if (success) {
       dispatch(setChromiumPath(executablePath));
       history.push(routes.login);
@@ -80,8 +78,8 @@ const Downloader = ({ history }: Props) => {
   };
 
   const fetchChromium = () => {
-    ipcRenderer.send('DOWNLOAD_CHROMIUM');
-    ipcRenderer.on('CHROMIUM_DOWNLOAD_PROGRESS', handleDownloadProgress);
+    IPCRenderer.downloadChromium();
+    ipc.on(CHROMIUM_DOWNLOAD_PROGRESS, handleDownloadProgress);
   };
 
   useEffect(fetchChromium, []);

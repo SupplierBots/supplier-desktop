@@ -10,7 +10,7 @@ import routes from 'constants/routes';
 
 import { colors } from 'theme/main';
 import Routes from 'routes/Routes';
-import { setupListeners } from 'IPCRendererHandler';
+import { IPCRenderer } from 'IPCRenderer';
 
 const GlobalWrapper = styled.div`
   color: ${colors.lightGrey};
@@ -43,7 +43,7 @@ const App = () => {
   };
 
   useEffect(disableAutofill, []);
-  useEffect(setupListeners, []);
+  useEffect(IPCRenderer.registerListeners, []);
 
   const authState = useSelector(state => state.auth);
 

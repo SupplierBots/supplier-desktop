@@ -8,7 +8,7 @@ import Button from 'components/Button/Button';
 import { useSelector } from 'hooks/useSelector';
 import { useDispatch } from 'hooks/useDispatch';
 import { createBrowser, removeBrowser } from 'store/browsers/actions';
-import { ipcRenderer } from 'electron';
+import { IPCRenderer } from 'IPCRenderer';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -48,7 +48,7 @@ const Browsers = () => {
               data={b}
               deleteAction={() => dispatch(removeBrowser(b.id))}
               canBeRemoved={browsers.length > 2 && !b.isActive}
-              openAction={() => ipcRenderer.send('SETUP_BROWSER', b)}
+              openAction={() => IPCRenderer.setupBrowser(b)}
             >
               {b.accountEmail}
             </Browser>
