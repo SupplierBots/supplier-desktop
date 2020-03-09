@@ -4,7 +4,7 @@
   "description": "Supreme & Palace Bot",
   "version": "1.0.0",
   "copyright": "SafeDrop",
-  "main": "public/electron.js",
+  "main": "build/electron.js",
   "homepage": ".",
   "private": true,
   "author": {
@@ -14,14 +14,16 @@
   },
   "scripts": {
     "start": "NODE_ENV=development yarn build-main && concurrently \"cross-env BROWSER=none craco start\" \"wait-on http://localhost:3000 && electron .\" --kill-others --raw",
-    "run-prod": "NODE_ENV=production electron .",
-    "build": "yarn build-main && yarn build-renderer",
-    "build-main": "NODE_ENV=production webpack --config main/webpack.config.js",
+    "production": "NODE_ENV=production electron .",
+    "build": "yarn build-main && yarn build-renderer && yarn compile",
+    "build-main": "rm -f public/app.jsc && NODE_ENV=production webpack --config src/main/webpack.config.js",
     "build-renderer": "cross-env GENERATE_SOURCEMAP=false NODE_ENV=production craco build",
-    "test-renderer": "craco test",
+    "compile": "node tools/compile.js",
+    "prepack": "node tools/prepack.js",
     "postinstall": "patch-package && NODE_ENV=development yarn build-main && electron-builder install-app-deps",
-    "package-all": "NODE_ENV=production yarn build && electron-builder build -mwl",
-    "package-mac": "NODE_ENV=production yarn build && electron-builder build -m"
+    "package-all": "yarn prepack && NODE_ENV=production lectron-builder build -mw",
+    "package-mac": "yarn prepack && NODE_ENV=production electron-builder build -m",
+    "package-win": "yarn prepack && NODE_ENV=production electron-builder build -w"
   },
   "husky": {
     "hooks": {
@@ -41,11 +43,16 @@
     "productName": "Electron CRA-TS-Redux-Router",
     "copyright": "Copyright © 2019 ${author}",
     "mac": {
-      "category": "public.app-category.utilities"
+      "category": "public.app-category.utilities",
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
     },
     "files": [
-      "build/**/*",
-      "node_modules/**/*"
+      "app/**/*",
+      "node_modules/**/*",
+      "package.json"
     ],
     "directories": {
       "buildResources": "resources"
@@ -56,6 +63,7 @@
     "@types/aes-js": "^3.1.0",
     "@types/crypto-js": "^3.1.43",
     "@typescript-eslint/eslint-plugin": "^2.18.0",
+    "bytenode": "^1.1.6",
     "cheerio": "^1.0.0-rc.3",
     "connected-react-router": "^6.6.1",
     "crypto-js": "^3.1.9-1",

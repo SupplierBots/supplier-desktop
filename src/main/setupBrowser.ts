@@ -1,5 +1,5 @@
 import { IpcMainEvent } from 'electron';
-import { BrowserData } from '../src/types/BrowserData';
+import { BrowserData } from '../types/BrowserData';
 import BrowsersManager from './bot/BrowsersManager';
 
 const setupBrowser = (e: IpcMainEvent, data: BrowserData) => {

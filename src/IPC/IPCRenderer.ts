@@ -7,7 +7,7 @@ import {
   VERIFY_CHROME,
   ChromiumVerifiedPayload,
   DOWNLOAD_CHROMIUM,
-} from './IPC/IPCEvents';
+} from './IPCEvents';
 
 import store from 'store/configureStore';
 import { setActive, setAccountEmail } from 'store/browsers/actions';

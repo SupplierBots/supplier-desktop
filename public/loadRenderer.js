@@ -3,8 +3,8 @@ const fs = require('fs');
 const v8 = require('v8');
 const path = require('path');
 
-const compiledPath = path.resolve(__dirname, 'app.jsc');
-const sourcePath = path.resolve(__dirname, 'app.js');
+const compiledPath = path.resolve(__dirname, 'renderer.jsc');
+const sourcePath = path.resolve(__dirname, 'renderer.js');
 
 v8.setFlagsFromString('--no-lazy');
 v8.setFlagsFromString('--no-flush-bytecode');

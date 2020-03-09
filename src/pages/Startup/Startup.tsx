@@ -12,7 +12,7 @@ import { useDispatch } from 'hooks/useDispatch';
 import { useSelector } from 'hooks/useSelector';
 import { setActive } from 'store/browsers/actions';
 import { setChromiumPath } from 'store/controller/actions';
-import { IPCRenderer } from 'IPCRenderer';
+import { IPCRenderer } from 'IPC/IPCRenderer';
 
 const StyledParticles = styled(Particles)`
   position: absolute;

@@ -10,7 +10,7 @@ import routes from 'constants/routes';
 
 import { colors } from 'theme/main';
 import Routes from 'routes/Routes';
-import { IPCRenderer } from 'IPCRenderer';
+import { IPCRenderer } from 'IPC/IPCRenderer';
 
 const GlobalWrapper = styled.div`
   color: ${colors.lightGrey};

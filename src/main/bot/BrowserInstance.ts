@@ -2,7 +2,7 @@ import path from 'path';
 import puppeteer from 'puppeteer-extra';
 import devices from 'puppeteer/DeviceDescriptors';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import { mainWindow } from '../electron';
+import { mainWindow } from '../main';
 import { app } from 'electron';
 
 const BrowserInstance = async (id: string, index = 0) => {

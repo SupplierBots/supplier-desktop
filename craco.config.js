@@ -1,12 +1,17 @@
 module.exports = {
   babel: {
-    plugins: ['react-hot-loader/babel', 'babel-plugin-styled-components'],
+    plugins: [
+      'react-hot-loader/babel',
+      'babel-plugin-styled-components',
+      '@babel/plugin-transform-async-to-generator',
+    ],
   },
   webpack: {
     configure: webpackConfig => {
       webpackConfig.target = 'electron-renderer';
       webpackConfig.optimization.splitChunks = false;
       webpackConfig.optimization.runtimeChunk = false;
+      webpackConfig.output.filename = 'renderer.js';
       webpackConfig.module.rules = [
         ...webpackConfig.module.rules,
         {

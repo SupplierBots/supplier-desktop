@@ -7,6 +7,7 @@ import { Task } from 'types/Task';
 import ProductsMonitor, { PageRegion } from './palace/ProductsMonitor';
 import { palaceTask } from './palace/palaceTask';
 import { PalaceMonitors } from 'types/PalaceMonitors';
+import { mainWindow } from '../main';
 
 class BrowsersManager {
   private static instance: BrowsersManager;
@@ -30,7 +31,7 @@ class BrowsersManager {
       }
       setupBrowser(page, data.id);
     } catch {
-      //store.dispatch(setActive(data.id, false));
+      mainWindow?.webContents.send('BROWSER_STATE_CHANGE', { id: data.id, status: false });
     }
   }
 

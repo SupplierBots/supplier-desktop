@@ -1,6 +1,7 @@
 {
   "presets": [
     "@babel/typescript",
+
     [
       "react-app",
       {
@@ -8,5 +9,6 @@
         "typescript": true
       }
     ]
-  ]
+  ],
+  "plugins": ["@babel/plugin-transform-async-to-generator"]
 }

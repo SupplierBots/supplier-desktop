@@ -1,6 +1,6 @@
 import { Page } from 'puppeteer';
 import { ipcMain as ipc } from 'electron-better-ipc';
-import { mainWindow } from '../../electron';
+import { mainWindow } from '../../main';
 import { BrowserData } from 'types/BrowserData';
 
 const setupBrowser = async (page: Page, id: string) => {
@@ -19,10 +19,15 @@ const setupBrowser = async (page: Page, id: string) => {
     if (!mainWindow) return;
     const url = page.url();
     if (!url.includes('https://myaccount.google.com/')) return;
+
+    await page.waitForXPath("//div[contains(text(),'@gmail.com')]");
+
     const accountEmailElements = await page.$x("//div[contains(text(),'@gmail.com')]");
     if (accountEmailElements.length < 1) return;
     const [accountEmailNode] = accountEmailElements;
-    let email = await page.evaluate(e => e.textContent, accountEmailNode);
+
+    const emailProperty = await accountEmailNode.getProperty('innerText');
+    let email = (await emailProperty.jsonValue()) as string;
 
     const sameEmails = await ipc.callRenderer<string, BrowserData[]>(
       mainWindow,

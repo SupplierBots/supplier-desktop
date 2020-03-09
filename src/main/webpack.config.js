@@ -1,8 +1,9 @@
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
 const WebpackMessages = require('webpack-messages');
-const ENTRY_FILE = path.resolve(__dirname, 'electron');
-const OUTPUT_PATH = path.resolve(__dirname, '..', 'public');
+const ENTRY_FILE = path.resolve(__dirname, 'main');
+const OUTPUT_PATH = path.resolve(__dirname, '..', '..', 'public');
+
 const isDev = process.env.NODE_ENV === 'development';
 
 module.exports = {
@@ -13,9 +14,9 @@ module.exports = {
     __dirname: false,
   },
   mode: isDev ? 'development' : 'production',
-  devtool: isDev ? 'eval' : 'source-map',
+  devtool: isDev ? 'eval' : '(none)',
   output: {
-    filename: 'electron.js',
+    filename: 'app.js',
     path: OUTPUT_PATH,
   },
   resolve: {

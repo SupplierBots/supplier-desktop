@@ -1,7 +1,8 @@
 import { IpcMainEvent, app } from 'electron';
 import path from 'path';
 import puppeteer from 'puppeteer-extra';
-import { mainWindow } from './electron';
+import { mainWindow } from './main';
+import { config } from '../config';
 
 const downloadChromium = (e: IpcMainEvent) => {
   const chromiumPath = path.resolve(app.getPath('userData'), '.local-chromium');
@@ -9,7 +10,7 @@ const downloadChromium = (e: IpcMainEvent) => {
 
   let prevPercentage = 0;
 
-  fetcher.download('662092', async (downloadedBytes: number, totalBytes: number) => {
+  fetcher.download(config.chromiumVersion, async (downloadedBytes: number, totalBytes: number) => {
     const status = {
       progress: Math.round((downloadedBytes / totalBytes) * 100),
       done: downloadedBytes === totalBytes,

@@ -8,7 +8,7 @@ import Button from 'components/Button/Button';
 import { useSelector } from 'hooks/useSelector';
 import { useDispatch } from 'hooks/useDispatch';
 import { createBrowser, removeBrowser } from 'store/browsers/actions';
-import { IPCRenderer } from 'IPCRenderer';
+import { IPCRenderer } from 'IPC/IPCRenderer';
 
 const Wrapper = styled.div`
   height: 100%;

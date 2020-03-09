@@ -1,4 +1,4 @@
-import ProductsMonitor from '../../main/bot/palace/ProductsMonitor';
+import ProductsMonitor from '../main/bot/palace/ProductsMonitor';
 
 export interface PalaceMonitors {
   eu: ProductsMonitor;
