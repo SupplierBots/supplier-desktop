@@ -2,6 +2,7 @@ import firebase from 'firebase/app';
 import ReduxSagaFirebase from 'redux-saga-firebase';
 import 'firebase/auth';
 import 'firebase/firestore';
+
 const config = {
   apiKey: 'AIzaSyAYeMxaOOKAmin-V6CQr1M49If6AMFAcGE',
   authDomain: 'safedrop-83b20.firebaseapp.com',

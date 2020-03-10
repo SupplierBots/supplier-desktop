@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { ReactComponent as MinimizeIcon } from 'assets/Minimize.svg';
 import { ReactComponent as CloseIcon } from 'assets/Close.svg';
 import { colors } from 'theme/main';
+import { IPCRenderer } from 'IPC/IPCRenderer';
 
 const Wrapper = styled.div`
   display: flex;
@@ -28,21 +29,31 @@ const AppControl = styled.div`
   :hover {
     transform: scale(1.1);
     filter: grayscale(75%);
+    cursor: pointer;
   }
 `;
 
 const AppControls = () => {
-  const minimizeApp = () => {};
-  const closeApp = () => {};
+  const minimizeApp = () => {
+    IPCRenderer.minimize();
+  };
+
+  const closeApp = () => {
+    IPCRenderer.close();
+  };
 
   return (
     <Wrapper>
-      <AppControl onClick={minimizeApp}>
-        <MinimizeIcon />
-      </AppControl>
-      <AppControl onClick={closeApp}>
-        <CloseIcon />
-      </AppControl>
+      {process.platform === 'win32' && (
+        <>
+          <AppControl onClick={minimizeApp}>
+            <MinimizeIcon />
+          </AppControl>
+          <AppControl onClick={closeApp}>
+            <CloseIcon />
+          </AppControl>
+        </>
+      )}
     </Wrapper>
   );
 };

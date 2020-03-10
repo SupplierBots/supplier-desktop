@@ -6,9 +6,9 @@ import electron, {
   ipcMain,
 } from 'electron';
 import path from 'path';
-import isDev from 'electron-is-dev';
-
 import { setupListeners } from './IPCMainHandler';
+
+const isDev = process.env.NODE_ENV === 'development';
 
 let mainWindow: electron.BrowserWindow | null;
 
@@ -33,8 +33,12 @@ const createWindow = () => {
   let launchOptions: BrowserWindowConstructorOptions = {
     width: 1200,
     height: 750,
+    frame: false,
     show: false,
     resizable: false,
+    maximizable: false,
+    fullscreenable: false,
+    titleBarStyle: 'hiddenInset',
     webPreferences: {
       nodeIntegration: true,
       backgroundThrottling: false,
@@ -43,11 +47,9 @@ const createWindow = () => {
 
   mainWindow = new BrowserWindow(launchOptions);
 
-  mainWindow.loadURL(`file://${path.join(__dirname, '../build/index.html')}`);
-
-  // mainWindow.loadURL(
-  //   isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`,
-  // );
+  mainWindow.loadURL(
+    isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`,
+  );
   mainWindow.webContents.once('did-finish-load', () => {
     if (mainWindow) {
       mainWindow.show();

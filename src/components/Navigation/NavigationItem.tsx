@@ -2,6 +2,7 @@ import React, { ReactNode, MouseEvent } from 'react';
 import styled, { css } from 'styled-components';
 import { NavLink } from 'react-router-dom';
 import { colors, fonts } from 'theme/main';
+import { shell } from 'electron';
 
 //Unfortunately kind of tricky way to style it:
 //svgs with gradients, react-router and styled-components don't like each other
@@ -70,6 +71,7 @@ const NavigationItem = ({ link, children, external, disabled }: Props) => {
   const additionalProps = external && {
     onClick: (e: MouseEvent) => {
       e.preventDefault();
+      shell.openExternal('https://safedropbot.com/');
     },
   };
 

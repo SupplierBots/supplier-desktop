@@ -16,7 +16,7 @@
     "start": "NODE_ENV=development yarn build-main && concurrently \"cross-env BROWSER=none craco start\" \"wait-on http://localhost:3000 && electron .\" --kill-others --raw",
     "production": "NODE_ENV=production electron .",
     "build": "yarn build-main && yarn build-renderer && yarn compile",
-    "build-main": "rm -f public/app.jsc && NODE_ENV=production webpack --config src/main/webpack.config.js",
+    "build-main": "NODE_ENV=production webpack --config src/main/webpack.config.js && cp public/electron.js build/electron.js",
     "build-renderer": "cross-env GENERATE_SOURCEMAP=false NODE_ENV=production craco build",
     "compile": "node tools/compile.js",
     "prepack": "node tools/prepack.js",

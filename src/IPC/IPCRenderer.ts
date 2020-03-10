@@ -7,6 +7,8 @@ import {
   VERIFY_CHROME,
   ChromiumVerifiedPayload,
   DOWNLOAD_CHROMIUM,
+  WINDOW_MINIMIZE,
+  WINDOW_CLOSE,
 } from './IPCEvents';
 
 import store from 'store/configureStore';
@@ -42,5 +44,13 @@ export abstract class IPCRenderer {
 
   public static downloadChromium = () => {
     ipc.send(DOWNLOAD_CHROMIUM);
+  };
+
+  public static minimize = () => {
+    ipc.send(WINDOW_MINIMIZE);
+  };
+
+  public static close = () => {
+    ipc.send(WINDOW_CLOSE);
   };
 }

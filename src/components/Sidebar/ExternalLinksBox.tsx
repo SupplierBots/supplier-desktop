@@ -8,6 +8,7 @@ import { colors } from 'theme/main';
 import { useDispatch } from 'hooks/useDispatch';
 import { initiateUserLogout } from 'store/auth/actions';
 import { useSelector } from 'hooks/useSelector';
+import { shell } from 'electron';
 
 const Wrapper = styled.div`
   display: flex;
@@ -42,11 +43,11 @@ const ExternalLinksBox = () => {
         <LogoutIcon />
       </ExternalLink>
 
-      <ExternalLink>
+      <ExternalLink onClick={() => shell.openExternal('https://safedropbot.com/')}>
         <DiscordIcon />
       </ExternalLink>
 
-      <ExternalLink>
+      <ExternalLink onClick={() => shell.openExternal('https://safedropbot.com/')}>
         <TwitterIcon />
       </ExternalLink>
     </Wrapper>
