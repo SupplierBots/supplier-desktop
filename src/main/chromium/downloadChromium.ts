@@ -1,8 +1,9 @@
 import { IpcMainEvent, app } from 'electron';
 import path from 'path';
 import puppeteer from 'puppeteer-extra';
-import { mainWindow } from './main';
-import { config } from '../config';
+import { mainWindow } from '../main';
+import { config } from '../../config';
+import { CHROMIUM_DOWNLOAD_PROGRESS } from '../IPC/IPCEvents';
 
 const downloadChromium = (e: IpcMainEvent) => {
   const chromiumPath = path.resolve(app.getPath('userData'), '.local-chromium');
@@ -18,7 +19,7 @@ const downloadChromium = (e: IpcMainEvent) => {
 
     if (status.progress > prevPercentage || status.done) {
       prevPercentage = status.progress;
-      mainWindow?.webContents.send('CHROMIUM_DOWNLOAD_PROGRESS', status);
+      mainWindow?.webContents.send(CHROMIUM_DOWNLOAD_PROGRESS, status);
     }
   });
 };

@@ -8,8 +8,8 @@ import routes from 'constants/routes';
 import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { useDispatch } from 'hooks/useDispatch';
 import { setChromiumPath } from 'store/controller/actions';
-import { IPCRenderer } from 'IPC/IPCRenderer';
-import { CHROMIUM_DOWNLOAD_PROGRESS } from '../../../IPC/IPCEvents';
+import { IPCRenderer } from 'main/IPC/IPCRenderer';
+import { CHROMIUM_DOWNLOAD_PROGRESS } from '../../../main/IPC/IPCEvents';
 
 const Wrapper = styled.div`
   display: flex;

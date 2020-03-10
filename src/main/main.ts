@@ -1,16 +1,11 @@
-import electron, {
-  app,
-  BrowserWindow,
-  Menu,
-  BrowserWindowConstructorOptions,
-  ipcMain,
-} from 'electron';
+import electron, { app, BrowserWindow, Menu, BrowserWindowConstructorOptions } from 'electron';
+
 import path from 'path';
-import { setupListeners } from './IPCMainHandler';
+import { IPCMain } from './IPC/IPCMain';
 
 const isDev = process.env.NODE_ENV === 'development';
 
-let mainWindow: electron.BrowserWindow | null;
+let mainWindow: electron.BrowserWindow | null = null;
 
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
@@ -30,7 +25,7 @@ const createWindow = () => {
     installExtensions();
   }
 
-  let launchOptions: BrowserWindowConstructorOptions = {
+  const launchOptions: BrowserWindowConstructorOptions = {
     width: 1200,
     height: 750,
     frame: false,
@@ -47,36 +42,33 @@ const createWindow = () => {
 
   mainWindow = new BrowserWindow(launchOptions);
 
-  mainWindow.loadURL(
-    isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`,
-  );
+  const url = isDev
+    ? 'http://localhost:3000'
+    : `file://${path.join(__dirname, '../build/index.html')}`;
+
+  mainWindow.loadURL(url);
+
   mainWindow.webContents.once('did-finish-load', () => {
-    if (mainWindow) {
-      mainWindow.show();
+    if (!mainWindow) return;
+    mainWindow.show();
 
-      if (isDev) {
-        mainWindow.webContents.openDevTools();
+    if (!isDev) return;
+    mainWindow.webContents.openDevTools();
 
-        // * Create context menu to inspect element on right click
-        mainWindow.webContents.on('context-menu', (e, props) => {
-          Menu.buildFromTemplate([
-            {
-              label: 'Inspect element',
-              click: () => {
-                (mainWindow as any).inspectElement(props.x, props.y);
-              },
-            },
-          ]).popup(mainWindow as any);
-        });
-      }
-    }
+    // * Create context menu to inspect element on right click
+    mainWindow.webContents.on('context-menu', (e, props) => {
+      Menu.buildFromTemplate([
+        {
+          label: 'Inspect element',
+          click: () => {
+            (mainWindow as any).inspectElement(props.x, props.y);
+          },
+        },
+      ]).popup(mainWindow as any);
+    });
   });
+
   mainWindow.on('closed', () => (mainWindow = null));
-
-  // * IPCEventMain type to be fixed in 6.0 | Read more: https://github.com/electron/typescript-definitions/issues/27
-  ipcMain.on('asynchronous-message', (event: any, message: string) => {
-    event.reply('asynchronous-reply', `Received ${message}!`);
-  });
 };
 
 app.on('ready', createWindow);
@@ -93,6 +85,6 @@ app.on('activate', () => {
   }
 });
 
-export { mainWindow };
+IPCMain.registerListeners();
 
-setupListeners();
+export { mainWindow };

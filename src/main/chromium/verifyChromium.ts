@@ -2,7 +2,7 @@ import { app, IpcMainInvokeEvent } from 'electron';
 import path from 'path';
 import fs from 'fs-extra';
 import puppeteer from 'puppeteer-extra';
-import { config } from '../config';
+import { config } from '../../config';
 
 export const verifyChromium = async (e: IpcMainInvokeEvent) => {
   const appData = app.getPath('userData');
@@ -20,7 +20,7 @@ export const verifyChromium = async (e: IpcMainInvokeEvent) => {
 
     const browser = await puppeteer.launch({
       executablePath,
-      headless: false,
+      headless: true,
     });
 
     const page = await browser.newPage();
