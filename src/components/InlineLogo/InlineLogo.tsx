@@ -34,7 +34,7 @@ const InlineLogo = () => (
   <Wrapper>
     <LogoSVG />
     <LogoText>
-      Safe<PrimaryLogoText>Drop</PrimaryLogoText>
+      SUPPLIER<PrimaryLogoText></PrimaryLogoText>
     </LogoText>
   </Wrapper>
 );

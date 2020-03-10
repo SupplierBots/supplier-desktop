@@ -1,22 +1,22 @@
 {
-  "name": "safedropbot-dev",
-  "productName": "SafeDrop-Dev",
+  "name": "supplier",
+  "productName": "Supplier",
   "description": "Supreme & Palace Bot",
   "version": "1.0.0",
-  "copyright": "SafeDrop",
+  "copyright": "Supplier",
   "main": "build/electron.js",
   "homepage": ".",
   "private": true,
   "author": {
-    "name": "Your Name",
-    "email": "your.email@domain.com",
-    "url": "https://your-website.com"
+    "name": "Supplier",
+    "email": "supplierbotcontact@gmail.com",
+    "url": "https://safedropbot.com"
   },
   "scripts": {
     "start": "NODE_ENV=development yarn build-main && concurrently \"cross-env BROWSER=none craco start\" \"wait-on http://localhost:3000 && electron .\" --kill-others --raw",
     "production": "NODE_ENV=production electron .",
     "build": "yarn build-main && yarn build-renderer && yarn compile",
-    "build-main": "NODE_ENV=production webpack --config src/main/webpack.config.js && cp public/app.js build/app.js && rm -f build/app.jsc",
+    "build-main": "webpack --config src/main/webpack.config.js && cp public/app.js build/app.js && rm -f build/app.jsc",
     "build-renderer": "cross-env GENERATE_SOURCEMAP=false NODE_ENV=production craco build",
     "compile": "node tools/compile.js",
     "prepack": "node tools/prepack.js",
@@ -39,8 +39,8 @@
     ]
   },
   "build": {
-    "appId": "com.my-website.electron-cra-ts-redux-router",
-    "productName": "Electron CRA-TS-Redux-Router",
+    "appId": "com.supplier.bot",
+    "productName": "Supplier",
     "copyright": "Copyright © 2019 ${author}",
     "mac": {
       "category": "public.app-category.utilities",
