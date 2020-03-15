@@ -1,9 +1,9 @@
 import { Browser } from 'puppeteer';
-import { Task } from 'types/Task';
+import { Task } from 'main/types/Task';
 import * as R from 'ramda';
-import { Product } from 'types/Product';
+import { Product } from 'main/types/Product';
 import { postRequest } from '../requests/puppeteerExtensions';
-import { PalaceMonitors } from 'types/PalaceMonitors';
+import { PalaceMonitors } from 'main/types/PalaceMonitors';
 
 interface CartPayload {
   updates: {

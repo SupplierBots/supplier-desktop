@@ -1,4 +1,4 @@
-import { Keywords } from 'types/Keywords';
+import { Keywords } from 'main/types/Keywords';
 import * as R from 'ramda';
 
 const isMatch = (name: string, keywords: Keywords) => {

@@ -1,13 +1,12 @@
 import BrowserInstance from './BrowserInstance';
 import { setupBrowser } from './setup/BrowserSetup';
-import { BrowserData } from 'types/BrowserData';
+import { BrowserData } from '../types/BrowserData';
 import { Browser } from 'puppeteer';
 import * as R from 'ramda';
-import { Task } from 'types/Task';
-import ProductsMonitor, { PageRegion } from './palace/ProductsMonitor';
-import { palaceTask } from './palace/palaceTask';
-import { PalaceMonitors } from 'types/PalaceMonitors';
-import { mainWindow } from '../main';
+import { Task } from '../types/Task';
+import { startSupremeTask } from './supreme/startSupremeTask';
+import { IPCMain } from '../IPC/IPCMain';
+import { ProductsMonitor } from './supreme/ProductsMonitor';
 
 class BrowsersManager {
   private static instance: BrowsersManager;
@@ -31,27 +30,22 @@ class BrowsersManager {
       }
       setupBrowser(page, data.id);
     } catch {
-      mainWindow?.webContents.send('BROWSER_STATE_CHANGE', { id: data.id, status: false });
+      IPCMain.browserStateChange(data.id, false);
     }
   }
 
   public async startTasks(tasks: Task[]) {
-    const monitors: PalaceMonitors = {
-      eu: new ProductsMonitor(PageRegion.Eu),
-      us: new ProductsMonitor(PageRegion.Us),
-    };
-
+    ProductsMonitor.init(2000);
     tasks.forEach(async (task, index) => {
       if (!task.browser) return;
       const browser = await BrowserInstance(task.browser?.value, index);
       this.browsers.push(browser);
-      if (task.site?.value === 'palace') {
-        palaceTask(browser, task, monitors);
-      }
+      startSupremeTask(browser, task);
     });
   }
 
   public async stopAll() {
+    ProductsMonitor.unsubscribeAll();
     const cleanUps: Promise<void>[] = [];
     this.browsers.forEach(b => {
       if (!b.isConnected()) return;

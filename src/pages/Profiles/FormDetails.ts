@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
-import { Option } from 'types/Option';
-import { Profile } from 'types/Profile';
+import { Option } from 'main/types/Option';
+import { Profile } from 'main/types/Profile';
 
 const coutriesWithRegions = ['USA', 'Canada'];
 

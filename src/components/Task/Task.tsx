@@ -5,13 +5,14 @@ import { ReactComponent as SupremeIcon } from 'assets/SupremeLogo.svg';
 import { ReactComponent as PalaceIcon } from 'assets/PalaceLogo.svg';
 import { ReactComponent as EditIcon } from 'assets/Edit.svg';
 import { ReactComponent as RemoveIcon } from 'assets/Remove.svg';
-import { Task as TaskType } from 'types/Task';
+import { Task as TaskType } from 'main/types/Task';
 import { useDispatch } from 'hooks/useDispatch';
 import { push } from 'connected-react-router';
 import routes from 'constants/routes';
 import { fadeIn } from 'theme/animations';
 import { removeUserDataItem } from 'store/userData/actions';
 import { useSelector } from 'hooks/useSelector';
+import { TaskStatusType } from 'main/types/TaskStatus';
 
 const Wrapper = styled.div`
   display: grid;
@@ -81,6 +82,36 @@ const ActionsContainer = styled.div`
   margin-top: 0.3rem;
 `;
 
+const Status = styled(Text)<{ type: TaskStatusType }>`
+  ${({ type }) =>
+    type === TaskStatusType.Inactive &&
+    css`
+      color: ${colors.darkGrey};
+    `};
+
+  ${({ type }) =>
+    type === TaskStatusType.Action &&
+    css`
+      color: ${colors.lightGrey};
+    `};
+
+  ${({ type }) =>
+    type === TaskStatusType.Success &&
+    css`
+      color: transparent;
+      background: ${colors.mainGradient45};
+      -webkit-background-clip: text;
+    `};
+
+  ${({ type }) =>
+    type === TaskStatusType.Error &&
+    css`
+      color: transparent;
+      background: ${colors.redDanger};
+      -webkit-background-clip: text;
+    `};
+`;
+
 interface Props {
   details: TaskType;
 }
@@ -113,7 +144,7 @@ const Task = ({ details }: Props) => {
       <Text>{details.name}</Text>
       <Text>{details.profile && details.profile.label}</Text>
       <Text>{details.proxy && details.proxy.label}</Text>
-      <Text>Waiting For Product</Text>
+      <Status type={details.status.type}>{details.status.message}</Status>
       <ActionsContainer>
         <Action disabled={isBrowserActive()}>
           <EditIcon onClick={editTask} />

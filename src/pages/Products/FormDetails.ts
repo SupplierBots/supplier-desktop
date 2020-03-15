@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
-import { Product } from 'types/Product';
-import { Option } from 'types/Option';
+import { Product } from 'main/types/Product';
+import { Option } from 'main/types/Option';
 
 export const productValidationSchema = Yup.object().shape({
   id: Yup.string(),

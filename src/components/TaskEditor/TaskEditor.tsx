@@ -14,17 +14,18 @@ import Button from 'components/Button/Button';
 import { slideInFromRight } from 'theme/animations';
 import ProductSelector from 'components/ProductSelector/ProductSelector';
 import { UserDataItemType } from 'store/userData/types';
-import { Option } from 'types/Option';
+import { Option } from 'main/types/Option';
 import { useSelector } from 'hooks/useSelector';
 import { taskSiteOptions, initialTaskValues, taskValidationSchema } from './FormDetails';
-import { Task } from 'types/Task';
+import { Task } from 'main/types/Task';
 import { RouteComponentProps } from 'react-router';
 import routes from 'constants/routes';
 import { useDispatch } from 'hooks/useDispatch';
 import uuid from 'uuid/v4';
 import { addUserDataItem, updateUserDataItem } from 'store/userData/actions';
 import { push } from 'connected-react-router';
-import { SelectableUserData } from 'types/SelectableUserData';
+import { SelectableUserData } from 'main/types/SelectableUserData';
+import { TaskStatusType } from 'main/types/TaskStatus';
 
 const StyledHeading = styled(Heading)`
   color: ${colors.lightPurple};
@@ -152,6 +153,7 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
     if (isNew) {
       const newTask = {
         ...task,
+        status: { message: 'Inactive', type: TaskStatusType.Inactive },
         id: uuid(),
       };
       dispatch(addUserDataItem('tasks', newTask));

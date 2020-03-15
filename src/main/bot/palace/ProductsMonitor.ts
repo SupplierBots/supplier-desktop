@@ -3,10 +3,10 @@ import * as R from 'ramda';
 import autoRetryRequest from '../requests/autoRetryRequest';
 import { createFetcher } from '../requests/createFetcher';
 import ProductFetcher from './ProductFetcher';
-import { Keywords } from 'types/Keywords';
+import { Keywords } from 'main/types/Keywords';
 import { isMatch } from '../keywordsManager';
-import { Product } from 'types/Product';
-import { Collection } from 'types/Palace';
+import { Product } from 'main/types/Product';
+import { Collection } from 'main/types/Palace';
 
 export enum PageRegion {
   Us,

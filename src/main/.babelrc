@@ -10,5 +10,11 @@
       }
     ]
   ],
-  "plugins": ["@babel/plugin-transform-async-to-generator"]
+  "plugins": ["@babel/plugin-transform-async-to-generator"],
+  "overrides": [
+    {
+      "include": "./bot/supreme/pageInject.ts",
+      "plugins": []
+    }
+  ]
 }

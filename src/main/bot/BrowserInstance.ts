@@ -2,18 +2,21 @@ import path from 'path';
 import puppeteer from 'puppeteer-extra';
 import devices from 'puppeteer/DeviceDescriptors';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import { mainWindow } from '../main';
+
 import { app } from 'electron';
+import { Target } from 'puppeteer';
+import { IPCMain } from '../IPC/IPCMain';
+import { config } from '../../config';
 
 const BrowserInstance = async (id: string, index = 0) => {
-  mainWindow?.webContents.send('BROWSER_STATE_CHANGE', { id, status: true });
+  IPCMain.browserStateChange(id, true);
 
   const appData = app.getPath('userData');
   const fetcher = puppeteer.createBrowserFetcher({
     path: path.resolve(appData, '.local-chromium'),
   });
 
-  const executablePath = fetcher.revisionInfo('662092').executablePath;
+  const executablePath = fetcher.revisionInfo(config.chromiumVersion).executablePath;
   const userDataDirectory = path.resolve(appData, id);
   const { width, height, deviceScaleFactor } = devices['Pixel 2'].viewport;
 
@@ -36,6 +39,13 @@ const BrowserInstance = async (id: string, index = 0) => {
 
   const page = await browser.newPage();
   const client = await page.target().createCDPSession();
+
+  browser.on('targetcreated', (target: Target) => {
+    console.log(target.url());
+    if (target.url().includes('devtools')) {
+      //browser.close();
+    }
+  });
 
   client.send('Network.setUserAgentOverride', {
     userAgent:
@@ -66,7 +76,7 @@ const BrowserInstance = async (id: string, index = 0) => {
   });
 
   browser.on('disconnected', async () => {
-    mainWindow?.webContents.send('BROWSER_STATE_CHANGE', { id, status: false });
+    IPCMain.browserStateChange(id, false);
   });
 
   return browser;

@@ -13,6 +13,9 @@ const CHROMIUM_DOWNLOAD_PROGRESS = 'CHROMIUM_DOWNLOAD_PROGRESS';
 const WINDOW_MINIMIZE = 'WINDOW_MINIMIZE';
 const WINDOW_CLOSE = 'WINDOW_CLOSE';
 
+const GET_PROFILE = 'GET_PROFILE';
+const UPDATE_TASK_STATUS = 'UPDATE_TASK_STATUS';
+
 export interface ChromiumVerifiedPayload {
   success: boolean;
   executablePath: string;
@@ -35,4 +38,6 @@ export {
   CHROMIUM_DOWNLOAD_PROGRESS,
   WINDOW_MINIMIZE,
   WINDOW_CLOSE,
+  GET_PROFILE,
+  UPDATE_TASK_STATUS,
 };

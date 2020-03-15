@@ -1,6 +1,6 @@
 import autoRetryRequest from '../requests/autoRetryRequest';
 import { createFetcher } from '../requests/createFetcher';
-import { ProductDetails } from 'types/Palace';
+import { ProductDetails } from 'main/types/Palace';
 
 class ProductFetcher {
   constructor(private readonly url: string) {}

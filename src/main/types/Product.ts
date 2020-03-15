@@ -10,4 +10,5 @@ export interface Product extends SelectableUserData {
   anyColor: boolean;
   anySizeOption: Option | null;
   site: Option | null;
+  [index: string]: any;
 }

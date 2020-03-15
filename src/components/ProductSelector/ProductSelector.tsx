@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import Item from 'components/Item/Item';
 import { colors, fonts } from 'theme/main';
 import { useSelector } from 'hooks/useSelector';
-import { Product } from 'types/Product';
+import { Product } from 'main/types/Product';
 import { fadeIn } from 'theme/animations';
 
 const StickyBottomBorder = styled.div`

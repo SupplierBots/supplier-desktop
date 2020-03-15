@@ -8,7 +8,7 @@ import { colors } from 'theme/main';
 import Item from './SelectableItem';
 import { UserDataItemType } from 'store/userData/types';
 import { useSelector } from 'hooks/useSelector';
-import { UserData } from 'types/UserData';
+import { UserData } from 'main/types/UserData';
 
 const CloseButton = styled.div`
   position: absolute;

@@ -1,4 +1,4 @@
-import { BrowserData } from 'types/BrowserData';
+import { BrowserData } from 'main/types/BrowserData';
 import { Action } from 'redux';
 
 export type BrowsersState = BrowserData[];

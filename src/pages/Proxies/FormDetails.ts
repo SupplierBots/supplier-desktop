@@ -1,6 +1,6 @@
-import { Option } from 'types/Option';
+import { Option } from 'main/types/Option';
 import * as Yup from 'yup';
-import { Proxy } from 'types/Proxy';
+import { Proxy } from 'main/types/Proxy';
 
 export const proxyValidationSchema = Yup.object().shape({
   ipPort: Yup.string()

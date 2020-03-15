@@ -6,7 +6,7 @@ import {
   REMOVE_USER_DATA_ITEM,
   REMOVE_ALL_ITEMS,
 } from './types';
-import { UserData } from 'types/UserData';
+import { UserData } from 'main/types/UserData';
 
 const initialState: UserDataState = {
   profiles: [],

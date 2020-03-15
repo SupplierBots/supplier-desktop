@@ -1,7 +1,5 @@
 import { Page } from 'puppeteer';
-import { ipcMain as ipc } from 'electron-better-ipc';
-import { mainWindow } from '../../main';
-import { BrowserData } from 'types/BrowserData';
+import { IPCMain } from '../../IPC/IPCMain';
 
 const setupBrowser = async (page: Page, id: string) => {
   const browser = page.browser();
@@ -16,7 +14,6 @@ const setupBrowser = async (page: Page, id: string) => {
   );
 
   page.on('load', async () => {
-    if (!mainWindow) return;
     const url = page.url();
     if (!url.includes('https://myaccount.google.com/')) return;
 
@@ -29,16 +26,12 @@ const setupBrowser = async (page: Page, id: string) => {
     const emailProperty = await accountEmailNode.getProperty('innerText');
     let email = (await emailProperty.jsonValue()) as string;
 
-    const sameEmails = await ipc.callRenderer<string, BrowserData[]>(
-      mainWindow,
-      'GET_SAME_EMAILS',
-      email,
-    );
+    const sameEmails = await IPCMain.getSameEmails(email);
 
-    if (sameEmails.length > 0) {
+    if (sameEmails && sameEmails.length > 0) {
       email += ` (${sameEmails.length + 1})`;
     }
-    ipc.sendToRenderers('SET_BROWSER_EMAIL', { id, email });
+    IPCMain.setBrowserEmail(id, email);
     browser.close();
   });
 };

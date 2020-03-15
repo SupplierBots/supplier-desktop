@@ -19,7 +19,7 @@ import { addUserDataItem, updateUserDataItem } from 'store/userData/actions';
 import routes from 'constants/routes';
 import { proxyValidationSchema, initialProxyValues, siteOptions } from './FormDetails';
 import Slider from 'components/Slider/Slider';
-import { Proxy } from 'types/Proxy';
+import { Proxy } from 'main/types/Proxy';
 import Item from 'components/ChangeItemModal/SelectableItem';
 import { colors, fonts } from 'theme/main';
 import { setLastVisited } from 'store/lastVisited/actions';

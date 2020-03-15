@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import { colors, fonts } from 'theme/main';
 import Button from 'components/Button/Button';
 import { ReactComponent as RemoveIcon } from 'assets/Remove.svg';
-import { BrowserData } from 'types/BrowserData';
+import { BrowserData } from 'main/types/BrowserData';
 
 interface Props {
   children: ReactNode;

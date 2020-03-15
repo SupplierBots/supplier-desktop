@@ -14,7 +14,8 @@
     "noEmit": true,
     "jsx": "react",
     "baseUrl": "src",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "noImplicitAny": true
   },
   "include": ["src", "types", "src/main"]
 }

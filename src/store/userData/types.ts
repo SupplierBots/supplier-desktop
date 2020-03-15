@@ -1,8 +1,8 @@
 import { Action } from 'redux';
-import { Product } from 'types/Product';
-import { Profile } from 'types/Profile';
-import { Proxy } from 'types/Proxy';
-import { Task } from 'types/Task';
+import { Product } from 'main/types/Product';
+import { Profile } from 'main/types/Profile';
+import { Proxy } from 'main/types/Proxy';
+import { Task } from 'main/types/Task';
 
 export type UserDataItemType = 'products' | 'profiles' | 'proxies' | 'tasks';
 export type UserDataItem = Product | Profile | Proxy | Task;

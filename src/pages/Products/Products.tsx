@@ -20,7 +20,7 @@ import Select from 'components/Select/Select';
 import Input from 'components/Input/Input';
 
 import { addUserDataItem, updateUserDataItem } from 'store/userData/actions';
-import { Product } from 'types/Product';
+import { Product } from 'main/types/Product';
 import routes from 'constants/routes';
 import {
   initialProductsValues,

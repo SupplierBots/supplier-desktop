@@ -19,7 +19,7 @@ import Input from 'components/Input/Input';
 
 import { addUserDataItem, updateUserDataItem } from 'store/userData/actions';
 import { slideInFromRight } from 'theme/animations';
-import { Profile } from 'types/Profile';
+import { Profile } from 'main/types/Profile';
 import routes from 'constants/routes';
 import {
   profileValidationSchema,
