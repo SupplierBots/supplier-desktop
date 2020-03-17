@@ -14,9 +14,9 @@ import { Proxy } from 'main/types/Proxy';
 import Item from 'components/Item/Item';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from 'store/root';
-import { addProduct, deleteProduct } from 'store/products/productsSlice';
-import { addProfile, deleteProfile } from 'store/profiles/profilesSlice';
-import { addProxy, deleteProxy } from 'store/proxies/proxiesSlice';
+import { addProduct, removeProduct } from 'store/products/productsSlice';
+import { addProfile, removeProfile } from 'store/profiles/profilesSlice';
+import { addProxy, removeProxy } from 'store/proxies/proxiesSlice';
 import {
   setLastVisitedProduct,
   setLastVisitedProfile,
@@ -86,13 +86,13 @@ const SelectableItem = (props: Props) => {
     if (itemToDuplicate) {
       const newItem = { ...itemToDuplicate, id: uuid() };
       if (props.type === 'products') {
-        dispatch(addProduct({ product: newItem as Product }));
+        dispatch(addProduct({ item: newItem as Product }));
       }
       if (props.type === 'profiles') {
-        dispatch(addProfile({ profile: newItem as Profile }));
+        dispatch(addProfile({ item: newItem as Profile }));
       }
       if (props.type === 'proxies') {
-        dispatch(addProxy({ proxy: newItem as Proxy }));
+        dispatch(addProxy({ item: newItem as Proxy }));
       }
     }
   };
@@ -101,24 +101,24 @@ const SelectableItem = (props: Props) => {
     event.stopPropagation();
 
     if (props.type === 'products') {
-      dispatch(deleteProduct({ id: props.id }));
+      dispatch(removeProduct({ id: props.id }));
     }
     if (props.type === 'profiles') {
-      dispatch(deleteProfile({ id: props.id }));
+      dispatch(removeProfile({ id: props.id }));
     }
     if (props.type === 'proxies') {
-      dispatch(deleteProxy({ id: props.id }));
+      dispatch(removeProxy({ id: props.id }));
     }
 
     if (props.active) {
       if (props.type === 'products') {
-        dispatch(setLastVisitedProduct({ id: props.id }));
+        dispatch(setLastVisitedProduct({ id: '' }));
       }
       if (props.type === 'profiles') {
-        dispatch(setLastVisitedProfile({ id: props.id }));
+        dispatch(setLastVisitedProfile({ id: '' }));
       }
       if (props.type === 'proxies') {
-        dispatch(setLastVisitedProxy({ id: props.id }));
+        dispatch(setLastVisitedProxy({ id: '' }));
       }
       dispatch(push(routes[props.type]));
     }

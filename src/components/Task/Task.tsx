@@ -12,7 +12,7 @@ import { fadeIn } from 'theme/animations';
 import { TaskStatusType } from 'main/types/TaskStatus';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from 'store/root';
-import { deleteTask } from 'store/tasks/tasksSlice';
+import { removeTask } from 'store/tasks/tasksSlice';
 
 const Wrapper = styled.div`
   display: grid;
@@ -126,9 +126,9 @@ const Task = ({ details }: Props) => {
     return false;
   };
 
-  const removeTask = () => {
+  const deleteTask = () => {
     if (isBrowserActive()) return;
-    dispatch(deleteTask({ id: details.id }));
+    dispatch(removeTask({ id: details.id }));
   };
 
   const editTask = () => {
@@ -150,7 +150,7 @@ const Task = ({ details }: Props) => {
           <EditIcon onClick={editTask} />
         </Action>
         <Action disabled={isBrowserActive()}>
-          <StyledRemoveIcon onClick={removeTask} />
+          <StyledRemoveIcon onClick={deleteTask} />
         </Action>
       </ActionsContainer>
     </Wrapper>

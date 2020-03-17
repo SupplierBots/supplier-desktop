@@ -1,30 +1,14 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { SliceCaseReducers } from '@reduxjs/toolkit';
 import { Profile } from 'main/types/Profile';
+import { createUserDataSlice } from 'store/ createUserDataSlice';
 
-export const profilesSlice = createSlice({
+export const profilesSlice = createUserDataSlice<Profile, SliceCaseReducers<Profile[]>>({
   name: 'profiles',
-  initialState: [] as Profile[],
-  reducers: {
-    addProfile: (state, { payload }: PayloadAction<{ profile: Profile }>) => {
-      state.push(payload.profile);
-    },
-    updateProfile: (state, { payload }: PayloadAction<{ profile: Profile }>) => {
-      return state.map(p => {
-        return p.id === payload.profile.id ? payload.profile : p;
-      });
-    },
-    deleteProfile: (state, { payload }: PayloadAction<{ id: string }>) => {
-      return state.filter(p => p.id !== payload.id);
-    },
-    deleteAllProfiles: () => {
-      return [];
-    },
-  },
 });
 
 export const {
-  addProfile,
-  updateProfile,
-  deleteProfile,
-  deleteAllProfiles,
+  add: addProfile,
+  update: updateProfile,
+  remove: removeProfile,
+  removeAll: removeAllProfiles,
 } = profilesSlice.actions;

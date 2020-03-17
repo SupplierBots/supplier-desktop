@@ -1,4 +1,3 @@
-import { AuthActionTypes } from './auth/types';
 import routes from 'constants/routes';
 import { all, fork } from 'redux-saga/effects';
 import { connectRouter } from 'connected-react-router';

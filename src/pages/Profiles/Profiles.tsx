@@ -81,11 +81,11 @@ const Profiles = ({ match, history }: RouteComponentProps<{ id: string }>) => {
         ...profile,
         id: uuid(),
       };
-      dispatch(addProfile({ profile: newProfile }));
+      dispatch(addProfile({ item: newProfile }));
       setIsNew(false);
       dispatch(push(routes.profiles + '/' + newProfile.id));
     } else {
-      dispatch(updateProfile({ profile }));
+      dispatch(updateProfile({ item: profile }));
     }
     actions.setSubmitting(false);
   };

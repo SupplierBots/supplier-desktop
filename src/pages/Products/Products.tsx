@@ -79,11 +79,11 @@ const Products = ({ history, match }: RouteComponentProps<{ id: string }>) => {
         ...product,
         id: uuid(),
       };
-      dispatch(addProduct({ product: newProduct }));
+      dispatch(addProduct({ item: newProduct }));
       setIsNew(false);
       dispatch(push(routes.products + '/' + newProduct.id));
     } else {
-      dispatch(updateProduct({ product }));
+      dispatch(updateProduct({ item: product }));
     }
     actions.setSubmitting(false);
   };

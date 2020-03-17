@@ -1,25 +1,21 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { PayloadAction, SliceCaseReducers } from '@reduxjs/toolkit';
 import { Task } from 'main/types/Task';
+import { createUserDataSlice } from 'store/ createUserDataSlice';
+import { TaskStatus } from 'main/types/TaskStatus';
 
-export const tasksSlice = createSlice({
+export const tasksSlice = createUserDataSlice<Task, SliceCaseReducers<Task[]>>({
   name: 'tasks',
-  initialState: [] as Task[],
   reducers: {
-    addTask: (state, { payload }: PayloadAction<{ task: Task }>) => {
-      state.push(payload.task);
-    },
-    updateTask: (state, { payload }: PayloadAction<{ task: Task }>) => {
-      return state.map(p => {
-        return p.id === payload.task.id ? payload.task : p;
-      });
-    },
-    deleteTask: (state, { payload }: PayloadAction<{ id: string }>) => {
-      return state.filter(p => p.id !== payload.id);
-    },
-    deleteAllTasks: () => {
-      return [];
+    updateTaskState(state: Task[], { payload }: PayloadAction<{ id: string; status: TaskStatus }>) {
+      const task = state.find(t => t.id === payload.id);
+      if (task) task.status = payload.status;
     },
   },
 });
 
-export const { addTask, updateTask, deleteTask, deleteAllTasks } = tasksSlice.actions;
+export const {
+  add: addTask,
+  update: updateTask,
+  remove: removeTask,
+  removeAll: removeAllTasks,
+} = tasksSlice.actions;

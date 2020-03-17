@@ -95,11 +95,11 @@ const Proxies = ({ match, history }: RouteComponentProps<{ id: string }>) => {
         ...proxy,
         id: uuid(),
       };
-      dispatch(addProxy({ proxy: newProxy }));
+      dispatch(addProxy({ item: newProxy }));
       setIsNew(false);
       dispatch(push(routes.proxies + '/' + newProxy.id));
     } else {
-      dispatch(updateProxy({ proxy }));
+      dispatch(updateProxy({ item: proxy }));
     }
     actions.setSubmitting(false);
   };

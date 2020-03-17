@@ -35,7 +35,7 @@ export abstract class IPCRenderer {
     });
 
     ipc.on(UPDATE_TASK_STATUS, (e, task: Task) => {
-      store.dispatch(updateTask({ task }));
+      store.dispatch(updateTask({ item: task }));
     });
 
     ipc.answerMain(GET_SAME_EMAILS, (email: string) => {

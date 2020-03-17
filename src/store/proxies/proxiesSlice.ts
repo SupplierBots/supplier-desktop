@@ -1,25 +1,14 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { SliceCaseReducers } from '@reduxjs/toolkit';
 import { Proxy } from 'main/types/Proxy';
+import { createUserDataSlice } from 'store/ createUserDataSlice';
 
-export const proxiesSlice = createSlice({
+export const proxiesSlice = createUserDataSlice<Proxy, SliceCaseReducers<Proxy[]>>({
   name: 'proxies',
-  initialState: [] as Proxy[],
-  reducers: {
-    addProxy: (state, { payload }: PayloadAction<{ proxy: Proxy }>) => {
-      state.push(payload.proxy);
-    },
-    updateProxy: (state, { payload }: PayloadAction<{ proxy: Proxy }>) => {
-      return state.map(p => {
-        return p.id === payload.proxy.id ? payload.proxy : p;
-      });
-    },
-    deleteProxy: (state, { payload }: PayloadAction<{ id: string }>) => {
-      return state.filter(p => p.id !== payload.id);
-    },
-    deleteAllProxies: () => {
-      return [];
-    },
-  },
 });
 
-export const { addProxy, updateProxy, deleteProxy, deleteAllProxies } = proxiesSlice.actions;
+export const {
+  add: addProxy,
+  update: updateProxy,
+  remove: removeProxy,
+  removeAll: removeAllProxies,
+} = proxiesSlice.actions;
