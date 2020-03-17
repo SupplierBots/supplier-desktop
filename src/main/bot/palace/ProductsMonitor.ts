@@ -4,7 +4,7 @@ import autoRetryRequest from '../requests/autoRetryRequest';
 import { createFetcher } from '../requests/createFetcher';
 import ProductFetcher from './ProductFetcher';
 import { Keywords } from 'main/types/Keywords';
-import { isMatch } from '../keywordsManager';
+import { isMatch } from '../core/keywordsManager';
 import { Product } from 'main/types/Product';
 import { Collection } from 'main/types/Palace';
 

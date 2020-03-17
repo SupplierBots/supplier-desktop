@@ -1,4 +1,4 @@
-export const generateXPath = (
+const generateXPath = (
   tag: string,
   attribute: '@placeholder' | 'text()' | '@value',
   stringToContain: string,
@@ -46,4 +46,4 @@ const selectors = {
   recaptchaCSS: "*[name='g-recaptcha-response']",
 };
 
-export default selectors;
+export { selectors };

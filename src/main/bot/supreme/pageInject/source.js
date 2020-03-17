@@ -2,14 +2,21 @@
 
 (async () => {
   localStorage.clear();
-  const stock = Supreme.categories.models.flatMap(c => c.attributes.products.models.flat());
+
+  if (typeof Supreme === 'undefined') return await reload();
 
   const payload = '$PRODUCT$';
+  const externalStock = '$STOCK$';
 
   const { keywords, colors, anySize, anyColor } = payload;
   const sizeToFind = payload.size.value;
 
-  const item = findItem(keywords);
+  let item = findItem(keywords);
+
+  if (!item && externalStock) {
+    loadExternalStock(externalStock);
+    item = findItem(keywords);
+  }
 
   if (!item) {
     return await reload();
@@ -32,7 +39,7 @@
   setLastVisitedCookie(item, selectedStyle);
   await addToCart(size);
 
-  //window.location.href = 'https://www.supremenewyork.com/mobile/#checkout';
+  window.location.href = 'https://www.supremenewyork.com/mobile/#checkout';
 
   function setLastVisitedCookie(item, style) {
     const date = new Date();
@@ -52,6 +59,12 @@
   function addToCart(size) {
     notifyTask('Adding to cart', 'Action');
     const result = Promise.race([atcListener(size), atcRequest(size)]);
+
+    if (!Supreme.app.cart.attributes.sizes.contains(size)) {
+      Supreme.app.cart.addSizeToLocalStorage(size, 1);
+      Supreme.app.cart.attributes.sizes.add(size, 1);
+    }
+
     return result;
   }
 
@@ -59,6 +72,7 @@
     const id = size.attributes.id.toString();
 
     while (!localStorage.hasOwnProperty(id)) {
+      Supreme.app.cart.removeSizeDirectly(id);
       Supreme.app.cart.addSize(size);
       await sleep(1500);
     }
@@ -91,6 +105,7 @@
   }
 
   function findItem(keywords) {
+    const stock = Supreme.categories.models.flatMap(c => c.attributes.products.models.flat());
     return stock.find(item => isMatch(item.attributes.name, keywords));
   }
 
@@ -142,11 +157,12 @@
       body: JSON.stringify({ message, type }),
     });
   }
-  // function loadFromPool() {
-  //   allCategoriesAndProducts = pool;
-  //   window.release_week = pool.release_week;
-  //   window.release_date = pool.release_date;
-  //   Supreme.categories = new Categories();
-  //   Supreme.categories.populate(allCategoriesAndProducts);
-  // }
+
+  function loadExternalStock(externalStock) {
+    allCategoriesAndProducts = externalStock;
+    window.release_week = externalStock.release_week;
+    window.release_date = externalStock.release_date;
+    Supreme.categories = new Categories();
+    Supreme.categories.populate(externalStock);
+  }
 })();

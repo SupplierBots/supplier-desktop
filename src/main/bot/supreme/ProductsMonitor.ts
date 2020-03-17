@@ -8,7 +8,6 @@ import {
   pluck,
   retryWhen,
   shareReplay,
-  tap,
 } from 'rxjs/operators';
 
 import { Supreme } from '../../types/Supreme';
@@ -52,7 +51,6 @@ abstract class ProductsMonitor {
         }
         return stockJson;
       }),
-      tap(x => console.log(x)),
       retryWhen(err => err.pipe(delay(refreshRate))),
       shareReplay({ refCount: true }),
     );

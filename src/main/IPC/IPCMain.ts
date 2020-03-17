@@ -2,7 +2,7 @@ import { ipcMain as ipc } from 'electron-better-ipc';
 import { verifyChromium } from '../chromium/verifyChromium';
 import { downloadChromium } from '../chromium/downloadChromium';
 import { mainWindow } from '../main';
-import BrowsersManager from '../bot/BrowsersManager';
+import BrowsersManager from '../bot/core/BrowsersManager';
 
 import {
   WINDOW_CLOSE,

@@ -5,8 +5,8 @@ import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 
 import { app } from 'electron';
 import { Target } from 'puppeteer';
-import { IPCMain } from '../IPC/IPCMain';
-import { config } from '../../config';
+import { IPCMain } from '../../IPC/IPCMain';
+import { config } from '../../../config';
 
 const BrowserInstance = async (id: string, index = 0) => {
   IPCMain.browserStateChange(id, true);
@@ -41,7 +41,6 @@ const BrowserInstance = async (id: string, index = 0) => {
   const client = await page.target().createCDPSession();
 
   browser.on('targetcreated', (target: Target) => {
-    console.log(target.url());
     if (target.url().includes('devtools')) {
       //browser.close();
     }
