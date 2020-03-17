@@ -25,7 +25,7 @@ const palaceTask = async (browser: Browser, task: Task, monitor: PalaceMonitors)
 
     let variantsPromises: Promise<number>[] = [];
     for (const product of task.products) {
-      variantsPromises.push(getProductVariant(product));
+      //variantsPromises.push(getProductVariant(product));
     }
     const variants = await Promise.all(variantsPromises);
     const payload: CartPayload = { updates: {} };

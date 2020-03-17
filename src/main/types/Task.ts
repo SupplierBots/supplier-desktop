@@ -1,5 +1,4 @@
 import { SelectableUserData } from './SelectableUserData';
-import { Product } from 'main/types/Product';
 import { Option } from 'main/types/Option';
 import { TaskStatus } from './TaskStatus';
 
@@ -8,7 +7,7 @@ export interface Task extends SelectableUserData {
   profile: Option | null;
   proxy: Option | null;
   browser: Option | null;
-  products: Product[];
+  products: string[];
   status: TaskStatus;
   refreshRate: number | string;
   checkoutDelay: number | string;

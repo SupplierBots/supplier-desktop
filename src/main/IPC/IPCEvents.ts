@@ -14,6 +14,7 @@ const WINDOW_MINIMIZE = 'WINDOW_MINIMIZE';
 const WINDOW_CLOSE = 'WINDOW_CLOSE';
 
 const GET_PROFILE = 'GET_PROFILE';
+const GET_PRODUCT = 'GET_PRODUCT';
 const UPDATE_TASK_STATUS = 'UPDATE_TASK_STATUS';
 
 export interface ChromiumVerifiedPayload {
@@ -40,4 +41,5 @@ export {
   WINDOW_CLOSE,
   GET_PROFILE,
   UPDATE_TASK_STATUS,
+  GET_PRODUCT,
 };

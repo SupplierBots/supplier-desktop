@@ -44,14 +44,15 @@ class BrowsersManager {
       if (!task.browser) return;
 
       const browser = await BrowserInstance(task.browser?.value, index);
+      const product = await IPCMain.getProduct(task.products[0]);
       this.browsers.push(browser);
 
       const pages = await browser.pages();
       const page = R.last(pages);
-      if (!page) return;
+      if (!page || !product) return;
 
       try {
-        const supremeTask = new SupremeTask(page, task);
+        const supremeTask = new SupremeTask(page, task, product);
         await supremeTask.init();
       } catch {}
     });

@@ -19,13 +19,11 @@ import { injectScript } from '../pageInject/injectScript';
 class SupremeTask {
   public browser: Browser;
   public checkoutDelay: number;
-  public product: Product;
   public externalStock: Supreme.Stock | null = null;
   public profile: Profile | null = null;
 
-  constructor(readonly page: Page, readonly task: Task) {
+  constructor(readonly page: Page, readonly task: Task, readonly product: Product) {
     this.browser = this.page.browser();
-    [this.product] = task.products;
     this.checkoutDelay =
       typeof this.task.checkoutDelay === 'string'
         ? parseInt(this.task.checkoutDelay)

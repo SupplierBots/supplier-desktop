@@ -40,6 +40,11 @@ const Navigation = () => {
           Tasks
         </NavigationItem>
 
+        <NavigationItem link={routes.browsers} disabled={isAnyTaskActive()}>
+          <BrowsersIcon />
+          Browsers
+        </NavigationItem>
+
         <NavigationItem
           link={routes.products + `/${lastVisited.products}`}
           disabled={isAnyTaskActive()}
@@ -62,11 +67,6 @@ const Navigation = () => {
         >
           <ProxiesIcon />
           Proxies
-        </NavigationItem>
-
-        <NavigationItem link={routes.browsers} disabled={isAnyTaskActive()}>
-          <BrowsersIcon />
-          Browsers
         </NavigationItem>
 
         <NavigationItem external link={'https://safedropbot.com/'}>

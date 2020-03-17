@@ -3,7 +3,6 @@ import styled, { css } from 'styled-components';
 import Item from 'components/Item/Item';
 import { colors, fonts } from 'theme/main';
 import { useSelector } from 'hooks/useSelector';
-import { Product } from 'main/types/Product';
 import { fadeIn } from 'theme/animations';
 
 const StickyBottomBorder = styled.div`
@@ -52,18 +51,20 @@ const Wrapper = styled.div<{ error: boolean }>`
 
 interface Props {
   site: string | null;
-  value: Product[];
+  value: string[];
   error: boolean;
-  onChange: (name: string, products: Product[]) => void;
+  onChange: (name: string, products: string[]) => void;
   setTouched: (name: string, value: boolean) => void;
   placeholder: string;
 }
 const ProductSelector = ({ site, value, onChange, setTouched, error }: Props) => {
   const isInitialMount = useRef(true);
+
   const products = useSelector(state =>
     state.userData.products.filter(prod => prod.site && prod.site.label === site),
   );
-  const [selectedProducts, setSelectedProducts] = useState<Product[]>(value);
+
+  const [selectedProducts, setSelectedProducts] = useState<string[]>(value);
 
   useEffect(() => {
     onChange('products', selectedProducts);
@@ -77,12 +78,12 @@ const ProductSelector = ({ site, value, onChange, setTouched, error }: Props) =>
     }
   }, [site]);
 
-  const handleClick = (product: Product) => {
+  const handleClick = (productID: string) => {
     setTouched('products', true);
-    if (selectedProducts.includes(product)) {
-      setSelectedProducts(selectedProducts.filter(selectedProd => selectedProd.id !== product.id));
+    if (selectedProducts.includes(productID)) {
+      setSelectedProducts(selectedProducts.filter(selectedID => selectedID !== productID));
     } else {
-      setSelectedProducts([...selectedProducts, product]);
+      setSelectedProducts([...selectedProducts, productID]);
     }
   };
 
@@ -91,10 +92,10 @@ const ProductSelector = ({ site, value, onChange, setTouched, error }: Props) =>
       <Title>Products</Title>
       {products.map(product => (
         <Item
-          active={selectedProducts.includes(product)}
+          active={selectedProducts.includes(product.id)}
           key={product.id}
           name={product.name}
-          onClick={() => handleClick(product)}
+          onClick={() => handleClick(product.id)}
           animation={fadeIn}
         />
       ))}

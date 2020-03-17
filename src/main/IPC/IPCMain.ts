@@ -17,11 +17,13 @@ import {
   BROWSER_STATE_CHANGE,
   SET_BROWSER_EMAIL,
   GET_SAME_EMAILS,
+  GET_PRODUCT,
 } from './IPCEvents';
 import { Profile } from '../types/Profile';
 import { TaskStatus } from '../types/TaskStatus';
 import { Task } from '../types/Task';
 import { BrowserData } from '../types/BrowserData';
+import { Product } from '../types/Product';
 
 export abstract class IPCMain {
   private constructor() {}
@@ -39,6 +41,12 @@ export abstract class IPCMain {
     if (!mainWindow) return;
     const profile = await ipc.callRenderer<string, Profile>(mainWindow, GET_PROFILE, id);
     return profile;
+  };
+
+  public static getProduct = async (id: string) => {
+    if (!mainWindow) return;
+    const product = await ipc.callRenderer<string, Product>(mainWindow, GET_PRODUCT, id);
+    return product;
   };
 
   public static updateTaskStatus = (task: Task, status: TaskStatus) => {

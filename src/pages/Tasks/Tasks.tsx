@@ -38,7 +38,7 @@ const TasksList = styled.div`
 `;
 
 const NoTaskInformation = styled.p`
-  height: 45rem;
+  height: 50rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -93,17 +93,21 @@ const Tasks = ({ history }: RouteComponentProps) => {
           {userData.tasks.map(task => (
             <Task key={task.id} details={task} />
           ))}
-          {userData.tasks.length === 0 && (
-            <NoTaskInformation>You don't have any tasks</NoTaskInformation>
-          )}
         </TasksList>
+        {userData.tasks.length === 0 && (
+          <NoTaskInformation>You don't have any tasks</NoTaskInformation>
+        )}
       </Main>
       <ButtonsContainer>
-        <Button disabled={isAnyTaskActive()} secondary onClick={removeAllTasks}>
+        <Button
+          disabled={isAnyTaskActive() || userData.tasks.length === 0}
+          secondary
+          onClick={removeAllTasks}
+        >
           Remove All
         </Button>
 
-        <Button secondary onClick={handleTasks}>
+        <Button secondary onClick={handleTasks} disabled={userData.tasks.length === 0}>
           {isAnyTaskActive() ? 'Stop All' : 'Start All'}
         </Button>
 

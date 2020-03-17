@@ -13,6 +13,7 @@ import {
   STOP_TASKS,
   GET_PROFILE,
   UPDATE_TASK_STATUS,
+  GET_PRODUCT,
 } from './IPCEvents';
 
 import store from 'store/configureStore';
@@ -49,6 +50,11 @@ export abstract class IPCRenderer {
     ipc.answerMain(GET_PROFILE, (id: string) => {
       const profile = store.getState().userData.profiles.find(p => p.id === id);
       return profile;
+    });
+
+    ipc.answerMain(GET_PRODUCT, (id: string) => {
+      const product = store.getState().userData.products.find(p => p.id === id);
+      return product;
     });
   };
 
