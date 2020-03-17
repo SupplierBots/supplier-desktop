@@ -6,13 +6,13 @@ import { ReactComponent as PalaceIcon } from 'assets/PalaceLogo.svg';
 import { ReactComponent as EditIcon } from 'assets/Edit.svg';
 import { ReactComponent as RemoveIcon } from 'assets/Remove.svg';
 import { Task as TaskType } from 'main/types/Task';
-import { useDispatch } from 'hooks/useDispatch';
 import { push } from 'connected-react-router';
 import routes from 'constants/routes';
 import { fadeIn } from 'theme/animations';
-import { removeUserDataItem } from 'store/userData/actions';
-import { useSelector } from 'hooks/useSelector';
 import { TaskStatusType } from 'main/types/TaskStatus';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppState } from 'store/root';
+import { deleteTask } from 'store/tasks/tasksSlice';
 
 const Wrapper = styled.div`
   display: grid;
@@ -117,7 +117,7 @@ interface Props {
 }
 const Task = ({ details }: Props) => {
   const dispatch = useDispatch();
-  const browsers = useSelector(state => state.browsers);
+  const browsers = useSelector((state: AppState) => state.browsers);
 
   const isBrowserActive = () => {
     const browser = browsers.find(b => b.id === details.browser?.value);
@@ -126,9 +126,9 @@ const Task = ({ details }: Props) => {
     return false;
   };
 
-  const deleteTask = () => {
+  const removeTask = () => {
     if (isBrowserActive()) return;
-    dispatch(removeUserDataItem('tasks', details.id));
+    dispatch(deleteTask({ id: details.id }));
   };
 
   const editTask = () => {
@@ -150,7 +150,7 @@ const Task = ({ details }: Props) => {
           <EditIcon onClick={editTask} />
         </Action>
         <Action disabled={isBrowserActive()}>
-          <StyledRemoveIcon onClick={deleteTask} />
+          <StyledRemoveIcon onClick={removeTask} />
         </Action>
       </ActionsContainer>
     </Wrapper>

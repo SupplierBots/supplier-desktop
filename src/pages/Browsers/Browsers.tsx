@@ -5,10 +5,11 @@ import Heading from 'components/Heading/Heading';
 import Browser from 'components/Browser/Browser';
 import ButtonsContainer from 'components/ButtonsContainer/ButtonsContainer';
 import Button from 'components/Button/Button';
-import { useSelector } from 'hooks/useSelector';
-import { useDispatch } from 'hooks/useDispatch';
-import { createBrowser, removeBrowser } from 'store/browsers/actions';
+
 import { IPCRenderer } from 'main/IPC/IPCRenderer';
+import { createBrowser, removeBrowser } from 'store/browsers/browsersSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { AppState } from 'store/root';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -27,7 +28,7 @@ const BrowsersContainer = styled.div`
 `;
 
 const Browsers = () => {
-  const browsers = useSelector(state => state.browsers);
+  const browsers = useSelector((state: AppState) => state.browsers);
   const dispatch = useDispatch();
 
   useEffect(
@@ -46,7 +47,7 @@ const Browsers = () => {
             <Browser
               key={b.id}
               data={b}
-              deleteAction={() => dispatch(removeBrowser(b.id))}
+              deleteAction={() => dispatch(removeBrowser({ id: b.id }))}
               canBeRemoved={browsers.length > 2 && !b.isActive}
               openAction={() => IPCRenderer.setupBrowser(b)}
             >

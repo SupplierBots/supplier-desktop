@@ -1,18 +1,27 @@
-import { createStore, applyMiddleware, compose } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { routerMiddleware } from 'connected-react-router';
 import { rootSaga, history, persistedReducer } from './root';
-import { persistStore } from 'redux-persist';
-
-const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+import { persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
+import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 
 const sagaMiddleware = createSagaMiddleware();
 const router = routerMiddleware(history);
 
-const store = createStore(
-  persistedReducer,
-  composeEnhancers(applyMiddleware(sagaMiddleware, router)),
-);
+const middleware = [
+  ...getDefaultMiddleware({
+    serializableCheck: {
+      ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+    },
+  }),
+  sagaMiddleware,
+  router,
+];
+
+const store = configureStore({
+  reducer: persistedReducer,
+  middleware,
+  devTools: process.env.NODE_ENV !== 'production',
+});
 
 export const persistor = persistStore(store);
 

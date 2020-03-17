@@ -5,9 +5,6 @@ import { push } from 'connected-react-router';
 import styled from 'styled-components';
 import uuid from 'uuid/v4';
 
-import { useDispatch } from 'hooks/useDispatch';
-import { useSelector } from 'hooks/useSelector';
-
 import ButtonsContainer from 'components/ButtonsContainer/ButtonsContainer';
 import Button from 'components/Button/Button';
 import Heading from 'components/Heading/Heading';
@@ -15,14 +12,16 @@ import Card from 'components/Card/Card';
 import Select from 'components/Select/Select';
 import Input from 'components/Input/Input';
 
-import { addUserDataItem, updateUserDataItem } from 'store/userData/actions';
 import routes from 'constants/routes';
 import { proxyValidationSchema, initialProxyValues, siteOptions } from './FormDetails';
 import Slider from 'components/Slider/Slider';
 import { Proxy } from 'main/types/Proxy';
 import Item from 'components/ChangeItemModal/SelectableItem';
 import { colors, fonts } from 'theme/main';
-import { setLastVisited } from 'store/lastVisited/actions';
+import { setLastVisitedProxy } from 'store/lastVisited/lastVisitedSlice';
+import { addProxy, updateProxy } from 'store/proxies/proxiesSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { AppState } from 'store/root';
 
 const Wrapper = styled.div`
   display: grid;
@@ -74,7 +73,7 @@ const StyledButton = styled(Button)`
 const Proxies = ({ match, history }: RouteComponentProps<{ id: string }>) => {
   const [isNew, setIsNew] = useState(!match.params.id);
   const dispatch = useDispatch();
-  const proxies = useSelector(state => state.userData.proxies);
+  const proxies = useSelector((state: AppState) => state.proxies);
 
   const getInitialValues = (): Proxy => {
     if (!match.params.id) {
@@ -83,7 +82,7 @@ const Proxies = ({ match, history }: RouteComponentProps<{ id: string }>) => {
     const proxyToLoad = proxies.find(proxy => proxy.id === match.params.id);
 
     if (proxyToLoad) {
-      dispatch(setLastVisited('proxies', proxyToLoad.id));
+      dispatch(setLastVisitedProxy({ id: proxyToLoad.id }));
       return proxyToLoad;
     }
 
@@ -96,11 +95,11 @@ const Proxies = ({ match, history }: RouteComponentProps<{ id: string }>) => {
         ...proxy,
         id: uuid(),
       };
-      dispatch(addUserDataItem('proxies', newProxy));
+      dispatch(addProxy({ proxy: newProxy }));
       setIsNew(false);
       dispatch(push(routes.proxies + '/' + newProxy.id));
     } else {
-      dispatch(updateUserDataItem('proxies', proxy));
+      dispatch(updateProxy({ proxy }));
     }
     actions.setSubmitting(false);
   };

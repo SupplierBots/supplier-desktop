@@ -3,24 +3,30 @@ import styled, { css } from 'styled-components';
 import { colors, fonts } from 'theme/main';
 import { ReactComponent as DuplicateIcon } from 'assets/Duplicate.svg';
 import { ReactComponent as RemoveIcon } from 'assets/Remove.svg';
-import { UserDataItemType } from 'store/userData/types';
-import { useSelector } from 'hooks/useSelector';
+
 import { UserData } from 'main/types/UserData';
 import uuid from 'uuid/v4';
-import { addUserDataItem, removeUserDataItem } from 'store/userData/actions';
 import { Product } from 'main/types/Product';
 import { Profile } from 'main/types/Profile';
 import routes from 'constants/routes';
-import { useDispatch } from 'hooks/useDispatch';
 import { push } from 'connected-react-router';
 import { Proxy } from 'main/types/Proxy';
 import Item from 'components/Item/Item';
-import { setLastVisited } from 'store/lastVisited/actions';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppState } from 'store/root';
+import { addProduct, deleteProduct } from 'store/products/productsSlice';
+import { addProfile, deleteProfile } from 'store/profiles/profilesSlice';
+import { addProxy, deleteProxy } from 'store/proxies/proxiesSlice';
+import {
+  setLastVisitedProduct,
+  setLastVisitedProfile,
+  setLastVisitedProxy,
+} from 'store/lastVisited/lastVisitedSlice';
 
 interface Props {
   name: string;
   id: string;
-  type: UserDataItemType;
+  type: 'proxies' | 'profiles' | 'products';
   active?: boolean;
 }
 
@@ -71,7 +77,7 @@ const IconsContainer = styled.div<Props>`
 
 const SelectableItem = (props: Props) => {
   const dispatch = useDispatch();
-  const userDataItems = useSelector(state => state.userData[props.type]) as UserData[];
+  const userDataItems = useSelector((state: AppState) => state[props.type]) as UserData[];
 
   const duplicateItem = (event: MouseEvent<HTMLOrSVGElement>) => {
     event.stopPropagation();
@@ -80,24 +86,39 @@ const SelectableItem = (props: Props) => {
     if (itemToDuplicate) {
       const newItem = { ...itemToDuplicate, id: uuid() };
       if (props.type === 'products') {
-        dispatch(addUserDataItem(props.type, newItem as Product));
+        dispatch(addProduct({ product: newItem as Product }));
       }
       if (props.type === 'profiles') {
-        dispatch(addUserDataItem(props.type, newItem as Profile));
+        dispatch(addProfile({ profile: newItem as Profile }));
       }
       if (props.type === 'proxies') {
-        dispatch(addUserDataItem(props.type, newItem as Proxy));
+        dispatch(addProxy({ proxy: newItem as Proxy }));
       }
     }
   };
 
   const removeItem = (event: MouseEvent<HTMLOrSVGElement>) => {
     event.stopPropagation();
-    dispatch(removeUserDataItem(props.type, props.id));
+
+    if (props.type === 'products') {
+      dispatch(deleteProduct({ id: props.id }));
+    }
+    if (props.type === 'profiles') {
+      dispatch(deleteProfile({ id: props.id }));
+    }
+    if (props.type === 'proxies') {
+      dispatch(deleteProxy({ id: props.id }));
+    }
 
     if (props.active) {
-      if (props.type !== 'tasks') {
-        dispatch(setLastVisited(props.type, ''));
+      if (props.type === 'products') {
+        dispatch(setLastVisitedProduct({ id: props.id }));
+      }
+      if (props.type === 'profiles') {
+        dispatch(setLastVisitedProfile({ id: props.id }));
+      }
+      if (props.type === 'proxies') {
+        dispatch(setLastVisitedProxy({ id: props.id }));
       }
       dispatch(push(routes[props.type]));
     }

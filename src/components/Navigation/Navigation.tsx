@@ -10,7 +10,8 @@ import { ReactComponent as ProxiesIcon } from 'assets/Proxies.svg';
 import { ReactComponent as BrowsersIcon } from 'assets/Harvesters.svg';
 import { ReactComponent as HelpIcon } from 'assets/Help.svg';
 import routes from 'constants/routes';
-import { useSelector } from 'hooks/useSelector';
+import { useSelector } from 'react-redux';
+import { AppState } from 'store/root';
 
 const Wrapper = styled.nav``;
 
@@ -20,9 +21,9 @@ const NavigationList = styled.ul`
 `;
 
 const Navigation = () => {
-  const lastVisited = useSelector(state => state.lastVisited);
-  const browsers = useSelector(state => state.browsers);
-  const router = useSelector(state => state.router);
+  const lastVisited = useSelector((state: AppState) => state.lastVisited);
+  const browsers = useSelector((state: AppState) => state.browsers);
+  const router = useSelector((state: AppState) => state.router);
 
   const isAnyTaskActive = () =>
     router.location.pathname.includes('tasks') && browsers.some(b => b.isActive);
@@ -46,7 +47,7 @@ const Navigation = () => {
         </NavigationItem>
 
         <NavigationItem
-          link={routes.products + `/${lastVisited.products}`}
+          link={routes.products + `/${lastVisited.product}`}
           disabled={isAnyTaskActive()}
         >
           <ProductsIcon />
@@ -54,7 +55,7 @@ const Navigation = () => {
         </NavigationItem>
 
         <NavigationItem
-          link={routes.profiles + `/${lastVisited.profiles}`}
+          link={routes.profiles + `/${lastVisited.profile}`}
           disabled={isAnyTaskActive()}
         >
           <ProfilesIcon />
@@ -62,7 +63,7 @@ const Navigation = () => {
         </NavigationItem>
 
         <NavigationItem
-          link={routes.proxies + `/${lastVisited.proxies}`}
+          link={routes.proxies + `/${lastVisited.proxy}`}
           disabled={isAnyTaskActive()}
         >
           <ProxiesIcon />

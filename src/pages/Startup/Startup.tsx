@@ -8,11 +8,12 @@ import routes from 'constants/routes';
 import { Route, RouteComponentProps } from 'react-router';
 import Loader from './Loader/Loader';
 import { fadeIn } from 'theme/animations';
-import { useDispatch } from 'hooks/useDispatch';
-import { useSelector } from 'hooks/useSelector';
-import { setActive } from 'store/browsers/actions';
-import { setChromiumPath } from 'store/controller/actions';
+
 import { IPCRenderer } from 'main/IPC/IPCRenderer';
+import { setActive } from 'store/browsers/browsersSlice';
+import { setChromiumPath } from 'store/controller/controllerSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { AppState } from 'store/root';
 
 const StyledParticles = styled(Particles)`
   position: absolute;
@@ -30,12 +31,12 @@ type Props = RouteComponentProps;
 
 const Startup = ({ history }: Props) => {
   const [loading, setLoading] = useState(true);
-  const browsers = useSelector(state => state.browsers);
+  const browsers = useSelector((state: AppState) => state.browsers);
   const dispatch = useDispatch();
 
   const resetBrowsers = () => {
     browsers.forEach(b => {
-      dispatch(setActive(b.id, false));
+      dispatch(setActive({ id: b.id, isActive: false }));
     });
   };
 
@@ -48,7 +49,7 @@ const Startup = ({ history }: Props) => {
       setLoading(false);
 
       if (success) {
-        dispatch(setChromiumPath(executablePath));
+        dispatch(setChromiumPath({ path: executablePath }));
         history.push(routes.login);
       } else {
         history.push(routes.downloader);

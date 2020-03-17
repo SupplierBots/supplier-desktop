@@ -6,9 +6,12 @@ import Heading from 'components/Heading/Heading';
 import { ReactComponent as CloseIcon } from 'assets/Close.svg';
 import { colors } from 'theme/main';
 import Item from './SelectableItem';
-import { UserDataItemType } from 'store/userData/types';
-import { useSelector } from 'hooks/useSelector';
 import { UserData } from 'main/types/UserData';
+import { useSelector } from 'react-redux';
+import { Profile } from 'main/types/Profile';
+import { Product } from 'main/types/Product';
+import { Proxy } from 'main/types/Proxy';
+import { AppState } from 'store/root';
 
 const CloseButton = styled.div`
   position: absolute;
@@ -56,13 +59,13 @@ const StyledCard = styled(Card)`
 `;
 interface Props {
   close: () => void;
-  type: UserDataItemType;
+  type: 'proxies' | 'profiles' | 'products';
   modalTitle: string;
   active: string;
 }
 
 const ChangeItemModal = ({ close, type, modalTitle, active }: Props) => {
-  const userData = useSelector(state => state.userData[type]) as UserData[];
+  const userData = useSelector((state: AppState) => state[type]) as UserData[];
 
   const handleCardClick = (event: MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();

@@ -13,10 +13,6 @@ import {
 } from './types';
 import { put, takeEvery, call, take } from 'redux-saga/effects';
 import {
-  startVerifyingCredentials,
-  setAuthError,
-  userLoggedIn,
-  userLoggedOut,
   startWatchingLoginTime,
   loginAttempt,
   initiateUserLogout,
@@ -27,6 +23,7 @@ import { firestore } from 'firebase';
 
 import { push } from 'connected-react-router';
 import routes from 'constants/routes';
+import { userLoggedOut, setAuthError, userLoggedIn, startVerifying } from './authSlice';
 
 enum FirestoreType {
   Collection = 'collection',
@@ -34,7 +31,7 @@ enum FirestoreType {
 }
 
 export function* loginAttemptSaga({ credentials }: LoginAttemptAction) {
-  yield put(startVerifyingCredentials());
+  yield put(startVerifying());
 
   try {
     const response = yield call(
@@ -51,7 +48,7 @@ export function* loginAttemptSaga({ credentials }: LoginAttemptAction) {
 
     if (!license || license.expirationDate < Date.now()) {
       yield put(userLoggedOut());
-      yield put(setAuthError('License expired'));
+      yield put(setAuthError({ error: 'License expired' }));
       return;
     }
     const authData = {
@@ -73,14 +70,14 @@ export function* loginAttemptSaga({ credentials }: LoginAttemptAction) {
     );
 
     yield put(startWatchingLoginTime(uid, loginTime));
-    yield put(userLoggedIn(authData));
+    yield put(userLoggedIn({ auth: authData }));
     yield put(push(routes.dashboard));
   } catch (error) {
     const { code } = error as FirebaseError;
     if (code === 'auth/user-not-found' || code === 'auth/wrong-password') {
-      yield put(setAuthError('Invalid credentials'));
+      yield put(setAuthError({ error: 'Invalid credentials' }));
     } else {
-      yield put(setAuthError("Couldn't verify credentials"));
+      yield put(setAuthError({ error: "Couldn't verify credentials" }));
     }
   }
 }
@@ -105,7 +102,7 @@ export function* startWatchingLoginTimeSaga({ uid, loginTime }: StartWatchingLog
 }
 
 export function* createAccountAttemptSaga({ credentials }: CreateAccountAttemptAction) {
-  yield put(startVerifyingCredentials());
+  yield put(startVerifying());
   try {
     const response = yield fetch(
       'https://us-central1-safedrop-83b20.cloudfunctions.net/createAccount',
@@ -128,7 +125,7 @@ export function* createAccountAttemptSaga({ credentials }: CreateAccountAttemptA
       yield put(loginAttempt(credentials));
     }
   } catch {
-    yield put(setAuthError("Couldn't verify credentials"));
+    yield put(setAuthError({ error: "Couldn't verify credentials" }));
   }
 }
 

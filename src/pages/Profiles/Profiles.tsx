@@ -1,13 +1,9 @@
-import React, { useState, useEffect, ChangeEvent } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Formik, Form, FormikProps, FormikHelpers } from 'formik';
 import { RouteComponentProps } from 'react-router';
 import { push } from 'connected-react-router';
 import styled from 'styled-components';
 import uuid from 'uuid/v4';
-
-import { useDispatch } from 'hooks/useDispatch';
-import { useSelector } from 'hooks/useSelector';
-
 import ButtonsContainer from 'components/ButtonsContainer/ButtonsContainer';
 import Button from 'components/Button/Button';
 import Heading from 'components/Heading/Heading';
@@ -17,7 +13,6 @@ import ChangeItemModal from 'components/ChangeItemModal/ChangeItemModal';
 import Select from 'components/Select/Select';
 import Input from 'components/Input/Input';
 
-import { addUserDataItem, updateUserDataItem } from 'store/userData/actions';
 import { slideInFromRight } from 'theme/animations';
 import { Profile } from 'main/types/Profile';
 import routes from 'constants/routes';
@@ -32,8 +27,11 @@ import {
   getRegions,
   isCountryWithRegions,
 } from './FormDetails';
-import { setLastVisited } from 'store/lastVisited/actions';
 import { InlineInputsContainer } from 'components/TaskEditor/TaskEditor';
+import { setLastVisitedProfile } from 'store/lastVisited/lastVisitedSlice';
+import { addProfile, updateProfile } from 'store/profiles/profilesSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppState } from 'store/root';
 
 const Wrapper = styled.div`
   display: grid;
@@ -58,7 +56,7 @@ const Profiles = ({ match, history }: RouteComponentProps<{ id: string }>) => {
   const [isNew, setIsNew] = useState(!match.params.id);
   const [modalIsOpened, setModalIsOpened] = useState(false);
   const dispatch = useDispatch();
-  const profiles = useSelector(state => state.userData.profiles);
+  const profiles = useSelector((state: AppState) => state.profiles);
 
   useEffect(() => {
     setModalIsOpened(false);
@@ -71,23 +69,23 @@ const Profiles = ({ match, history }: RouteComponentProps<{ id: string }>) => {
     const profileToLoad = profiles.find(profile => profile.id === match.params.id);
 
     if (profileToLoad) {
-      dispatch(setLastVisited('profiles', profileToLoad.id));
+      dispatch(setLastVisitedProfile({ id: profileToLoad.id }));
       return profileToLoad;
     }
     return initialValues;
   };
 
-  const handleSubmit = (product: Profile, actions: FormikHelpers<Profile>) => {
+  const handleSubmit = (profile: Profile, actions: FormikHelpers<Profile>) => {
     if (isNew) {
-      const newProduct = {
-        ...product,
+      const newProfile = {
+        ...profile,
         id: uuid(),
       };
-      dispatch(addUserDataItem('profiles', newProduct));
+      dispatch(addProfile({ profile: newProfile }));
       setIsNew(false);
-      dispatch(push(routes.profiles + '/' + newProduct.id));
+      dispatch(push(routes.profiles + '/' + newProfile.id));
     } else {
-      dispatch(updateUserDataItem('profiles', product));
+      dispatch(updateProfile({ profile }));
     }
     actions.setSubmitting(false);
   };

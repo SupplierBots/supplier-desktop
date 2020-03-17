@@ -9,11 +9,11 @@ import Button from 'components/Button/Button';
 import { signInSchema, signUpSchema, initialValues, Values } from './FormDetails';
 import Error from './Error';
 import { RouteComponentProps } from 'react-router';
-import { useDispatch } from 'hooks/useDispatch';
 import { createAccountAttempt, loginAttempt, setAuthError } from 'store/auth/actions';
-import { useSelector } from 'hooks/useSelector';
 import Spinner from 'components/Spinner/Spinner';
 import Fieldset from 'components/Fieldset/Fieldset';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppState } from 'store/root';
 
 const Wrapper = styled.div`
   display: flex;
@@ -69,7 +69,7 @@ type Props = RouteComponentProps;
 const Login = ({ history }: Props) => {
   const [isSignUp, setSignUp] = useState(false);
   const dispatch = useDispatch();
-  const { verifying, error, authenticated } = useSelector(state => state.auth);
+  const { verifying, error, authenticated } = useSelector((state: AppState) => state.auth);
 
   const submit = async (values: Values, actions: FormikHelpers<Values>) => {
     if (isSignUp) {

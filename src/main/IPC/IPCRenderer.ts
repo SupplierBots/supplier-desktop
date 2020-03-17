@@ -17,29 +17,25 @@ import {
 } from './IPCEvents';
 
 import store from 'store/configureStore';
-import { setActive, setAccountEmail } from 'store/browsers/actions';
 import { ipcRenderer as ipc } from 'electron-better-ipc';
 import { BrowserData } from 'main/types/BrowserData';
 import { Task } from 'main/types/Task';
-import { updateUserDataItem } from 'store/userData/actions';
+import { updateTask } from 'store/tasks/tasksSlice';
+import { setAccountEmail, setActive } from 'store/browsers/browsersSlice';
 
 export abstract class IPCRenderer {
   private constructor() {}
   public static registerListeners = () => {
     ipc.on(BROWSER_STATE_CHANGE, (e, { id, status }: BrowserStatePayload) => {
-      store.dispatch(setActive(id, status));
+      store.dispatch(setActive({ id, isActive: status }));
     });
 
     ipc.on(SET_BROWSER_EMAIL, (e, { id, email }: { id: string; email: string }) => {
-      store.dispatch(setAccountEmail(id, email));
-    });
-
-    ipc.on(SET_BROWSER_EMAIL, (e, { id, email }: { id: string; email: string }) => {
-      store.dispatch(setAccountEmail(id, email));
+      store.dispatch(setAccountEmail({ id, email }));
     });
 
     ipc.on(UPDATE_TASK_STATUS, (e, task: Task) => {
-      store.dispatch(updateUserDataItem('tasks', task));
+      store.dispatch(updateTask({ task }));
     });
 
     ipc.answerMain(GET_SAME_EMAILS, (email: string) => {
@@ -48,12 +44,12 @@ export abstract class IPCRenderer {
     });
 
     ipc.answerMain(GET_PROFILE, (id: string) => {
-      const profile = store.getState().userData.profiles.find(p => p.id === id);
+      const profile = store.getState().profiles.find(p => p.id === id);
       return profile;
     });
 
     ipc.answerMain(GET_PRODUCT, (id: string) => {
-      const product = store.getState().userData.products.find(p => p.id === id);
+      const product = store.getState().products.find(p => p.id === id);
       return product;
     });
   };

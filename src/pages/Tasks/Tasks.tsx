@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import ButtonsContainer from 'components/ButtonsContainer/ButtonsContainer';
 import Button from 'components/Button/Button';
@@ -9,10 +9,9 @@ import TasksHeader from 'components/TasksHeader/TasksHeader';
 import TaskEditor from 'components/TaskEditor/TaskEditor';
 import { Route, RouteComponentProps } from 'react-router';
 import routes from 'constants/routes';
-import { useSelector } from 'hooks/useSelector';
-import { useDispatch } from 'hooks/useDispatch';
-import { removeUserDataItem, removeAllItems as removeAllDataItems } from 'store/userData/actions';
 import { IPCRenderer } from 'main/IPC/IPCRenderer';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppState } from 'store/root';
 
 const Wrapper = styled.div`
   display: grid;
@@ -48,17 +47,14 @@ const NoTaskInformation = styled.p`
 `;
 
 const Tasks = ({ history }: RouteComponentProps) => {
-  const { userData, browsers } = useSelector(state => state);
+  const { tasks, browsers } = useSelector((state: AppState) => state);
   const dispatch = useDispatch();
   const isAnyBrowserAvailable = () => {
-    return (
-      browsers.filter(b => !userData.tasks.some(t => t.browser && t.browser.value === b.id))
-        .length > 0
-    );
+    return browsers.filter(b => !tasks.some(t => t.browser && t.browser.value === b.id)).length > 0;
   };
 
   const removeAllTasks = () => {
-    dispatch(removeAllDataItems('tasks'));
+    dispatch(removeAllTasks());
   };
 
   const createNewTask = () => {
@@ -77,7 +73,7 @@ const Tasks = ({ history }: RouteComponentProps) => {
 
   const handleTasks = async () => {
     if (!isAnyTaskActive()) {
-      IPCRenderer.startTasks(userData.tasks);
+      IPCRenderer.startTasks(tasks);
       return;
     }
     IPCRenderer.stopTasks();
@@ -90,24 +86,22 @@ const Tasks = ({ history }: RouteComponentProps) => {
         <StyledHeading>Tasks</StyledHeading>
         <TasksList>
           <TasksHeader />
-          {userData.tasks.map(task => (
+          {tasks.map(task => (
             <Task key={task.id} details={task} />
           ))}
         </TasksList>
-        {userData.tasks.length === 0 && (
-          <NoTaskInformation>You don't have any tasks</NoTaskInformation>
-        )}
+        {tasks.length === 0 && <NoTaskInformation>You don't have any tasks</NoTaskInformation>}
       </Main>
       <ButtonsContainer>
         <Button
-          disabled={isAnyTaskActive() || userData.tasks.length === 0}
+          disabled={isAnyTaskActive() || tasks.length === 0}
           secondary
           onClick={removeAllTasks}
         >
           Remove All
         </Button>
 
-        <Button secondary onClick={handleTasks} disabled={userData.tasks.length === 0}>
+        <Button secondary onClick={handleTasks} disabled={tasks.length === 0}>
           {isAnyTaskActive() ? 'Stop All' : 'Start All'}
         </Button>
 

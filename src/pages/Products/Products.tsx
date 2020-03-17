@@ -5,9 +5,6 @@ import { push } from 'connected-react-router';
 import styled from 'styled-components';
 import uuid from 'uuid/v4';
 
-import { useDispatch } from 'hooks/useDispatch';
-import { useSelector } from 'hooks/useSelector';
-
 import ButtonsContainer from 'components/ButtonsContainer/ButtonsContainer';
 import Button from 'components/Button/Button';
 import Heading from 'components/Heading/Heading';
@@ -19,7 +16,6 @@ import Slider from 'components/Slider/Slider';
 import Select from 'components/Select/Select';
 import Input from 'components/Input/Input';
 
-import { addUserDataItem, updateUserDataItem } from 'store/userData/actions';
 import { Product } from 'main/types/Product';
 import routes from 'constants/routes';
 import {
@@ -29,7 +25,11 @@ import {
   anySizeOptions,
   productSiteOptions,
 } from './FormDetails';
-import { setLastVisited } from 'store/lastVisited/actions';
+
+import { addProduct, updateProduct } from 'store/products/productsSlice';
+import { setLastVisitedProduct } from 'store/lastVisited/lastVisitedSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppState } from 'store/root';
 
 const Wrapper = styled.div`
   display: grid;
@@ -53,7 +53,7 @@ const Products = ({ history, match }: RouteComponentProps<{ id: string }>) => {
   const [isNew, setIsNew] = useState(!match.params.id);
   const [modalIsOpened, setModalIsOpened] = useState(false);
   const dispatch = useDispatch();
-  const products = useSelector(state => state.userData.products);
+  const products = useSelector((state: AppState) => state.products);
 
   useEffect(() => {
     setModalIsOpened(false);
@@ -66,7 +66,7 @@ const Products = ({ history, match }: RouteComponentProps<{ id: string }>) => {
     const productToLoad = products.find(product => product.id === match.params.id);
 
     if (productToLoad) {
-      dispatch(setLastVisited('products', productToLoad.id));
+      dispatch(setLastVisitedProduct({ id: productToLoad.id }));
       return productToLoad;
     }
 
@@ -79,11 +79,11 @@ const Products = ({ history, match }: RouteComponentProps<{ id: string }>) => {
         ...product,
         id: uuid(),
       };
-      dispatch(addUserDataItem('products', newProduct));
+      dispatch(addProduct({ product: newProduct }));
       setIsNew(false);
       dispatch(push(routes.products + '/' + newProduct.id));
     } else {
-      dispatch(updateUserDataItem('products', product));
+      dispatch(updateProduct({ product }));
     }
     actions.setSubmitting(false);
   };

@@ -2,11 +2,12 @@ import React from 'react';
 import routes from 'constants/routes';
 import { Route, Switch } from 'react-router';
 import Startup from 'pages/Startup/Startup';
-import { useSelector } from 'hooks/useSelector';
 import AuthenticatedRoutes from './AuthenticatedRoutes';
+import { useSelector } from 'react-redux';
+import { AppState } from 'store/root';
 
 const Routes = () => {
-  const authenticated = useSelector(state => state.auth.authenticated);
+  const authenticated = useSelector((state: AppState) => state.auth.authenticated);
 
   return (
     <Switch>

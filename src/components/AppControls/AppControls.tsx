@@ -3,7 +3,6 @@ import styled from 'styled-components';
 
 import { ReactComponent as MinimizeIcon } from 'assets/Minimize.svg';
 import { ReactComponent as CloseIcon } from 'assets/Close.svg';
-import { colors } from 'theme/main';
 import { IPCRenderer } from 'main/IPC/IPCRenderer';
 
 const Wrapper = styled.div`

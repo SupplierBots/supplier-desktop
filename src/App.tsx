@@ -2,7 +2,6 @@ import { hot } from 'react-hot-loader/root';
 import React, { useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 import styled from 'styled-components';
-import { useSelector } from 'hooks/useSelector';
 import GlobalStyle from 'theme/GlobalStyle';
 import Sidebar from 'components/Sidebar/Sidebar';
 import AppControls from 'components/AppControls/AppControls';
@@ -11,6 +10,8 @@ import routes from 'constants/routes';
 import { colors } from 'theme/main';
 import Routes from 'routes/Routes';
 import { IPCRenderer } from 'main/IPC/IPCRenderer';
+import { useSelector } from 'react-redux';
+import { AppState } from 'store/root';
 
 const GlobalWrapper = styled.div`
   color: ${colors.lightGrey};
@@ -45,7 +46,7 @@ const App = () => {
   useEffect(disableAutofill, []);
   useEffect(IPCRenderer.registerListeners, []);
 
-  const authState = useSelector(state => state.auth);
+  const authState = useSelector((state: AppState) => state.auth);
 
   return (
     <>

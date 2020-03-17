@@ -1,36 +1,40 @@
-import { BrowserDataActionTypes } from './browsers/types';
-import { browsersReducer } from './browsers/reducers';
-import { controllerReducer } from './controller/reducers';
-import { ControllerActionTypes } from './controller/types';
-import { LastVisitedActionTypes } from './lastVisited/types';
-import { lastVisitedReducer } from './lastVisited/reducers';
-import { UserDataActionTypes } from './userData/types';
 import { AuthActionTypes } from './auth/types';
 import routes from 'constants/routes';
-import { combineReducers } from 'redux';
 import { all, fork } from 'redux-saga/effects';
-import { connectRouter, CallHistoryMethodAction } from 'connected-react-router';
+import { connectRouter } from 'connected-react-router';
 import { createMemoryHistory } from 'history';
 import { persistReducer, createTransform, PersistConfig } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import { authReducer } from './auth/reducers';
-import { userDataReducer } from './userData/reducers';
 import { watchAuth } from './auth/sagas';
 import CryptoJS from 'crypto-js';
+import { authSlice } from './auth/authSlice';
+import { lastVisitedSlice } from './lastVisited/lastVisitedSlice';
+import { controllerSlice } from './controller/controllerSlice';
+import { profilesSlice } from './profiles/profilesSlice';
+import { proxiesSlice } from './proxies/proxiesSlice';
+import { productsSlice } from './products/productsSlice';
+import { browsersSlice } from './browsers/browsersSlice';
+import { combineReducers } from '@reduxjs/toolkit';
+import { tasksSlice } from './tasks/tasksSlice';
 
 export const history = createMemoryHistory({
   initialEntries: [routes.startup],
   initialIndex: 0,
 });
 
+export type AppState = ReturnType<typeof rootReducer>;
+
 export const rootReducer = combineReducers({
-  auth: authReducer,
-  userData: userDataReducer,
-  lastVisited: lastVisitedReducer,
-  controller: controllerReducer,
-  browsers: browsersReducer,
+  auth: authSlice.reducer,
+  lastVisited: lastVisitedSlice.reducer,
+  controller: controllerSlice.reducer,
+  profiles: profilesSlice.reducer,
+  proxies: proxiesSlice.reducer,
+  products: productsSlice.reducer,
+  browsers: browsersSlice.reducer,
+  tasks: tasksSlice.reducer,
   router: connectRouter(history),
-} as const);
+});
 
 const key = String.fromCharCode(
   ...[99, 55, 51, 54, 98, 51, 49, 97, 102, 97, 49, 101, 52, 99, 50, 57],
@@ -62,12 +66,3 @@ export function* rootSaga() {
     // * fork() any other store sagas down here...
   ]);
 }
-
-export type AppState = ReturnType<typeof rootReducer>;
-export type AppActions =
-  | CallHistoryMethodAction
-  | AuthActionTypes
-  | UserDataActionTypes
-  | LastVisitedActionTypes
-  | ControllerActionTypes
-  | BrowserDataActionTypes; // | OtherActionTypes

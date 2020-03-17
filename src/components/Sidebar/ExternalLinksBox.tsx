@@ -5,10 +5,10 @@ import { ReactComponent as LogoutIcon } from 'assets/Logout.svg';
 import { ReactComponent as DiscordIcon } from 'assets/Discord.svg';
 import { ReactComponent as TwitterIcon } from 'assets/Twitter.svg';
 import { colors } from 'theme/main';
-import { useDispatch } from 'hooks/useDispatch';
 import { initiateUserLogout } from 'store/auth/actions';
-import { useSelector } from 'hooks/useSelector';
 import { shell } from 'electron';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppState } from 'store/root';
 
 const Wrapper = styled.div`
   display: flex;
@@ -35,7 +35,7 @@ const ExternalLink = styled.a`
 
 const ExternalLinksBox = () => {
   const dispatch = useDispatch();
-  const uid = useSelector(state => state.auth.uid);
+  const uid = useSelector((state: AppState) => state.auth.uid);
 
   return (
     <Wrapper>

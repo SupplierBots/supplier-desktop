@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled, { css } from 'styled-components';
 import Item from 'components/Item/Item';
 import { colors, fonts } from 'theme/main';
-import { useSelector } from 'hooks/useSelector';
 import { fadeIn } from 'theme/animations';
+import { useSelector } from 'react-redux';
+import { AppState } from 'store/root';
 
 const StickyBottomBorder = styled.div`
   position: sticky;
@@ -60,8 +61,8 @@ interface Props {
 const ProductSelector = ({ site, value, onChange, setTouched, error }: Props) => {
   const isInitialMount = useRef(true);
 
-  const products = useSelector(state =>
-    state.userData.products.filter(prod => prod.site && prod.site.label === site),
+  const products = useSelector((state: AppState) =>
+    state.products.filter(prod => prod.site && prod.site.label === site),
   );
 
   const [selectedProducts, setSelectedProducts] = useState<string[]>(value);

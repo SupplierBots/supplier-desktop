@@ -1,7 +1,5 @@
 import React, { ReactNode } from 'react';
-import styled, { css, Keyframes } from 'styled-components';
-import { ReactComponent as SupremeLogo } from 'assets/SupremeLogo.svg';
-import { ReactComponent as PalaceLogo } from 'assets/PalaceLogo.svg';
+import styled from 'styled-components';
 import { colors, fonts } from 'theme/main';
 
 interface Props {

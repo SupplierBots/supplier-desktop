@@ -13,19 +13,18 @@ import Slider from 'components/Slider/Slider';
 import Button from 'components/Button/Button';
 import { slideInFromRight } from 'theme/animations';
 import ProductSelector from 'components/ProductSelector/ProductSelector';
-import { UserDataItemType } from 'store/userData/types';
 import { Option } from 'main/types/Option';
-import { useSelector } from 'hooks/useSelector';
 import { taskSiteOptions, initialTaskValues, taskValidationSchema } from './FormDetails';
 import { Task } from 'main/types/Task';
 import { RouteComponentProps } from 'react-router';
 import routes from 'constants/routes';
-import { useDispatch } from 'hooks/useDispatch';
 import uuid from 'uuid/v4';
-import { addUserDataItem, updateUserDataItem } from 'store/userData/actions';
 import { push } from 'connected-react-router';
 import { SelectableUserData } from 'main/types/SelectableUserData';
 import { TaskStatusType } from 'main/types/TaskStatus';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppState } from 'store/root';
+import { updateTask, addTask } from 'store/tasks/tasksSlice';
 
 const StyledHeading = styled(Heading)`
   color: ${colors.lightPurple};
@@ -112,11 +111,11 @@ const ButtonsContainer = styled.div`
 `;
 const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => {
   const dispatch = useDispatch();
-  const { userData, browsers } = useSelector(state => state);
+  const state = useSelector((state: AppState) => state);
   const [isNew, setIsNew] = useState(match.params.id && match.params.id === 'new');
 
-  const getOptions = (type: UserDataItemType, site: Option | null): Option[] => {
-    const dataArr = userData[type] as SelectableUserData[];
+  const getOptions = (type: 'profiles' | 'products' | 'proxies', site: Option | null): Option[] => {
+    const dataArr = state[type] as SelectableUserData[];
 
     const options = dataArr
       .filter(
@@ -134,8 +133,8 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
   };
 
   const getAvailableBrowsers = (): Option[] => {
-    return browsers
-      .filter(b => !userData.tasks.some(t => t.browser && t.browser.value === b.id))
+    return state.browsers
+      .filter(b => !state.tasks.some(t => t.browser && t.browser.value === b.id))
       .map(b => ({ label: b.accountEmail, value: b.id }));
   };
 
@@ -143,7 +142,7 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
     if (!match.params.id) {
       return initialTaskValues;
     }
-    const taskToLoad = userData.tasks.find(task => task.id === match.params.id);
+    const taskToLoad = state.tasks.find(task => task.id === match.params.id);
 
     if (taskToLoad) return taskToLoad;
 
@@ -156,9 +155,9 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
         status: { message: 'Inactive', type: TaskStatusType.Inactive },
         id: uuid(),
       };
-      dispatch(addUserDataItem('tasks', newTask));
+      dispatch(addTask({ task: newTask }));
     } else {
-      dispatch(updateUserDataItem('tasks', task));
+      dispatch(updateTask({ task }));
     }
     dispatch(push(routes.tasks));
     actions.setSubmitting(false);
