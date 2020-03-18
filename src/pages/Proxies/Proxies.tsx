@@ -20,8 +20,7 @@ import Item from 'components/ChangeItemModal/SelectableItem';
 import { colors, fonts } from 'theme/main';
 import { setLastVisitedProxy } from 'store/lastVisited/lastVisitedSlice';
 import { addProxy, updateProxy } from 'store/proxies/proxiesSlice';
-import { useSelector, useDispatch } from 'react-redux';
-import { AppState } from 'store/root';
+import { useStateDispatch, useStateSelector } from 'hooks/typedReduxHooks';
 
 const Wrapper = styled.div`
   display: grid;
@@ -72,8 +71,8 @@ const StyledButton = styled(Button)`
 
 const Proxies = ({ match, history }: RouteComponentProps<{ id: string }>) => {
   const [isNew, setIsNew] = useState(!match.params.id);
-  const dispatch = useDispatch();
-  const proxies = useSelector((state: AppState) => state.proxies);
+  const dispatch = useStateDispatch();
+  const proxies = useStateSelector(state => state.proxies);
 
   const getInitialValues = (): Proxy => {
     if (!match.params.id) {

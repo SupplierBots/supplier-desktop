@@ -8,8 +8,7 @@ import Button from 'components/Button/Button';
 
 import { IPCRenderer } from 'main/IPC/IPCRenderer';
 import { createBrowser, removeBrowser } from 'store/browsers/browsersSlice';
-import { useSelector, useDispatch } from 'react-redux';
-import { AppState } from 'store/root';
+import { useStateSelector, useStateDispatch } from 'hooks/typedReduxHooks';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -28,8 +27,8 @@ const BrowsersContainer = styled.div`
 `;
 
 const Browsers = () => {
-  const browsers = useSelector((state: AppState) => state.browsers);
-  const dispatch = useDispatch();
+  const browsers = useStateSelector(state => state.browsers);
+  const dispatch = useStateDispatch();
 
   useEffect(
     () => () => {

@@ -30,8 +30,7 @@ import {
 import { InlineInputsContainer } from 'components/TaskEditor/TaskEditor';
 import { setLastVisitedProfile } from 'store/lastVisited/lastVisitedSlice';
 import { addProfile, updateProfile } from 'store/profiles/profilesSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppState } from 'store/root';
+import { useStateDispatch, useStateSelector } from 'hooks/typedReduxHooks';
 
 const Wrapper = styled.div`
   display: grid;
@@ -55,8 +54,8 @@ const StyledForm = styled(Form)`
 const Profiles = ({ match, history }: RouteComponentProps<{ id: string }>) => {
   const [isNew, setIsNew] = useState(!match.params.id);
   const [modalIsOpened, setModalIsOpened] = useState(false);
-  const dispatch = useDispatch();
-  const profiles = useSelector((state: AppState) => state.profiles);
+  const dispatch = useStateDispatch();
+  const profiles = useStateSelector(state => state.profiles);
 
   useEffect(() => {
     setModalIsOpened(false);

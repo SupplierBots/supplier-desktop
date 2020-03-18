@@ -12,8 +12,7 @@ import { fadeIn } from 'theme/animations';
 import { IPCRenderer } from 'main/IPC/IPCRenderer';
 import { setActive } from 'store/browsers/browsersSlice';
 import { setChromiumPath } from 'store/controller/controllerSlice';
-import { useSelector, useDispatch } from 'react-redux';
-import { AppState } from 'store/root';
+import { useStateSelector, useStateDispatch } from 'hooks/typedReduxHooks';
 
 const StyledParticles = styled(Particles)`
   position: absolute;
@@ -31,8 +30,8 @@ type Props = RouteComponentProps;
 
 const Startup = ({ history }: Props) => {
   const [loading, setLoading] = useState(true);
-  const browsers = useSelector((state: AppState) => state.browsers);
-  const dispatch = useDispatch();
+  const browsers = useStateSelector(state => state.browsers);
+  const dispatch = useStateDispatch();
 
   const resetBrowsers = () => {
     browsers.forEach(b => {

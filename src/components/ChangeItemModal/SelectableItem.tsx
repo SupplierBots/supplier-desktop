@@ -12,8 +12,6 @@ import routes from 'constants/routes';
 import { push } from 'connected-react-router';
 import { Proxy } from 'main/types/Proxy';
 import Item from 'components/Item/Item';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppState } from 'store/root';
 import { addProduct, removeProduct } from 'store/products/productsSlice';
 import { addProfile, removeProfile } from 'store/profiles/profilesSlice';
 import { addProxy, removeProxy } from 'store/proxies/proxiesSlice';
@@ -22,6 +20,7 @@ import {
   setLastVisitedProfile,
   setLastVisitedProxy,
 } from 'store/lastVisited/lastVisitedSlice';
+import { useStateDispatch, useStateSelector } from 'hooks/typedReduxHooks';
 
 interface Props {
   name: string;
@@ -76,8 +75,8 @@ const IconsContainer = styled.div<Props>`
 `;
 
 const SelectableItem = (props: Props) => {
-  const dispatch = useDispatch();
-  const userDataItems = useSelector((state: AppState) => state[props.type]) as UserData[];
+  const dispatch = useStateDispatch();
+  const userDataItems = useStateSelector(state => state[props.type]) as UserData[];
 
   const duplicateItem = (event: MouseEvent<HTMLOrSVGElement>) => {
     event.stopPropagation();

@@ -9,7 +9,7 @@ import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { IPCRenderer } from 'main/IPC/IPCRenderer';
 import { CHROMIUM_DOWNLOAD_PROGRESS } from '../../../main/IPC/IPCEvents';
 import { setChromiumPath } from 'store/controller/controllerSlice';
-import { useDispatch } from 'react-redux';
+import { useStateDispatch } from 'hooks/typedReduxHooks';
 
 const Wrapper = styled.div`
   display: flex;
@@ -51,7 +51,7 @@ type Props = RouteComponentProps;
 const Downloader = ({ history }: Props) => {
   const [progress, setProgress] = useState(0);
   const [downloaded, setDownloaded] = useState(false);
-  const dispatch = useDispatch();
+  const dispatch = useStateDispatch();
 
   const handleDownloadProgress = (
     e: IpcRendererEvent,

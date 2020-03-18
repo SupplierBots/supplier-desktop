@@ -7,11 +7,7 @@ import { ReactComponent as CloseIcon } from 'assets/Close.svg';
 import { colors } from 'theme/main';
 import Item from './SelectableItem';
 import { UserData } from 'main/types/UserData';
-import { useSelector } from 'react-redux';
-import { Profile } from 'main/types/Profile';
-import { Product } from 'main/types/Product';
-import { Proxy } from 'main/types/Proxy';
-import { AppState } from 'store/root';
+import { useStateSelector } from 'hooks/typedReduxHooks';
 
 const CloseButton = styled.div`
   position: absolute;
@@ -65,7 +61,7 @@ interface Props {
 }
 
 const ChangeItemModal = ({ close, type, modalTitle, active }: Props) => {
-  const userData = useSelector((state: AppState) => state[type]) as UserData[];
+  const userData = useStateSelector(state => state[type]) as UserData[];
 
   const handleCardClick = (event: MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();

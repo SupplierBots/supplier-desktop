@@ -10,9 +10,8 @@ import { push } from 'connected-react-router';
 import routes from 'constants/routes';
 import { fadeIn } from 'theme/animations';
 import { TaskStatusType } from 'main/types/TaskStatus';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppState } from 'store/root';
 import { removeTask } from 'store/tasks/tasksSlice';
+import { useStateSelector, useStateDispatch } from 'hooks/typedReduxHooks';
 
 const Wrapper = styled.div`
   display: grid;
@@ -116,8 +115,8 @@ interface Props {
   details: TaskType;
 }
 const Task = ({ details }: Props) => {
-  const dispatch = useDispatch();
-  const browsers = useSelector((state: AppState) => state.browsers);
+  const dispatch = useStateDispatch();
+  const browsers = useStateSelector(state => state.browsers);
 
   const isBrowserActive = () => {
     const browser = browsers.find(b => b.id === details.browser?.value);

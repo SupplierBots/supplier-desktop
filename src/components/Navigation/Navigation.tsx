@@ -10,8 +10,7 @@ import { ReactComponent as ProxiesIcon } from 'assets/Proxies.svg';
 import { ReactComponent as BrowsersIcon } from 'assets/Harvesters.svg';
 import { ReactComponent as HelpIcon } from 'assets/Help.svg';
 import routes from 'constants/routes';
-import { useSelector } from 'react-redux';
-import { AppState } from 'store/root';
+import { useStateSelector } from 'hooks/typedReduxHooks';
 
 const Wrapper = styled.nav``;
 
@@ -21,9 +20,9 @@ const NavigationList = styled.ul`
 `;
 
 const Navigation = () => {
-  const lastVisited = useSelector((state: AppState) => state.lastVisited);
-  const browsers = useSelector((state: AppState) => state.browsers);
-  const router = useSelector((state: AppState) => state.router);
+  const lastVisited = useStateSelector(state => state.lastVisited);
+  const browsers = useStateSelector(state => state.browsers);
+  const router = useStateSelector(state => state.router);
 
   const isAnyTaskActive = () =>
     router.location.pathname.includes('tasks') && browsers.some(b => b.isActive);

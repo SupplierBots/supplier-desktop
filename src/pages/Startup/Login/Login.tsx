@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import LoginCard from 'components/LoginCard/LoginCard';
 import InlineLogo from 'components/InlineLogo/InlineLogo';
@@ -12,8 +12,7 @@ import { RouteComponentProps } from 'react-router';
 import { createAccountAttempt, loginAttempt, setAuthError } from 'store/auth/actions';
 import Spinner from 'components/Spinner/Spinner';
 import Fieldset from 'components/Fieldset/Fieldset';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppState } from 'store/root';
+import { useStateDispatch, useStateSelector } from 'hooks/typedReduxHooks';
 
 const Wrapper = styled.div`
   display: flex;
@@ -68,8 +67,8 @@ type Props = RouteComponentProps;
 
 const Login = ({ history }: Props) => {
   const [isSignUp, setSignUp] = useState(false);
-  const dispatch = useDispatch();
-  const { verifying, error, authenticated } = useSelector((state: AppState) => state.auth);
+  const dispatch = useStateDispatch();
+  const { verifying, error, authenticated } = useStateSelector(state => state.auth);
 
   const submit = async (values: Values, actions: FormikHelpers<Values>) => {
     if (isSignUp) {

@@ -22,9 +22,8 @@ import uuid from 'uuid/v4';
 import { push } from 'connected-react-router';
 import { SelectableUserData } from 'main/types/SelectableUserData';
 import { TaskStatusType } from 'main/types/TaskStatus';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppState } from 'store/root';
 import { updateTask, addTask } from 'store/tasks/tasksSlice';
+import { useStateSelector, useStateDispatch } from 'hooks/typedReduxHooks';
 
 const StyledHeading = styled(Heading)`
   color: ${colors.lightPurple};
@@ -110,8 +109,8 @@ const ButtonsContainer = styled.div`
   }
 `;
 const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => {
-  const dispatch = useDispatch();
-  const state = useSelector((state: AppState) => state);
+  const dispatch = useStateDispatch();
+  const state = useStateSelector(state => state);
   const [isNew, setIsNew] = useState(match.params.id && match.params.id === 'new');
 
   const getOptions = (type: 'profiles' | 'products' | 'proxies', site: Option | null): Option[] => {

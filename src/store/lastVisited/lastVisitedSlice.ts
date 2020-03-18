@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface LastVisitedState {
+export interface LastVisitedState {
   product: string;
   profile: string;
   proxy: string;

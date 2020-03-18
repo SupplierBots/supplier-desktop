@@ -10,8 +10,8 @@ import TaskEditor from 'components/TaskEditor/TaskEditor';
 import { Route, RouteComponentProps } from 'react-router';
 import routes from 'constants/routes';
 import { IPCRenderer } from 'main/IPC/IPCRenderer';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppState } from 'store/root';
+import { useStateSelector, useStateDispatch } from 'hooks/typedReduxHooks';
+import { removeAllTasks } from 'store/tasks/tasksSlice';
 
 const Wrapper = styled.div`
   display: grid;
@@ -47,14 +47,10 @@ const NoTaskInformation = styled.p`
 `;
 
 const Tasks = ({ history }: RouteComponentProps) => {
-  const { tasks, browsers } = useSelector((state: AppState) => state);
-  const dispatch = useDispatch();
+  const { tasks, browsers } = useStateSelector(state => state);
+  const dispatch = useStateDispatch();
   const isAnyBrowserAvailable = () => {
     return browsers.filter(b => !tasks.some(t => t.browser && t.browser.value === b.id)).length > 0;
-  };
-
-  const removeAllTasks = () => {
-    dispatch(removeAllTasks());
   };
 
   const createNewTask = () => {
@@ -96,7 +92,7 @@ const Tasks = ({ history }: RouteComponentProps) => {
         <Button
           disabled={isAnyTaskActive() || tasks.length === 0}
           secondary
-          onClick={removeAllTasks}
+          onClick={() => dispatch(removeAllTasks())}
         >
           Remove All
         </Button>

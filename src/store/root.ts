@@ -15,13 +15,15 @@ import { productsSlice } from './products/productsSlice';
 import { browsersSlice } from './browsers/browsersSlice';
 import { combineReducers } from '@reduxjs/toolkit';
 import { tasksSlice } from './tasks/tasksSlice';
+import store from './configureStore';
 
 export const history = createMemoryHistory({
   initialEntries: [routes.startup],
   initialIndex: 0,
 });
 
-export type AppState = ReturnType<typeof rootReducer>;
+export type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<typeof rootReducer>;
 
 export const rootReducer = combineReducers({
   auth: authSlice.reducer,
@@ -49,7 +51,7 @@ const encryptTransform = createTransform(
   },
 );
 
-const persistConfig: PersistConfig<AppState> = {
+const persistConfig: PersistConfig<RootState> = {
   key: 'root',
   blacklist: ['auth', 'router', 'controller'],
   transforms: [encryptTransform],

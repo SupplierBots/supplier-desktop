@@ -10,8 +10,7 @@ import routes from 'constants/routes';
 import { colors } from 'theme/main';
 import Routes from 'routes/Routes';
 import { IPCRenderer } from 'main/IPC/IPCRenderer';
-import { useSelector } from 'react-redux';
-import { AppState } from 'store/root';
+import { useStateSelector } from 'hooks/typedReduxHooks';
 
 const GlobalWrapper = styled.div`
   color: ${colors.lightGrey};
@@ -46,7 +45,7 @@ const App = () => {
   useEffect(disableAutofill, []);
   useEffect(IPCRenderer.registerListeners, []);
 
-  const authState = useSelector((state: AppState) => state.auth);
+  const authState = useStateSelector(state => state.auth);
 
   return (
     <>

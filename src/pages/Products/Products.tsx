@@ -28,8 +28,7 @@ import {
 
 import { addProduct, updateProduct } from 'store/products/productsSlice';
 import { setLastVisitedProduct } from 'store/lastVisited/lastVisitedSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppState } from 'store/root';
+import { useStateDispatch, useStateSelector } from 'hooks/typedReduxHooks';
 
 const Wrapper = styled.div`
   display: grid;
@@ -52,8 +51,8 @@ const StyledHeading = styled(Heading)`
 const Products = ({ history, match }: RouteComponentProps<{ id: string }>) => {
   const [isNew, setIsNew] = useState(!match.params.id);
   const [modalIsOpened, setModalIsOpened] = useState(false);
-  const dispatch = useDispatch();
-  const products = useSelector((state: AppState) => state.products);
+  const dispatch = useStateDispatch();
+  const products = useStateSelector(state => state.products);
 
   useEffect(() => {
     setModalIsOpened(false);

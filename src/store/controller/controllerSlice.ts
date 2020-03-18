@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface ControllerState {
+export interface ControllerState {
   lockTasks: boolean;
   chromiumPath: string;
   appData: string;

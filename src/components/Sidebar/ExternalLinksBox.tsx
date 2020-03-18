@@ -7,8 +7,7 @@ import { ReactComponent as TwitterIcon } from 'assets/Twitter.svg';
 import { colors } from 'theme/main';
 import { initiateUserLogout } from 'store/auth/actions';
 import { shell } from 'electron';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppState } from 'store/root';
+import { useStateDispatch, useStateSelector } from 'hooks/typedReduxHooks';
 
 const Wrapper = styled.div`
   display: flex;
@@ -34,8 +33,8 @@ const ExternalLink = styled.a`
 `;
 
 const ExternalLinksBox = () => {
-  const dispatch = useDispatch();
-  const uid = useSelector((state: AppState) => state.auth.uid);
+  const dispatch = useStateDispatch();
+  const uid = useStateSelector(state => state.auth.uid);
 
   return (
     <Wrapper>

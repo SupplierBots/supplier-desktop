@@ -3,8 +3,7 @@ import styled, { css } from 'styled-components';
 import Item from 'components/Item/Item';
 import { colors, fonts } from 'theme/main';
 import { fadeIn } from 'theme/animations';
-import { useSelector } from 'react-redux';
-import { AppState } from 'store/root';
+import { useStateSelector } from 'hooks/typedReduxHooks';
 
 const StickyBottomBorder = styled.div`
   position: sticky;
@@ -61,7 +60,7 @@ interface Props {
 const ProductSelector = ({ site, value, onChange, setTouched, error }: Props) => {
   const isInitialMount = useRef(true);
 
-  const products = useSelector((state: AppState) =>
+  const products = useStateSelector(state =>
     state.products.filter(prod => prod.site && prod.site.label === site),
   );
 
