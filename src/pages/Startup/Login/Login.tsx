@@ -9,10 +9,11 @@ import Button from 'components/Button/Button';
 import { signInSchema, signUpSchema, initialValues, Values } from './FormDetails';
 import Error from './Error';
 import { RouteComponentProps } from 'react-router';
-import { createAccountAttempt, loginAttempt, setAuthError } from 'store/auth/actions';
+import { loginAttempt, registerAttempt } from 'store/auth/authEpics';
 import Spinner from 'components/Spinner/Spinner';
 import Fieldset from 'components/Fieldset/Fieldset';
 import { useStateDispatch, useStateSelector } from 'hooks/typedReduxHooks';
+import { setAuthError } from 'store/auth/authSlice';
 
 const Wrapper = styled.div`
   display: flex;
@@ -77,13 +78,13 @@ const Login = ({ history }: Props) => {
         password: values.password,
         key: values.key,
       };
-      dispatch(createAccountAttempt(credentials));
+      dispatch(registerAttempt({ credentials }));
     } else {
       const credentials = {
         email: values.email,
         password: values.password,
       };
-      dispatch(loginAttempt(credentials));
+      dispatch(loginAttempt({ credentials }));
     }
     actions.setSubmitting(false);
   };
@@ -131,7 +132,7 @@ const Login = ({ history }: Props) => {
                     bgColor={colors.secondaryBackground}
                     onClick={() => {
                       setSignUp(!isSignUp);
-                      dispatch(setAuthError(''));
+                      dispatch(setAuthError({ error: '' }));
                       resetForm();
                     }}
                   >

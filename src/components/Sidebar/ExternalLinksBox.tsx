@@ -5,9 +5,9 @@ import { ReactComponent as LogoutIcon } from 'assets/Logout.svg';
 import { ReactComponent as DiscordIcon } from 'assets/Discord.svg';
 import { ReactComponent as TwitterIcon } from 'assets/Twitter.svg';
 import { colors } from 'theme/main';
-import { initiateUserLogout } from 'store/auth/actions';
 import { shell } from 'electron';
 import { useStateDispatch, useStateSelector } from 'hooks/typedReduxHooks';
+import { initiateLogout } from 'store/auth/authEpics';
 
 const Wrapper = styled.div`
   display: flex;
@@ -38,7 +38,7 @@ const ExternalLinksBox = () => {
 
   return (
     <Wrapper>
-      <ExternalLink onClick={() => dispatch(initiateUserLogout(uid))}>
+      <ExternalLink onClick={() => dispatch(initiateLogout({ uid }))}>
         <LogoutIcon />
       </ExternalLink>
 

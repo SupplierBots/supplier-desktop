@@ -15,6 +15,14 @@ export async function parseResponse(response: Response, task: SupremeTask) {
 
   if (status !== 200) return;
 
+  if (process.env.NODE_ENV === 'development' && /.*(checkout|status|add).json$/.test(url)) {
+    const res = await response.text();
+    console.log('RES' + response.url());
+    console.log(response.headers());
+    console.log(res);
+    console.log('---------------');
+  }
+
   if (/.*add.json$/.test(url)) {
     const res = (await response.json()) as Supreme.AddToCartResponse;
     if (res.length > 0) {
@@ -29,10 +37,6 @@ export async function parseResponse(response: Response, task: SupremeTask) {
   } else if (/.*(checkout|status).json$/.test(url)) {
     const res = (await response.json()) as Supreme.CheckoutResponse;
 
-    if (process.env.NODE_ENV === 'development') {
-      console.log(res);
-    }
-
     switch (res.status) {
       case 'failed':
       case '404':
@@ -40,7 +44,7 @@ export async function parseResponse(response: Response, task: SupremeTask) {
       case 'outOfStock': {
         const message = res.status === 'outOfStock' ? 'Size sold out' : 'Failed. Retrying';
         task.updateTaskStatus({ message, type: TaskStatusType.Error });
-        await task.retry();
+        //await task.retry();
         return;
       }
 

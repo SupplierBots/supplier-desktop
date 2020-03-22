@@ -1,24 +1,32 @@
-import createSagaMiddleware from 'redux-saga';
 import { routerMiddleware } from 'connected-react-router';
-import { rootSaga, history, persistedReducer, RootState } from './root';
+import { history, persistedReducer, RootState, rootEpic } from './root';
 import { persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
-import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import {
+  configureStore,
+  getDefaultMiddleware,
+  SerializableStateInvariantMiddlewareOptions,
+} from '@reduxjs/toolkit';
+import { createEpicMiddleware } from 'redux-observable';
 
-const sagaMiddleware = createSagaMiddleware<RootState>();
+const epicMiddleware = createEpicMiddleware();
 
 const router = routerMiddleware(history);
 
-const serializableOptions: unknown = {
-  ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-};
+interface DefaultMiddlewareOptions {
+  thunk: false;
+  immutableCheck: boolean;
+  serializableCheck: SerializableStateInvariantMiddlewareOptions;
+}
 
 const middleware = [
-  sagaMiddleware,
+  epicMiddleware,
   router,
-  ...getDefaultMiddleware<RootState>({
-    thunk: true,
+  ...getDefaultMiddleware<RootState, DefaultMiddlewareOptions>({
+    thunk: false,
     immutableCheck: true,
-    serializableCheck: serializableOptions as true,
+    serializableCheck: {
+      ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+    },
   }),
 ] as const;
 
@@ -30,5 +38,6 @@ const store = configureStore({
 
 export const persistor = persistStore(store);
 
-sagaMiddleware.run(rootSaga);
+epicMiddleware.run(rootEpic);
+
 export default store;

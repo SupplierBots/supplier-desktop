@@ -1,10 +1,8 @@
 import routes from 'constants/routes';
-import { all, fork } from 'redux-saga/effects';
 import { connectRouter } from 'connected-react-router';
 import { createMemoryHistory } from 'history';
 import { persistReducer, createTransform, PersistConfig } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import { watchAuth } from './auth/sagas';
 import CryptoJS from 'crypto-js';
 import { authSlice } from './auth/authSlice';
 import { lastVisitedSlice } from './lastVisited/lastVisitedSlice';
@@ -16,6 +14,16 @@ import { browsersSlice } from './browsers/browsersSlice';
 import { combineReducers } from '@reduxjs/toolkit';
 import { tasksSlice } from './tasks/tasksSlice';
 import store from './configureStore';
+import { Observable } from 'rxjs';
+import { combineEpics, Epic } from 'redux-observable';
+import {
+  loginEpic,
+  licenseEpic,
+  registerEpic,
+  logoutEpic,
+  authMonitorEpic,
+} from './auth/authEpics';
+import { config } from 'config';
 
 export const history = createMemoryHistory({
   initialEntries: [routes.startup],
@@ -24,6 +32,7 @@ export const history = createMemoryHistory({
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof rootReducer>;
+export type StoreObservable = Observable<ReturnType<AppDispatch>>;
 
 export const rootReducer = combineReducers({
   auth: authSlice.reducer,
@@ -36,6 +45,14 @@ export const rootReducer = combineReducers({
   tasks: tasksSlice.reducer,
   router: connectRouter(history),
 });
+
+export const rootEpic: Epic = combineEpics(
+  loginEpic,
+  registerEpic,
+  licenseEpic,
+  logoutEpic,
+  authMonitorEpic,
+);
 
 const key = String.fromCharCode(
   ...[99, 55, 51, 54, 98, 51, 49, 97, 102, 97, 49, 101, 52, 99, 50, 57],
@@ -52,7 +69,7 @@ const encryptTransform = createTransform(
 );
 
 const persistConfig: PersistConfig<RootState> = {
-  key: 'root',
+  key: `root${config.storageVersion}`,
   blacklist: ['auth', 'router', 'controller'],
   transforms: [encryptTransform],
   storage,
@@ -60,10 +77,3 @@ const persistConfig: PersistConfig<RootState> = {
 };
 
 export const persistedReducer = persistReducer(persistConfig, rootReducer);
-
-export function* rootSaga() {
-  yield all([
-    fork(watchAuth),
-    // * fork() any other store sagas down here...
-  ]);
-}

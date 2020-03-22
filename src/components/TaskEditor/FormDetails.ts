@@ -19,7 +19,7 @@ export const taskValidationSchema = Yup.object().shape({
     is: (site: Option) => site?.value === 'supreme',
     then: Yup.number()
       .required('Required')
-      .moreThan(750, '> 750ms')
+      .moreThan(-1, '> 750ms')
       .lessThan(10000, '< 10000ms'),
     otherwise: Yup.number(),
   }),

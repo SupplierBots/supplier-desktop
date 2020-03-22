@@ -1,9 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-export interface License {
-  expirationDate: number;
-  key: string;
-}
+import { License } from 'main/types/License';
 
 export interface AuthState {
   readonly verifying: boolean;
@@ -11,24 +7,36 @@ export interface AuthState {
   readonly uid: string;
   readonly error: string;
   readonly license: License | null;
+  readonly loginTime: number;
 }
 
-const initialState: AuthState = {
+export const initialState: AuthState = {
   verifying: false,
   authenticated: false,
   uid: '',
   error: '',
   license: null,
+  loginTime: 0,
 };
 
 export const authSlice = createSlice({
   name: 'auth',
-  initialState,
+  initialState: initialState,
   reducers: {
-    userLoggedIn: (state, { payload }: PayloadAction<{ auth: AuthState }>) => {
-      return payload.auth;
+    userLoggedIn: (
+      state,
+      { payload }: PayloadAction<{ license: License; uid: string; loginTime: number }>,
+    ) => {
+      return {
+        verifying: false,
+        authenticated: true,
+        error: '',
+        license: payload.license,
+        uid: payload.uid,
+        loginTime: payload.loginTime,
+      };
     },
-    userLoggedOut: state => {
+    userLoggedOut: () => {
       return initialState;
     },
     setAuthError: (state, { payload }: PayloadAction<{ error: string }>) => {
