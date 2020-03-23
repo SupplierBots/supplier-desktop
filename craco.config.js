@@ -12,6 +12,10 @@ module.exports = {
       webpackConfig.optimization.splitChunks = false;
       webpackConfig.optimization.runtimeChunk = false;
       webpackConfig.output.filename = 'renderer.js';
+      webpackConfig.resolve = {
+        ...webpackConfig.resolve,
+        mainFields: ['browser', 'module', 'main'],
+      };
       webpackConfig.module.rules = [
         ...webpackConfig.module.rules,
         {

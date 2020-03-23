@@ -35,13 +35,13 @@ const createWindow = () => {
     fullscreenable: false,
     titleBarStyle: 'hiddenInset',
     webPreferences: {
-      nodeIntegration: true,
+      nodeIntegration: isDev,
+      preload: isDev ? undefined : path.join(__dirname, 'preload.js'),
       backgroundThrottling: false,
     },
   };
 
   mainWindow = new BrowserWindow(launchOptions);
-
   const url = isDev
     ? 'http://localhost:3000'
     : `file://${path.join(__dirname, '../build/index.html')}`;

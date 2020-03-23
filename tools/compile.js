@@ -12,6 +12,7 @@ const buildDir = path.resolve(process.cwd(), 'build');
     'loadRenderer.js',
     'index.html',
     'static',
+    'preload.js',
   ];
 
   const files = await fs.readdir(buildDir);
