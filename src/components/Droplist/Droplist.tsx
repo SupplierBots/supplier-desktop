@@ -3,10 +3,13 @@ import styled, { css } from 'styled-components';
 import { colors, fonts } from 'theme/main';
 import { ReactComponent as SupremeLogo } from 'assets/SupremeLogo.svg';
 import { ReactComponent as PalaceLogo } from 'assets/PalaceLogo.svg';
+import { Droplist as DroplistType } from 'store/dashboard/dashboardSlice';
+import { shell } from 'electron';
 
 interface Props {
   'data-available'?: boolean;
   isPalace?: boolean;
+  details: DroplistType;
 }
 
 const Wrapper = styled.div<Props>`
@@ -16,7 +19,7 @@ const Wrapper = styled.div<Props>`
   background: ${colors.tertiaryBackground};
   color: ${colors.darkGrey};
   border: 1px solid ${colors.darkGrey};
-  padding: 1.6rem 3rem;
+  padding: 0.8rem 1.5rem;
   text-align: right;
   position: relative;
   transition: 0.3s all;
@@ -43,6 +46,8 @@ const Wrapper = styled.div<Props>`
 `;
 
 const Week = styled.p`
+  margin-top: 1.03rem;
+
   font-size: ${fonts.big};
   color: ${colors.lightGrey};
 `;
@@ -55,8 +60,8 @@ const Date = styled.p`
 
 const StyledSupremeLogo = styled(SupremeLogo)<Props>`
   position: absolute;
-  top: 1.5rem;
-  left: 1.5rem;
+  top: 1.65rem;
+  left: 2rem;
 
   ${({ 'data-available': available }) =>
     !available &&
@@ -69,8 +74,8 @@ const StyledSupremeLogo = styled(SupremeLogo)<Props>`
 
 const StyledPalaceLogo = styled(PalaceLogo)<Props>`
   position: absolute;
-  top: 1.5rem;
-  left: 1.5rem;
+  top: 1.65rem;
+  left: 2rem;
 
   ${({ 'data-available': available }) =>
     !available &&
@@ -84,10 +89,10 @@ const StyledPalaceLogo = styled(PalaceLogo)<Props>`
 const Droplist = (props: Props) => {
   const { isPalace, ...rest } = props;
   return (
-    <Wrapper {...rest}>
-      {props.isPalace ? <StyledPalaceLogo {...rest} /> : <StyledSupremeLogo {...rest} />}
-      <Week>Week 20</Week>
-      <Date>11th July 19</Date>
+    <Wrapper {...rest} onClick={() => shell.openExternal(props.details.link)}>
+      {isPalace ? <StyledPalaceLogo {...rest} /> : <StyledSupremeLogo {...rest} />}
+      <Week>Week {props.details.week}</Week>
+      <Date>{props.details.date}</Date>
     </Wrapper>
   );
 };

@@ -20,6 +20,7 @@ const UPDATE_TASK_STATUS = 'UPDATE_TASK_STATUS';
 export interface ChromiumVerifiedPayload {
   success: boolean;
   executablePath: string;
+  version: string;
 }
 
 export interface BrowserStatePayload {

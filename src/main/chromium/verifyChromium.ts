@@ -27,11 +27,11 @@ export const verifyChromium = async (e: IpcMainInvokeEvent) => {
     await page.goto('http://example.com/');
     await browser.close();
 
-    return { success: true, executablePath };
+    return { success: true, executablePath, version: app.getVersion() };
   } catch (ex) {
     console.log('Error while testing browser.');
     console.log(ex);
     fs.removeSync(chromiumPath);
-    return { success: false, executablePath: 'fail' };
+    return { success: false, executablePath: 'fail', version: app.getVersion() };
   }
 };

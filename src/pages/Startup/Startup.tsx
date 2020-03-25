@@ -11,7 +11,7 @@ import { fadeIn } from 'theme/animations';
 
 import { IPCRenderer } from 'main/IPC/IPCRenderer';
 import { setActive } from 'store/browsers/browsersSlice';
-import { setChromiumPath } from 'store/controller/controllerSlice';
+import { setAppDetails } from 'store/controller/controllerSlice';
 import { useStateSelector, useStateDispatch } from 'hooks/typedReduxHooks';
 
 const StyledParticles = styled(Particles)`
@@ -43,12 +43,12 @@ const Startup = ({ history }: Props) => {
 
   useEffect(() => {
     (async () => {
-      const { success, executablePath } = await IPCRenderer.verifyChromium();
+      const { success, executablePath, version } = await IPCRenderer.verifyChromium();
 
       setLoading(false);
 
       if (success) {
-        dispatch(setChromiumPath({ path: executablePath }));
+        dispatch(setAppDetails({ path: executablePath, version }));
         history.push(routes.login);
       } else {
         history.push(routes.downloader);

@@ -10,7 +10,8 @@ import routes from 'constants/routes';
 import { colors } from 'theme/main';
 import Routes from 'routes/Routes';
 import { IPCRenderer } from 'main/IPC/IPCRenderer';
-import { useStateSelector } from 'hooks/typedReduxHooks';
+import { useStateSelector, useStateDispatch } from 'hooks/typedReduxHooks';
+import { fetchDashboardData } from 'store/dashboard/dashboardEpics';
 
 const GlobalWrapper = styled.div`
   color: ${colors.lightGrey};

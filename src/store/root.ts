@@ -24,6 +24,8 @@ import {
   authMonitorEpic,
 } from './auth/authEpics';
 import { config } from 'config';
+import { fetchDashboardEpic } from './dashboard/dashboardEpics';
+import { dashboardSlice } from './dashboard/dashboardSlice';
 
 export const history = createMemoryHistory({
   initialEntries: [routes.startup],
@@ -43,6 +45,7 @@ export const rootReducer = combineReducers({
   products: productsSlice.reducer,
   browsers: browsersSlice.reducer,
   tasks: tasksSlice.reducer,
+  dashboard: dashboardSlice.reducer,
   router: connectRouter(history),
 });
 
@@ -52,6 +55,7 @@ export const rootEpic: Epic = combineEpics(
   licenseEpic,
   logoutEpic,
   authMonitorEpic,
+  fetchDashboardEpic,
 );
 
 const key = String.fromCharCode(

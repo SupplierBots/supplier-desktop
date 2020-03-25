@@ -8,7 +8,7 @@ import routes from 'constants/routes';
 import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { IPCRenderer } from 'main/IPC/IPCRenderer';
 import { CHROMIUM_DOWNLOAD_PROGRESS } from '../../../main/IPC/IPCEvents';
-import { setChromiumPath } from 'store/controller/controllerSlice';
+import { setAppDetails } from 'store/controller/controllerSlice';
 import { useStateDispatch } from 'hooks/typedReduxHooks';
 
 const Wrapper = styled.div`
@@ -68,9 +68,9 @@ const Downloader = ({ history }: Props) => {
     //* Wait to install
     await new Promise(resolve => setTimeout(resolve, 10000));
 
-    const { success, executablePath } = await IPCRenderer.verifyChromium();
+    const { success, executablePath, version } = await IPCRenderer.verifyChromium();
     if (success) {
-      dispatch(setChromiumPath({ path: executablePath }));
+      dispatch(setAppDetails({ path: executablePath, version }));
       history.push(routes.login);
     } else {
       history.push(routes.downloader);

@@ -1,8 +1,10 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { ReactComponent as SupremeLogo } from 'assets/SupremeLogo.svg';
 import { ReactComponent as PalaceLogo } from 'assets/PalaceLogo.svg';
 import { colors, fonts } from 'theme/main';
+import { SelloutTime as SelloutTimeType } from 'store/dashboard/dashboardSlice';
+import { shell } from 'electron';
 
 const Wrapper = styled.div`
   height: 5rem;
@@ -24,7 +26,7 @@ const Week = styled.p`
   margin-left: 1.5rem;
 `;
 
-const RegionLink = styled.div`
+const RegionLink = styled.div<{ available?: boolean }>`
   height: 2rem;
   width: 2rem;
   border-radius: 0.5rem;
@@ -47,6 +49,16 @@ const RegionLink = styled.div`
     filter: brightness(90%);
     cursor: pointer;
   }
+
+  ${({ available }) =>
+    !available &&
+    css`
+      filter: grayscale(100%);
+      :hover {
+        filter: grayscale(100%);
+        cursor: not-allowed;
+      }
+    `}
 `;
 
 const RegionName = styled.span`
@@ -60,22 +72,31 @@ const RegionName = styled.span`
 
 interface Props {
   isPalace?: boolean;
+  details: SelloutTimeType;
 }
 
-const SelloutTime = ({ isPalace }: Props) => {
-  //Redux useSelector
-  return (
-    <Wrapper>
-      {isPalace ? <PalaceLogo /> : <SupremeLogo />}
-      <Week>Week 20</Week>
-      <RegionLink>
-        <RegionName>UK</RegionName>
-      </RegionLink>
-      <RegionLink>
-        <RegionName>US</RegionName>
-      </RegionLink>
-    </Wrapper>
-  );
-};
+const SelloutTime = ({ isPalace, details }: Props) => (
+  <Wrapper>
+    {isPalace ? <PalaceLogo /> : <SupremeLogo />}
+    <Week>Week {details.week}</Week>
+    <RegionLink
+      available={!!details.eu}
+      {...(!!details.eu && {
+        onClick: () => shell.openExternal(details.eu ?? 'https://supremecommunity.com/'),
+      })}
+    >
+      <RegionName>UK</RegionName>
+    </RegionLink>
+
+    <RegionLink
+      available={!!details.us}
+      {...(!!details.us && {
+        onClick: () => shell.openExternal(details.us ?? 'https://supremecommunity.com/'),
+      })}
+    >
+      <RegionName>US</RegionName>
+    </RegionLink>
+  </Wrapper>
+);
 
 export default SelloutTime;

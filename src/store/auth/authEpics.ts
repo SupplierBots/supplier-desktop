@@ -13,6 +13,7 @@ import routes from 'constants/routes';
 import { FirebaseError } from 'firebase';
 import axios, { AxiosResponse } from 'axios';
 import { config } from 'config';
+import { fetchDashboardData } from 'store/dashboard/dashboardEpics';
 
 export const loginAttempt = createAction<{ credentials: LoginCredentials }>('auth/loginAttempt');
 export const retreiveLicense = createAction<{ uid: string }>('auth/retreiveLicense');
@@ -95,6 +96,7 @@ export const licenseEpic = (action$: StoreObservable) =>
             return concat(of(userLoggedOut()), of(setAuthError({ error: 'License Expired' })));
           }
           return concat(
+            of(fetchDashboardData()),
             from(
               firestore
                 .doc(`users/${payload.uid}`)

@@ -6,6 +6,9 @@ import Droplist from 'components/Droplist/Droplist';
 import SelloutTime from 'components/SelloutTime/SelloutTime';
 import Statistics from 'components/Staistics/Statistics';
 import { fonts, colors } from 'theme/main';
+import { useStateSelector } from 'hooks/typedReduxHooks';
+import semver from 'semver';
+import moment from 'moment';
 
 const Wrapper = styled.div`
   display: grid;
@@ -34,12 +37,13 @@ const Container = styled.div`
   }
 `;
 
-const Info = styled.p`
+const Info = styled.p<{ height: string }>`
   font-size: ${fonts.regular};
   color: ${colors.darkGrey};
   text-align: justify;
   line-height: 2rem;
   margin-bottom: 2.5rem;
+  height: ${({ height }) => height};
 `;
 
 const ContactDescription = styled.p`
@@ -59,20 +63,33 @@ const ContactEmail = styled.span`
 `;
 
 const Dashboard = () => {
+  const { news, tips, contactEmail, supportEmail, latestVersion } = useStateSelector(
+    s => s.dashboard,
+  );
+  const { version } = useStateSelector(s => s.controller);
+  const license = useStateSelector(s => s.auth.license);
+  const { supreme, palace } = useStateSelector(s => s.dashboard.droplists);
+  const times = useStateSelector(s => s.dashboard.selloutTimes);
+
+  const isLatest = () => semver.gte(version, latestVersion.number);
+  const getLicenseDate = () => moment(license?.expirationDate ?? moment.now());
+  const getDaysLeft = () => getLicenseDate().diff(moment.now(), 'days');
+  const isLifetime = () => getDaysLeft() > 3000;
+
   return (
     <Wrapper>
       <StyledCard>
         <Heading>Droplists</Heading>
         <Container>
-          <Droplist data-available />
-          <Droplist />
-          <Droplist isPalace data-available />
-          <Droplist isPalace />
+          <Droplist data-available details={supreme[0]} />
+          <Droplist details={supreme[1]} />
+          <Droplist isPalace data-available details={palace[0]} />
+          <Droplist isPalace details={palace[1]} />
         </Container>
         <StyledHeading>Sellout times</StyledHeading>
         <Container>
-          <SelloutTime />
-          <SelloutTime isPalace />
+          <SelloutTime details={times.supreme} />
+          <SelloutTime isPalace details={times.palace} />
         </Container>
         <StyledHeading>Stats</StyledHeading>
         <Statistics name="Successful checkouts">23</Statistics>
@@ -80,27 +97,28 @@ const Dashboard = () => {
       </StyledCard>
       <StyledCard>
         <StyledHeadingSmall>News</StyledHeadingSmall>
-        <Info>
-          Finally closed beta! We would be thankful for every feedback. Please be aware that some
-          errors can occur. We will fix them as fast as possible. Be sure you've downloaded latest
-          version. Thanks for participating.
-        </Info>
+        <Info height="10.5rem">{news}</Info>
         <StyledHeadingSmall>Tips</StyledHeadingSmall>
-        <Info>
-          Here we will display random tips and answers to frequently asked questions. We need more
-          text - this placeholder is a too short, final tips will be a bit longer. At least some of
-          them.
-        </Info>
+        <Info height="8rem">{tips}</Info>
         <StyledHeadingSmall>Information</StyledHeadingSmall>
-        <Statistics name="Version">1.0.0 (latest)</Statistics>
-        <Statistics name="License expires on">28 July 2020 (365 days left)</Statistics>
+        <Statistics name="Version" {...(!isLatest() && { externalLink: latestVersion.url })}>
+          {version} ({!isLatest() ? `Download ${latestVersion.number} update!` : 'latest'})
+        </Statistics>
+        {isLifetime() ? (
+          <Statistics name="License">Lifetime</Statistics>
+        ) : (
+          <Statistics name="License">
+            {getLicenseDate().format('Do MMMM YYYY')} ({getDaysLeft()} days left)
+          </Statistics>
+        )}
+
         <ContactDescription>
           Did you notice any bugs or have some suggestions? Send us a message!
-          <ContactEmail>support@safedropbot.com</ContactEmail>
+          <ContactEmail>{supportEmail}</ContactEmail>
         </ContactDescription>
         <ContactDescription>
           Business inquiries:
-          <ContactEmail>contact@safedropbot.com</ContactEmail>
+          <ContactEmail>{contactEmail}</ContactEmail>
         </ContactDescription>
       </StyledCard>
     </Wrapper>
