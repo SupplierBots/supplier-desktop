@@ -1,10 +1,16 @@
-import electron, { app, BrowserWindow, Menu, BrowserWindowConstructorOptions } from 'electron';
+import electron, {
+  app,
+  BrowserWindow,
+  Menu,
+  BrowserWindowConstructorOptions,
+  powerSaveBlocker,
+} from 'electron';
 
 import path from 'path';
 import { IPCMain } from './IPC/IPCMain';
 import { menu } from './menu';
-
-const isDev = process.env.NODE_ENV === 'development';
+import { setDiscordActivity } from './discordRPC';
+export const isDev = process.env.NODE_ENV === 'development';
 
 let mainWindow: electron.BrowserWindow | null = null;
 
@@ -50,6 +56,7 @@ const createWindow = () => {
   mainWindow.loadURL(url);
 
   mainWindow.once('ready-to-show', () => {
+    setDiscordActivity();
     mainWindow?.show();
   });
 
@@ -76,6 +83,7 @@ const createWindow = () => {
 
 app.whenReady().then(createWindow);
 Menu.setApplicationMenu(menu);
+powerSaveBlocker.start('prevent-display-sleep');
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

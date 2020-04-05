@@ -4,12 +4,9 @@ import InlineLogo from 'components/InlineLogo/InlineLogo';
 import { colors, fonts } from 'theme/main';
 import ProgressBar from 'components/ProgressBar/ProgressBar';
 import { RouteComponentProps } from 'react-router';
-import routes from 'constants/routes';
 import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { IPCRenderer } from 'main/IPC/IPCRenderer';
 import { CHROMIUM_DOWNLOAD_PROGRESS } from '../../../main/IPC/IPCEvents';
-import { setAppDetails } from 'store/controller/controllerSlice';
-import { useStateDispatch } from 'hooks/typedReduxHooks';
 
 const Wrapper = styled.div`
   display: flex;
@@ -51,7 +48,6 @@ type Props = RouteComponentProps;
 const Downloader = ({ history }: Props) => {
   const [progress, setProgress] = useState(0);
   const [downloaded, setDownloaded] = useState(false);
-  const dispatch = useStateDispatch();
 
   const handleDownloadProgress = (
     e: IpcRendererEvent,
@@ -68,13 +64,7 @@ const Downloader = ({ history }: Props) => {
     //* Wait to install
     await new Promise(resolve => setTimeout(resolve, 10000));
 
-    const { success, executablePath, version } = await IPCRenderer.verifyChromium();
-    if (success) {
-      dispatch(setAppDetails({ path: executablePath, version }));
-      history.push(routes.login);
-    } else {
-      history.push(routes.downloader);
-    }
+    IPCRenderer.relaunch();
   };
 
   const fetchChromium = () => {

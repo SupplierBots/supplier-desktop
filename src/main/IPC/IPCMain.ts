@@ -24,12 +24,14 @@ import {
   UPDATE_DOWNLOADED,
   UPDATE_DOWNLOAD_ERROR,
   DOWNLOAD_UPDATE,
+  RELAUNCH,
 } from './IPCEvents';
 import { Profile } from '../types/Profile';
 import { TaskStatus } from '../types/TaskStatus';
 import { Task } from '../types/Task';
 import { BrowserData } from '../types/BrowserData';
 import { Product } from '../types/Product';
+import { app } from 'electron';
 
 export abstract class IPCMain {
   private constructor() {}
@@ -43,6 +45,10 @@ export abstract class IPCMain {
     ipc.on(WINDOW_CLOSE, () => mainWindow?.close());
     ipc.on(DOWNLOAD_UPDATE, () => {
       autoUpdater.downloadUpdate();
+    });
+    ipc.on(RELAUNCH, () => {
+      app.relaunch();
+      app.exit();
     });
   };
 

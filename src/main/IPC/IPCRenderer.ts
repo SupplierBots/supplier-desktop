@@ -19,6 +19,7 @@ import {
   UPDATE_DOWNLOADED,
   UPDATE_DOWNLOAD_ERROR,
   DOWNLOAD_UPDATE,
+  RELAUNCH,
 } from './IPCEvents';
 
 import store from 'store/configureStore';
@@ -124,5 +125,9 @@ export abstract class IPCRenderer {
 
   public static downloadUpdate = () => {
     ipc.send(DOWNLOAD_UPDATE);
+  };
+
+  public static relaunch = () => {
+    ipc.send(RELAUNCH);
   };
 }

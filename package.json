@@ -2,7 +2,7 @@
   "name": "supplier",
   "productName": "Supplier",
   "description": "Supreme & Palace Bot",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "copyright": "Supplier",
   "main": "build/electron.js",
   "homepage": ".",
@@ -55,7 +55,7 @@
       "electronUpdaterCompatibility": ">= 2.16"
     },
     "files": [
-      "app/**/*",
+      "build/**/*",
       "node_modules/**/*",
       "package.json",
       "!electron-builder.env"
@@ -80,6 +80,7 @@
     "cheerio": "^1.0.0-rc.3",
     "connected-react-router": "^6.8.0",
     "crypto-js": "^3.1.9-1",
+    "discord-rpc": "^3.1.0",
     "electron-better-ipc": "^0.8.0",
     "electron-updater": "^4.2.5",
     "firebase": "^7.8.0",
@@ -128,6 +129,7 @@
     "@babel/preset-env": "^7.8.4",
     "@babel/preset-typescript": "^7.8.3",
     "@types/cheerio": "^0.22.16",
+    "@types/discord-rpc": "^3.0.2",
     "@types/flat": "^5.0.0",
     "@types/fs-extra": "^8.0.1",
     "@types/jest": "^25.1.1",
