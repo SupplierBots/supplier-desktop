@@ -27,7 +27,7 @@
     //"craco.config.js": true,
     //You can hide these too
     //"node_modules": true,
-    "dist": true,
+    //"dist": true,
     "patches": true,
     "resources": true
   },

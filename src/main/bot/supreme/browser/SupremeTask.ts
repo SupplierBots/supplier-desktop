@@ -15,14 +15,17 @@ import { selectOption } from './selectOption';
 import { checkout } from './checkout';
 import { loadMainPage } from './loadPage';
 import { injectScript } from '../pageInject/injectScript';
+import { Logger } from '../Logger';
 
 class SupremeTask {
   public browser: Browser;
   public checkoutDelay: number;
   public externalStock: Supreme.Stock | null = null;
   public profile: Profile | null = null;
+  public logger: Logger;
 
   constructor(readonly page: Page, readonly task: Task, readonly product: Product) {
+    this.logger = new Logger(task.id, page);
     this.browser = this.page.browser();
     this.checkoutDelay =
       typeof this.task.checkoutDelay === 'string'
@@ -34,22 +37,20 @@ class SupremeTask {
     ProductsMonitor.subscribe(this.setStock);
     if (!this.task.profile) return;
     this.profile = (await IPCMain.getProfile(this.task.profile.value)) ?? null;
-
     this.page.on('request', req => this.parseRequest(req, this));
     this.page.on('response', res => this.parseResponse(res, this));
     this.page.on('load', () => this.onLoad());
-
+    this.logger.writeString('Started fast task!');
     await this.prepareCookies();
     await this.loadMainPage();
-    await this.checkout();
   };
 
   private onLoad = async () => {
     try {
       const fullUrl = (await this.page.evaluate('window.location.href')) as string;
-      if (fullUrl.includes('supplier')) {
+      if (!fullUrl.includes('#checkout')) {
         const source = injectScript(this.product, this.externalStock);
-        await this.page.evaluate(source);
+        await await this.page.evaluate(source);
       }
     } catch {}
   };
@@ -68,7 +69,6 @@ class SupremeTask {
       await this.prepareCookies();
       await this.loadMainPage();
       await this.page.reload();
-      await this.checkout();
     } catch {}
   };
 

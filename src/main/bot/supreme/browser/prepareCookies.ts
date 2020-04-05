@@ -15,7 +15,6 @@ function generateJSAddressCookie({
   const value = `${firstName} ${lastName}|${email}|${telephone}|${address1}|${address2}|${city}|undefined|${postcode}|PL|`
     .replace(/ /g, '%20')
     .replace(/@/g, '%40');
-
   return {
     name: 'js-address',
     value: value,
@@ -28,4 +27,5 @@ export async function prepareCookies(this: SupremeTask) {
   const cookies = await this.page.cookies('https://www.supremenewyork.com/');
   await this.page.deleteCookie(...cookies);
   await this.page.setCookie(generateJSAddressCookie(this.profile));
+  this.logger.writeObject({ message: 'Prepared cookies!' });
 }

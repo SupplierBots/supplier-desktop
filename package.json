@@ -2,7 +2,7 @@
   "name": "supplier",
   "productName": "Supplier",
   "description": "Supreme & Palace Bot",
-  "version": "1.0.0",
+  "version": "0.2.1",
   "copyright": "Supplier",
   "main": "build/electron.js",
   "homepage": ".",
@@ -22,9 +22,12 @@
     "compile": "node tools/compile.js",
     "prepack": "node tools/prepack.js",
     "postinstall": "patch-package && NODE_ENV=development yarn build-main && electron-builder install-app-deps",
-    "package-all": "yarn prepack && NODE_ENV=production lectron-builder build -mw",
+    "package-all": "yarn prepack && NODE_ENV=production electron-builder build -mw",
     "package-mac": "yarn prepack && NODE_ENV=production electron-builder build -m",
-    "package-win": "yarn prepack && NODE_ENV=production electron-builder build -w"
+    "package-win": "yarn prepack && NODE_ENV=production electron-builder build -w",
+    "publish-all": "yarn prepack && NODE_ENV=production electron-builder --win --mac -p always",
+    "publish-mac": "yarn prepack && NODE_ENV=production electron-builder --mac -p always",
+    "publish-win": "yarn prepack && NODE_ENV=production electron-builder --win -p always"
   },
   "husky": {
     "hooks": {
@@ -44,19 +47,26 @@
     "productName": "Supplier",
     "copyright": "Copyright © 2019 ${author}",
     "mac": {
-      "category": "public.app-category.utilities",
-      "target": "dmg"
+      "category": "supplier.bot",
+      "electronUpdaterCompatibility": ">= 2.16"
     },
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "electronUpdaterCompatibility": ">= 2.16"
     },
     "files": [
       "app/**/*",
       "node_modules/**/*",
-      "package.json"
+      "package.json",
+      "!electron-builder.env"
     ],
     "directories": {
       "buildResources": "resources"
+    },
+    "publish": {
+      "provider": "spaces",
+      "name": "supplier",
+      "region": "nyc3"
     }
   },
   "dependencies": {
@@ -71,6 +81,7 @@
     "connected-react-router": "^6.8.0",
     "crypto-js": "^3.1.9-1",
     "electron-better-ipc": "^0.8.0",
+    "electron-updater": "^4.2.5",
     "firebase": "^7.8.0",
     "formik": "^2.1.3",
     "fs-extra": "^8.1.0",
@@ -82,7 +93,7 @@
     "needle": "^2.3.3",
     "npm-check": "^5.9.2",
     "path-to-regexp": "^6.1.0",
-    "puppeteer": "1.17.0",
+    "puppeteer": "2.1.1",
     "puppeteer-extra": "3.1.9",
     "puppeteer-extra-plugin": "3.1.4",
     "puppeteer-extra-plugin-stealth": "2.4.9",

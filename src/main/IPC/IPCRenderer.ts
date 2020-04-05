@@ -14,6 +14,11 @@ import {
   GET_PROFILE,
   UPDATE_TASK_STATUS,
   GET_PRODUCT,
+  UPDATE_AVAILABLE,
+  UPDATE_DOWNLOAD_PROGRESS,
+  UPDATE_DOWNLOADED,
+  UPDATE_DOWNLOAD_ERROR,
+  DOWNLOAD_UPDATE,
 } from './IPCEvents';
 
 import store from 'store/configureStore';
@@ -22,10 +27,23 @@ import { BrowserData } from 'main/types/BrowserData';
 import { Task } from 'main/types/Task';
 import { updateTask } from 'store/tasks/tasksSlice';
 import { setAccountEmail, setActive } from 'store/browsers/browsersSlice';
+import { UpdateInfo, UpdateDownloadedEvent } from 'electron-updater';
+import { ProgressInfo } from 'builder-util-runtime';
+import { push } from 'connected-react-router';
+import routes from 'constants/routes';
+import {
+  resetUpdateState,
+  setAvailableUpdate,
+  setUpdateProgress,
+  setUpdateComplete,
+  setUpdateError,
+} from 'store/update/updateSlice';
 
 export abstract class IPCRenderer {
   private constructor() {}
   public static registerListeners = () => {
+    store.dispatch(resetUpdateState());
+
     ipc.on(BROWSER_STATE_CHANGE, (e, { id, status }: BrowserStatePayload) => {
       store.dispatch(setActive({ id, isActive: status }));
     });
@@ -51,6 +69,27 @@ export abstract class IPCRenderer {
     ipc.answerMain(GET_PRODUCT, (id: string) => {
       const product = store.getState().products.find(p => p.id === id);
       return product;
+    });
+
+    ipc.on(UPDATE_AVAILABLE, (e, info: UpdateInfo) => {
+      store.dispatch(setAvailableUpdate({ version: info.version }));
+    });
+
+    ipc.on(UPDATE_DOWNLOAD_PROGRESS, (e, info: ProgressInfo) => {
+      store.dispatch(setUpdateProgress({ percentage: info.percent }));
+    });
+
+    ipc.on(UPDATE_DOWNLOADED, (e, info: UpdateDownloadedEvent) => {
+      store.dispatch(setUpdateComplete());
+    });
+
+    ipc.on(UPDATE_DOWNLOAD_ERROR, (e, error: Error) => {
+      if (!store.getState().update.inProgress) return;
+      store.dispatch(setUpdateError());
+      setTimeout(() => {
+        store.dispatch(resetUpdateState());
+        store.dispatch(push(routes.dashboard));
+      }, 3000);
     });
   };
 
@@ -81,5 +120,9 @@ export abstract class IPCRenderer {
 
   public static stopTasks = () => {
     ipc.send(STOP_TASKS);
+  };
+
+  public static downloadUpdate = () => {
+    ipc.send(DOWNLOAD_UPDATE);
   };
 }

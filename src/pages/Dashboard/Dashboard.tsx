@@ -6,9 +6,12 @@ import Droplist from 'components/Droplist/Droplist';
 import SelloutTime from 'components/SelloutTime/SelloutTime';
 import Statistics from 'components/Staistics/Statistics';
 import { fonts, colors } from 'theme/main';
-import { useStateSelector } from 'hooks/typedReduxHooks';
-import semver from 'semver';
+import { useStateSelector, useStateDispatch } from 'hooks/typedReduxHooks';
 import moment from 'moment';
+import { IPCRenderer } from 'main/IPC/IPCRenderer';
+import { push } from 'connected-react-router';
+import routes from 'constants/routes';
+import { setUpdateStart } from 'store/update/updateSlice';
 
 const Wrapper = styled.div`
   display: grid;
@@ -63,15 +66,14 @@ const ContactEmail = styled.span`
 `;
 
 const Dashboard = () => {
-  const { news, tips, contactEmail, supportEmail, latestVersion } = useStateSelector(
-    s => s.dashboard,
-  );
+  const { news, tips, contactEmail, supportEmail } = useStateSelector(s => s.dashboard);
+  const update = useStateSelector(s => s.update);
   const { version } = useStateSelector(s => s.controller);
   const license = useStateSelector(s => s.auth.license);
   const { supreme, palace } = useStateSelector(s => s.dashboard.droplists);
   const times = useStateSelector(s => s.dashboard.selloutTimes);
+  const dispatch = useStateDispatch();
 
-  const isLatest = () => semver.gte(version, latestVersion.number);
   const getLicenseDate = () => moment(license?.expirationDate ?? moment.now());
   const getDaysLeft = () => getLicenseDate().diff(moment.now(), 'days');
   const isLifetime = () => getDaysLeft() > 3000;
@@ -101,8 +103,12 @@ const Dashboard = () => {
         <StyledHeadingSmall>Tips</StyledHeadingSmall>
         <Info height="8rem">{tips}</Info>
         <StyledHeadingSmall>Information</StyledHeadingSmall>
-        <Statistics name="Version" {...(!isLatest() && { externalLink: latestVersion.url })}>
-          {version} ({!isLatest() ? `Download ${latestVersion.number} update!` : 'latest'})
+        <Statistics
+          hasAction={update.isUpdateAvailable}
+          name="Version"
+          {...(update.isUpdateAvailable && { onClick: () => dispatch(push(routes.update)) })}
+        >
+          {version} ({update.isUpdateAvailable ? `Download ${update.number} update!` : 'latest'})
         </Statistics>
         {isLifetime() ? (
           <Statistics name="License">Lifetime</Statistics>

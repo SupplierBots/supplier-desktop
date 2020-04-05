@@ -10,4 +10,5 @@ export default {
   profiles: '/profiles',
   proxies: '/proxies',
   browsers: '/browsers',
+  update: '/update',
 };

@@ -33,7 +33,8 @@ const middleware = [
 const store = configureStore({
   reducer: persistedReducer,
   middleware,
-  devTools: process.env.NODE_ENV !== 'production',
+  devTools:
+    process.env.NODE_ENV !== 'production' && process.env.REACT_APP_ENABLE_EXTENSIONS === 'dev',
 });
 
 export const persistor = persistStore(store);

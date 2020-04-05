@@ -10,12 +10,14 @@ import { shell } from 'electron';
 interface Props {
   children: ReactNode;
   link: string;
+  name: string;
+  alwaysActive?: boolean;
   external?: boolean;
   disabled?: boolean;
   click?: (url: string) => void;
 }
 
-const StyledNavLink = styled(NavLink)<{ disabled?: boolean }>`
+const StyledNavLink = styled(NavLink)<{ disabled?: boolean; 'data-active'?: boolean }>`
   color: ${colors.darkGrey};
   font-size: ${fonts.big};
   height: 5rem;
@@ -23,9 +25,10 @@ const StyledNavLink = styled(NavLink)<{ disabled?: boolean }>`
   align-items: center;
   transition: all 0.3s;
   cursor: pointer;
+  outline: none;
 
   svg {
-    margin: 0 2.5rem -0.1rem 2.5rem;
+    margin: 0 2.5rem 0rem 2.5rem;
 
     path {
       transition: all 0.3s;
@@ -65,9 +68,24 @@ const StyledNavLink = styled(NavLink)<{ disabled?: boolean }>`
         cursor: not-allowed;
       }
     `};
+
+  ${({ 'data-active': alwaysActive }) =>
+    alwaysActive &&
+    css`
+      svg path {
+        fill: url(#iconGradient);
+      }
+      :hover path {
+        fill: ${colors.lightPurple};
+      }
+    `};
 `;
 
-const NavigationItem = ({ link, children, external, disabled }: Props) => {
+const NavigationName = styled.span`
+  margin-top: 0.2rem;
+`;
+
+const NavigationItem = ({ link, children, external, disabled, name, alwaysActive }: Props) => {
   const additionalProps = external && {
     onClick: (e: MouseEvent) => {
       e.preventDefault();
@@ -76,9 +94,10 @@ const NavigationItem = ({ link, children, external, disabled }: Props) => {
   };
 
   return (
-    <StyledNavLink to={link} {...additionalProps} disabled={disabled}>
+    <StyledNavLink to={link} {...additionalProps} disabled={disabled} data-active={alwaysActive}>
       <div />
       {children}
+      <NavigationName>{name}</NavigationName>
     </StyledNavLink>
   );
 };

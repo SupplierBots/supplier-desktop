@@ -9,6 +9,7 @@ import { ReactComponent as ProfilesIcon } from 'assets/Profiles.svg';
 import { ReactComponent as ProxiesIcon } from 'assets/Proxies.svg';
 import { ReactComponent as BrowsersIcon } from 'assets/Harvesters.svg';
 import { ReactComponent as HelpIcon } from 'assets/Help.svg';
+import { ReactComponent as DownloadIcon } from 'assets/Download.svg';
 import routes from 'constants/routes';
 import { useStateSelector } from 'hooks/typedReduxHooks';
 
@@ -23,6 +24,7 @@ const Navigation = () => {
   const lastVisited = useStateSelector(state => state.lastVisited);
   const browsers = useStateSelector(state => state.browsers);
   const router = useStateSelector(state => state.router);
+  const { isUpdateAvailable, number } = useStateSelector(state => state.update);
 
   const isAnyTaskActive = () =>
     router.location.pathname.includes('tasks') && browsers.some(b => b.isActive);
@@ -30,48 +32,55 @@ const Navigation = () => {
   return (
     <Wrapper>
       <NavigationList>
-        <NavigationItem link={routes.dashboard} disabled={isAnyTaskActive()}>
+        {isUpdateAvailable && (
+          <NavigationItem
+            link={routes.update}
+            disabled={isAnyTaskActive()}
+            name={`Update ${number}`}
+            alwaysActive
+          >
+            <DownloadIcon />
+          </NavigationItem>
+        )}
+
+        <NavigationItem link={routes.dashboard} disabled={isAnyTaskActive()} name="Dashboard">
           <DashboardIcon />
-          Dashboard
         </NavigationItem>
 
-        <NavigationItem link={routes.tasks}>
+        <NavigationItem link={routes.tasks} name="Tasks">
           <TasksIcon />
-          Tasks
         </NavigationItem>
 
-        <NavigationItem link={routes.browsers} disabled={isAnyTaskActive()}>
+        <NavigationItem link={routes.browsers} disabled={isAnyTaskActive()} name="Browsers">
           <BrowsersIcon />
-          Browsers
         </NavigationItem>
 
         <NavigationItem
           link={routes.products + `/${lastVisited.product}`}
           disabled={isAnyTaskActive()}
+          name="Products"
         >
           <ProductsIcon />
-          Products
         </NavigationItem>
 
         <NavigationItem
           link={routes.profiles + `/${lastVisited.profile}`}
           disabled={isAnyTaskActive()}
+          name="Profiles"
         >
           <ProfilesIcon />
-          Profiles
         </NavigationItem>
 
         <NavigationItem
           link={routes.proxies + `/${lastVisited.proxy}`}
           disabled={isAnyTaskActive()}
+          name="Proxies"
         >
           <ProxiesIcon />
-          Proxies
         </NavigationItem>
 
-        <NavigationItem external link={'https://safedropbot.com/'}>
+        <NavigationItem external link={'https://safedropbot.com/'} name="Help">
           <HelpIcon />
-          Help
         </NavigationItem>
       </NavigationList>
     </Wrapper>

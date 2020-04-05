@@ -7,8 +7,6 @@ import { docData, collectionData } from 'rxfire/firestore';
 import {
   setInformation,
   DashboardInformation,
-  setLatestVersion,
-  Version,
   setSupremeDroplists,
   setPalaceDroplists,
   setSupremeTimes,
@@ -17,7 +15,6 @@ import {
 
 import { userLoggedOut } from 'store/auth/authSlice';
 import moment from 'moment';
-import semver from 'semver';
 export const fetchDashboardData = createAction('dashboard/fetchDashboardData');
 
 const supremeDroplistsRef = firestore
@@ -41,7 +38,6 @@ const palaceTimesRef = firestore
   .limit(1);
 
 const messagesRef = firestore.doc('dashboard/messages');
-const versionRef = firestore.doc('dashboard/version');
 
 const urlRegex = /^(?:http(s)?:\/\/)[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/;
 
@@ -52,13 +48,6 @@ export interface Timestamp {
 
 const information$ = docData<DashboardInformation>(messagesRef).pipe(
   map(information => setInformation({ information })),
-);
-
-const version$ = docData<Version>(versionRef).pipe(
-  mergeMap(version => {
-    if (!semver.valid(version.number)) return EMPTY;
-    return of(setLatestVersion({ version }));
-  }),
 );
 
 const isValidTimeUrl = (url?: string) => {
@@ -130,13 +119,8 @@ export const fetchDashboardEpic = (action$: StoreObservable) =>
   action$.pipe(
     filter(fetchDashboardData.match),
     switchMap(() =>
-      merge(
-        information$,
-        version$,
-        supremeDroplists$,
-        palaceDroplists$,
-        supremeTimes$,
-        palaceTimes$,
-      ).pipe(takeUntil(action$.pipe(filter(userLoggedOut.match)))),
+      merge(information$, supremeDroplists$, palaceDroplists$, supremeTimes$, palaceTimes$).pipe(
+        takeUntil(action$.pipe(filter(userLoggedOut.match))),
+      ),
     ),
   );

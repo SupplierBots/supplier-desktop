@@ -7,6 +7,8 @@ export async function parseResponse(response: Response, task: SupremeTask) {
   const status = response.status();
   const url = response.url();
 
+  task.logger.reportResponse(response);
+
   if (/.*checkout.json$/.test(url) && status !== 200) {
     task.updateTaskStatus({ message: `${status}. Retrying`, type: TaskStatusType.Error });
     await task.retry();
@@ -14,14 +16,6 @@ export async function parseResponse(response: Response, task: SupremeTask) {
   }
 
   if (status !== 200) return;
-
-  if (process.env.NODE_ENV === 'development' && /.*(checkout|status|add).json$/.test(url)) {
-    const res = await response.text();
-    console.log('RES' + response.url());
-    console.log(response.headers());
-    console.log(res);
-    console.log('---------------');
-  }
 
   if (/.*add.json$/.test(url)) {
     const res = (await response.json()) as Supreme.AddToCartResponse;
@@ -44,7 +38,7 @@ export async function parseResponse(response: Response, task: SupremeTask) {
       case 'outOfStock': {
         const message = res.status === 'outOfStock' ? 'Size sold out' : 'Failed. Retrying';
         task.updateTaskStatus({ message, type: TaskStatusType.Error });
-        //await task.retry();
+        await task.retry();
         return;
       }
 

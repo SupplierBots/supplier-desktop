@@ -1,6 +1,7 @@
 import SupremeTask from './SupremeTask';
 import { TaskStatusType } from '../../../types/TaskStatus';
 import { selectors } from './selectors';
+import { waitTicket } from './waitTicket';
 
 export async function checkout(this: SupremeTask) {
   if (
@@ -11,7 +12,8 @@ export async function checkout(this: SupremeTask) {
   )
     return;
 
-  const start = Date.now();
+  const checkoutButton = await this.getVisibleElement(selectors.checkoutBtn);
+  await checkoutButton.tap();
 
   await this.page.waitForXPath(selectors.cardTypeSelect, { visible: true, timeout: 0 });
 
@@ -55,11 +57,9 @@ export async function checkout(this: SupremeTask) {
     const requiredDelay = delay - checkoutTime;
     await new Promise(resolve => setTimeout(resolve, requiredDelay));
   }
-
+  await this.page.evaluate(waitTicket());
   const processBtn = await this.getVisibleElement(selectors.processBtn, false);
   await processBtn.tap();
-
-  console.log(Date.now() - start);
 
   this.updateTaskStatus({
     message: 'Waiting for response',

@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import moment, { Moment } from 'moment';
 
 export interface Droplist {
   date: string;
@@ -14,11 +13,6 @@ export interface DashboardInformation {
   contactEmail: string;
 }
 
-export interface Version {
-  number: string;
-  url: string;
-}
-
 export interface SelloutTime {
   eu?: string;
   us?: string;
@@ -26,7 +20,6 @@ export interface SelloutTime {
 }
 
 interface DashboardState extends DashboardInformation {
-  latestVersion: Version;
   droplists: {
     supreme: Droplist[];
     palace: Droplist[];
@@ -43,10 +36,6 @@ const initialState: DashboardState = {
     'We recommend to schedule your task. Bot will be able to preload some resources, which saves time during the drop',
   supportEmail: 'support@safedropbot.com',
   contactEmail: 'business@safedropbot.com',
-  latestVersion: {
-    number: '1.0.0',
-    url: 'https://safedropbot.com/',
-  },
   droplists: {
     supreme: [
       {
@@ -106,9 +95,6 @@ export const dashboardSlice = createSlice({
       state.contactEmail = contactEmail;
       state.supportEmail = supportEmail;
     },
-    setLatestVersion: (state, { payload }: PayloadAction<{ version: Version }>) => {
-      state.latestVersion = payload.version;
-    },
   },
 });
 
@@ -116,7 +102,6 @@ export const {
   setSupremeDroplists,
   setPalaceDroplists,
   setInformation,
-  setLatestVersion,
   setSupremeTimes,
   setPalaceTimes,
 } = dashboardSlice.actions;

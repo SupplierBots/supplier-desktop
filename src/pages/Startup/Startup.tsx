@@ -14,7 +14,7 @@ import { setActive } from 'store/browsers/browsersSlice';
 import { setAppDetails } from 'store/controller/controllerSlice';
 import { useStateSelector, useStateDispatch } from 'hooks/typedReduxHooks';
 
-const StyledParticles = styled(Particles)`
+export const StyledParticles = styled(Particles)`
   position: absolute;
   top: 4.5rem;
   left: 0;

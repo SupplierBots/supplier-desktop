@@ -3,6 +3,7 @@ import { verifyChromium } from '../chromium/verifyChromium';
 import { downloadChromium } from '../chromium/downloadChromium';
 import { mainWindow } from '../main';
 import BrowsersManager from '../bot/core/BrowsersManager';
+import { autoUpdater, UpdateInfo } from 'electron-updater';
 
 import {
   WINDOW_CLOSE,
@@ -18,6 +19,11 @@ import {
   SET_BROWSER_EMAIL,
   GET_SAME_EMAILS,
   GET_PRODUCT,
+  UPDATE_AVAILABLE,
+  UPDATE_DOWNLOAD_PROGRESS,
+  UPDATE_DOWNLOADED,
+  UPDATE_DOWNLOAD_ERROR,
+  DOWNLOAD_UPDATE,
 } from './IPCEvents';
 import { Profile } from '../types/Profile';
 import { TaskStatus } from '../types/TaskStatus';
@@ -35,6 +41,34 @@ export abstract class IPCMain {
     ipc.on(STOP_TASKS, e => BrowsersManager.getInstance().stopAll());
     ipc.on(WINDOW_MINIMIZE, () => mainWindow?.minimize());
     ipc.on(WINDOW_CLOSE, () => mainWindow?.close());
+    ipc.on(DOWNLOAD_UPDATE, () => {
+      autoUpdater.downloadUpdate();
+    });
+  };
+
+  public static setupUpdater = async () => {
+    autoUpdater.autoDownload = false;
+
+    autoUpdater.on('update-available', (info: UpdateInfo) => {
+      mainWindow?.webContents.send(UPDATE_AVAILABLE, info);
+    });
+
+    autoUpdater.on('error', error => {
+      mainWindow?.webContents.send(UPDATE_DOWNLOAD_ERROR, error);
+    });
+
+    autoUpdater.signals.progress(info => {
+      mainWindow?.webContents.send(UPDATE_DOWNLOAD_PROGRESS, info);
+    });
+
+    autoUpdater.signals.updateDownloaded(info => {
+      mainWindow?.webContents.send(UPDATE_DOWNLOADED, info);
+      autoUpdater.quitAndInstall();
+    });
+
+    const res = await autoUpdater.checkForUpdates();
+    console.log(res);
+    setInterval(() => autoUpdater.checkForUpdates(), 1000 * 60 * 2);
   };
 
   public static getProfile = async (id: string) => {

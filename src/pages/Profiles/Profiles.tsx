@@ -193,7 +193,7 @@ const Profiles = ({ match, history }: RouteComponentProps<{ id: string }>) => {
                     width="48.5%"
                   />
                 </CardExpDate>
-                <Input type="number" name="cvv" placeholder="CVV" />
+                <Input type="text" name="cvv" placeholder="CVV" />
                 <StyledHeading>Other</StyledHeading>
                 <Input type="text" name="name" placeholder="Profile Name" />
                 <Select

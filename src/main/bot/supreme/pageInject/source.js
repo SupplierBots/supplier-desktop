@@ -36,35 +36,25 @@
     return;
   }
 
-  setLastVisitedCookie(item, selectedStyle);
   await addToCart(size);
+  await sleep(250);
 
-  window.location.href = 'https://www.supremenewyork.com/mobile/#checkout';
-
-  function setLastVisitedCookie(item, style) {
-    const date = new Date();
-    date.setMonth(date.getMonth() + 6);
-    date.setHours(date.getHours() + 1);
-    const cookieValue = `products/${item.attributes.id}/${
-      style.attributes.id
-    };path=/; expires=${date.toUTCString()}`;
-    document.cookie = `lastVisitedFragment=${cookieValue}`;
-  }
+  notifyTask('ATC', 'Action');
 
   async function reload() {
     await sleep(1500);
     window.location.reload();
   }
 
-  function addToCart(size) {
+  async function addToCart(size) {
     notifyTask('Adding to cart', 'Action');
-    const result = Promise.race([atcListener(size), atcRequest(size)]);
+    const result = await Promise.race([atcListener(size), atcRequest(size)]);
 
     if (!Supreme.app.cart.attributes.sizes.contains(size)) {
       Supreme.app.cart.addSizeToLocalStorage(size, 1);
       Supreme.app.cart.attributes.sizes.add(size, 1);
     }
-
+    setSessionIDs();
     return result;
   }
 

@@ -11,11 +11,11 @@ import { initiateLogout } from 'store/auth/authEpics';
 
 const Wrapper = styled.div`
   display: flex;
-  margin-top: 11rem;
   justify-content: space-between;
   align-self: center;
   width: 50%;
   cursor: pointer;
+  margin-top: auto;
 `;
 
 const ExternalLink = styled.a`

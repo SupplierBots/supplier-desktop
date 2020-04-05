@@ -10,8 +10,7 @@ import routes from 'constants/routes';
 import { colors } from 'theme/main';
 import Routes from 'routes/Routes';
 import { IPCRenderer } from 'main/IPC/IPCRenderer';
-import { useStateSelector, useStateDispatch } from 'hooks/typedReduxHooks';
-import { fetchDashboardData } from 'store/dashboard/dashboardEpics';
+import { useStateSelector } from 'hooks/typedReduxHooks';
 
 const GlobalWrapper = styled.div`
   color: ${colors.lightGrey};
@@ -47,11 +46,12 @@ const App = () => {
   useEffect(IPCRenderer.registerListeners, []);
 
   const authState = useStateSelector(state => state.auth);
+  const update = useStateSelector(state => state.update);
 
   return (
     <>
       <GlobalWrapper>
-        {authState.authenticated && <Sidebar />}
+        {authState.authenticated && !update.inProgress && <Sidebar />}
         {!authState.authenticated && <Redirect to={routes.startup} />}
         <Content>
           <Routes />

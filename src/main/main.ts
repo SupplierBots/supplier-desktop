@@ -2,6 +2,7 @@ import electron, { app, BrowserWindow, Menu, BrowserWindowConstructorOptions } f
 
 import path from 'path';
 import { IPCMain } from './IPC/IPCMain';
+import { menu } from './menu';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -48,11 +49,13 @@ const createWindow = () => {
 
   mainWindow.loadURL(url);
 
-  mainWindow.webContents.once('did-finish-load', () => {
-    if (!mainWindow) return;
-    mainWindow.show();
+  mainWindow.once('ready-to-show', () => {
+    mainWindow?.show();
+  });
 
-    if (!isDev) return;
+  mainWindow.webContents.once('did-finish-load', () => {
+    if (!mainWindow || !isDev) return;
+
     mainWindow.webContents.openDevTools();
 
     // * Create context menu to inspect element on right click
@@ -71,7 +74,8 @@ const createWindow = () => {
   mainWindow.on('closed', () => (mainWindow = null));
 };
 
-app.on('ready', createWindow);
+app.whenReady().then(createWindow);
+Menu.setApplicationMenu(menu);
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -86,5 +90,6 @@ app.on('activate', () => {
 });
 
 IPCMain.registerListeners();
+if (!isDev) IPCMain.setupUpdater();
 
 export { mainWindow };

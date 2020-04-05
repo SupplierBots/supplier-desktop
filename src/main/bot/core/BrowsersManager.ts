@@ -7,6 +7,10 @@ import { Task } from '../../types/Task';
 import { IPCMain } from '../../IPC/IPCMain';
 import SupremeTask from '../supreme/browser/SupremeTask';
 import { ProductsMonitor } from '../supreme/ProductsMonitor';
+import fs from 'fs-extra';
+import path from 'path';
+import { app } from 'electron';
+import { SafeSupremeTask } from '../supreme/safeMode/SafeSupremeTask';
 
 class BrowsersManager {
   private static instance: BrowsersManager;
@@ -38,6 +42,7 @@ class BrowsersManager {
   }
 
   public async startTasks(tasks: Task[]) {
+    await fs.ensureDir(path.resolve(app.getAppPath(), 'logs'));
     ProductsMonitor.init(2000);
 
     tasks.forEach(async (task, index) => {
@@ -52,8 +57,14 @@ class BrowsersManager {
       if (!page || !product) return;
 
       try {
-        const supremeTask = new SupremeTask(page, task, product);
-        await supremeTask.init();
+        //const supremeTask = new SupremeTask(page, task, product);
+        if (task.stopIfSoldOut) {
+          const supremeTask = new SafeSupremeTask(page, task, product);
+          await supremeTask.init();
+        } else {
+          const supremeTask = new SupremeTask(page, task, product);
+          await supremeTask.init();
+        }
       } catch {}
     });
   }

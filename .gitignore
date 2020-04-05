@@ -6,6 +6,7 @@
 .pnp.js
 .todos
 /.local-chromium
+*.env
 
 # testing
 /coverage
@@ -16,6 +17,7 @@
 /App
 /dist
 /share/SafeDrop
+logs
 
 # misc
 .DS_Store

@@ -1,12 +1,11 @@
 import React, { ReactNode } from 'react';
 import styled, { css } from 'styled-components';
 import { colors, fonts } from 'theme/main';
-import { shell } from 'electron';
 
 interface Props {
   name: string;
   children: ReactNode;
-  externalLink?: string;
+  hasAction?: boolean;
 }
 
 const Name = styled.p`
@@ -15,7 +14,7 @@ const Name = styled.p`
   margin-bottom: 0.5rem;
 `;
 
-const Value = styled.span<{ hasLink: boolean }>`
+const Value = styled.span<{ hasAction: boolean }>`
   background: ${colors.mainGradient45};
   /* stylelint-disable-next-line */ /* prefix is necessary: background-clip doesn't work in Chromium */
   -webkit-background-clip: text;
@@ -23,8 +22,8 @@ const Value = styled.span<{ hasLink: boolean }>`
   color: transparent;
   transition: 0.3s all;
 
-  ${({ hasLink }) =>
-    hasLink &&
+  ${({ hasAction }) =>
+    hasAction &&
     css`
       :hover {
         cursor: pointer;
@@ -33,15 +32,9 @@ const Value = styled.span<{ hasLink: boolean }>`
     `}
 `;
 
-const Statistics = ({ name, children, externalLink }: Props) => (
-  <Name>
-    {name}:{' '}
-    <Value
-      hasLink={!!externalLink}
-      {...(externalLink && { onClick: () => shell.openExternal(externalLink) })}
-    >
-      {children}
-    </Value>
+const Statistics = (props: Props) => (
+  <Name {...props}>
+    {props.name}: <Value hasAction={!!props.hasAction}>{props.children}</Value>
   </Name>
 );
 

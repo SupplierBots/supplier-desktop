@@ -23,13 +23,16 @@ const BrowserInstance = async (id: string, index = 0) => {
   puppeteer.use(StealthPlugin());
   const browser = await puppeteer.launch({
     headless: false,
-    devtools: false,
     ignoreHTTPSErrors: true,
     ignoreDefaultArgs: ['--enable-automation'],
     args: [
+      '--no-sandbox',
+      '--disable-gpu',
       '--disable-infobars',
-      '--no-first-run',
-      '--enable-features=NetworkService',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--ignore-certifcate-errors',
+      '--ignore-certifcate-errors-spki-list',
       `--user-data-dir=${userDataDirectory}`,
       `--window-size=${width},${height + 82}`,
       `--window-position=${0 + 500 * index},0`,
@@ -48,7 +51,7 @@ const BrowserInstance = async (id: string, index = 0) => {
 
   client.send('Network.setUserAgentOverride', {
     userAgent:
-      'Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3803.0 Mobile Safari/537.36',
+      'Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3882.0 Mobile Safari/537.36',
     locale: `en-US,en`,
     platform: 'linux',
   });

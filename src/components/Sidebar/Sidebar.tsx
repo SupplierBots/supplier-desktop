@@ -10,6 +10,7 @@ const Wrapper = styled.aside`
   box-shadow: ${shadows.sidebar};
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   -webkit-app-region: drag;
   z-index: 2000;
 `;
@@ -22,7 +23,7 @@ const TopPolygon = styled.div`
 
 const BottomPolygon = styled(TopPolygon)`
   clip-path: polygon(0 0, 100% 100%, 0 100%);
-  margin-top: auto;
+  margin-top: 2rem;
 `;
 
 const Sidebar = () => (
