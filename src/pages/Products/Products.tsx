@@ -29,6 +29,7 @@ import {
 import { addProduct, updateProduct } from 'store/products/productsSlice';
 import { setLastVisitedProduct } from 'store/lastVisited/lastVisitedSlice';
 import { useStateDispatch, useStateSelector } from 'hooks/typedReduxHooks';
+import { incrementCreatedProducts } from 'store/statistics/statisticsSlice';
 
 const Wrapper = styled.div`
   display: grid;
@@ -79,6 +80,7 @@ const Products = ({ history, match }: RouteComponentProps<{ id: string }>) => {
         id: uuid(),
       };
       dispatch(addProduct({ item: newProduct }));
+      dispatch(incrementCreatedProducts());
       setIsNew(false);
       dispatch(push(routes.products + '/' + newProduct.id));
     } else {

@@ -7,6 +7,7 @@ import { RouteComponentProps } from 'react-router';
 import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
 import { IPCRenderer } from 'main/IPC/IPCRenderer';
 import { CHROMIUM_DOWNLOAD_PROGRESS } from '../../../main/IPC/IPCEvents';
+import { StyledSpinner } from 'pages/Update/Update';
 
 const Wrapper = styled.div`
   display: flex;
@@ -22,6 +23,8 @@ const ProgressMessage = styled.p`
   font-size: ${fonts.large};
   margin-top: 23rem;
   margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
 `;
 
 const TutorialMessage = styled.p`
@@ -60,10 +63,14 @@ const Downloader = ({ history }: Props) => {
     verifyChromium();
   };
 
-  const verifyChromium = async () => {
+  const verifyChromium = async (attempt = 0) => {
     //* Wait to install
     await new Promise(resolve => setTimeout(resolve, 10000));
-
+    const { success } = await IPCRenderer.verifyChromium();
+    if (!success && attempt < 5) {
+      await verifyChromium(++attempt);
+      return;
+    }
     IPCRenderer.relaunch();
   };
 
@@ -78,9 +85,10 @@ const Downloader = ({ history }: Props) => {
     <Wrapper>
       <InlineLogo />
       <ProgressMessage>
-        {downloaded ? 'Installing...' : `Downloading remaining files (${progress}%)`}
+        {downloaded ? 'Installing' : `Downloading remaining files (${progress}%)`}
+        {downloaded && <StyledSpinner />}
       </ProgressMessage>
-      <ProgressBar progressPercentage={progress} />
+      {!downloaded && <ProgressBar progressPercentage={progress} />}
       <TutorialMessage>
         In the meantime you can read our <TutLink>detailed tutorial</TutLink>
       </TutorialMessage>

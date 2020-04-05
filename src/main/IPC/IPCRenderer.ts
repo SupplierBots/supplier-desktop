@@ -20,6 +20,7 @@ import {
   UPDATE_DOWNLOAD_ERROR,
   DOWNLOAD_UPDATE,
   RELAUNCH,
+  REPORT_CHECKOUT,
 } from './IPCEvents';
 
 import store from 'store/configureStore';
@@ -39,6 +40,7 @@ import {
   setUpdateComplete,
   setUpdateError,
 } from 'store/update/updateSlice';
+import { incrementCheckouts } from 'store/statistics/statisticsSlice';
 
 export abstract class IPCRenderer {
   private constructor() {}
@@ -57,6 +59,10 @@ export abstract class IPCRenderer {
       store.dispatch(updateTask({ item: task }));
     });
 
+    ipc.on(REPORT_CHECKOUT, e => {
+      store.dispatch(incrementCheckouts());
+    });
+
     ipc.answerMain(GET_SAME_EMAILS, (email: string) => {
       const sameEmails = store.getState().browsers.filter(b => b.accountEmail.includes(email));
       return sameEmails;
@@ -73,6 +79,7 @@ export abstract class IPCRenderer {
     });
 
     ipc.on(UPDATE_AVAILABLE, (e, info: UpdateInfo) => {
+      if (store.getState().update.inProgress) return;
       store.dispatch(setAvailableUpdate({ version: info.version }));
     });
 

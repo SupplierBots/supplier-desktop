@@ -25,6 +25,7 @@ import {
   UPDATE_DOWNLOAD_ERROR,
   DOWNLOAD_UPDATE,
   RELAUNCH,
+  REPORT_CHECKOUT,
 } from './IPCEvents';
 import { Profile } from '../types/Profile';
 import { TaskStatus } from '../types/TaskStatus';
@@ -72,9 +73,8 @@ export abstract class IPCMain {
       autoUpdater.quitAndInstall();
     });
 
-    const res = await autoUpdater.checkForUpdates();
-    console.log(res);
-    setInterval(() => autoUpdater.checkForUpdates(), 1000 * 60 * 2);
+    await autoUpdater.checkForUpdates();
+    setInterval(() => autoUpdater.checkForUpdates(), 1000 * 60 * 5);
   };
 
   public static getProfile = async (id: string) => {
@@ -111,5 +111,9 @@ export abstract class IPCMain {
 
   public static setBrowserEmail = (id: string, email: string) => {
     mainWindow?.webContents.send(SET_BROWSER_EMAIL, { id, email });
+  };
+
+  public static reportCheckout = () => {
+    mainWindow?.webContents.send(REPORT_CHECKOUT);
   };
 }

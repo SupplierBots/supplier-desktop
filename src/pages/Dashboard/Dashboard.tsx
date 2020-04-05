@@ -8,10 +8,8 @@ import Statistics from 'components/Staistics/Statistics';
 import { fonts, colors } from 'theme/main';
 import { useStateSelector, useStateDispatch } from 'hooks/typedReduxHooks';
 import moment from 'moment';
-import { IPCRenderer } from 'main/IPC/IPCRenderer';
 import { push } from 'connected-react-router';
 import routes from 'constants/routes';
-import { setUpdateStart } from 'store/update/updateSlice';
 
 const Wrapper = styled.div`
   display: grid;
@@ -72,6 +70,7 @@ const Dashboard = () => {
   const license = useStateSelector(s => s.auth.license);
   const { supreme, palace } = useStateSelector(s => s.dashboard.droplists);
   const times = useStateSelector(s => s.dashboard.selloutTimes);
+  const { createdProducts, checkouts } = useStateSelector(s => s.statistics);
   const dispatch = useStateDispatch();
 
   const getLicenseDate = () => moment(license?.expirationDate ?? moment.now());
@@ -94,8 +93,8 @@ const Dashboard = () => {
           <SelloutTime isPalace details={times.palace} />
         </Container>
         <StyledHeading>Stats</StyledHeading>
-        <Statistics name="Successful checkouts">23</Statistics>
-        <Statistics name="Created products">144</Statistics>
+        <Statistics name="Checkouts">{checkouts}</Statistics>
+        <Statistics name="Created products">{createdProducts}</Statistics>
       </StyledCard>
       <StyledCard>
         <StyledHeadingSmall>News</StyledHeadingSmall>

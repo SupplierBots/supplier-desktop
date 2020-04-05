@@ -34,7 +34,7 @@ const TutorialMessage = styled.p`
   color: ${colors.darkGrey};
 `;
 
-const StyledSpinner = styled(Spinner)`
+export const StyledSpinner = styled(Spinner)`
   font-size: 0.6rem;
   margin-left: 2rem;
 `;

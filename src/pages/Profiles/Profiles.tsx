@@ -31,6 +31,7 @@ import { InlineInputsContainer } from 'components/TaskEditor/TaskEditor';
 import { setLastVisitedProfile } from 'store/lastVisited/lastVisitedSlice';
 import { addProfile, updateProfile } from 'store/profiles/profilesSlice';
 import { useStateDispatch, useStateSelector } from 'hooks/typedReduxHooks';
+import { incrementCreatedProducts } from 'store/statistics/statisticsSlice';
 
 const Wrapper = styled.div`
   display: grid;

@@ -27,6 +27,7 @@ import { config } from 'config';
 import { fetchDashboardEpic } from './dashboard/dashboardEpics';
 import { dashboardSlice } from './dashboard/dashboardSlice';
 import { updateSlice } from './update/updateSlice';
+import { statisticsSlice } from './statistics/statisticsSlice';
 
 export const history = createMemoryHistory({
   initialEntries: [routes.startup],
@@ -48,6 +49,7 @@ export const rootReducer = combineReducers({
   tasks: tasksSlice.reducer,
   dashboard: dashboardSlice.reducer,
   update: updateSlice.reducer,
+  statistics: statisticsSlice.reducer,
   router: connectRouter(history),
 });
 
