@@ -12,7 +12,7 @@ const setDiscordActivity = async () => {
   }
 
   discordRPC.setActivity({
-    details: `Version: ${isDev ? 'dev' : app.getVersion()}`,
+    details: `Version ${isDev ? 'dev' : app.getVersion()}`,
     startTimestamp: Date.now(),
     largeImageKey: 'logo',
     instance: true,
