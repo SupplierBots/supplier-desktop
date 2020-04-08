@@ -2,15 +2,15 @@
   "name": "supplier",
   "productName": "Supplier",
   "description": "Supreme & Palace Bot",
-  "version": "0.2.4",
+  "version": "0.2.6",
   "copyright": "Supplier",
   "main": "build/electron.js",
   "homepage": ".",
   "private": true,
   "author": {
     "name": "Supplier",
-    "email": "supplierbotcontact@gmail.com",
-    "url": "https://safedropbot.com"
+    "email": "contact@supplierbot.io",
+    "url": "https://supplierbot.io"
   },
   "scripts": {
     "start": "NODE_ENV=development yarn build-main && concurrently \"cross-env BROWSER=none craco start\" \"wait-on http://localhost:3000 && electron .\" --kill-others",
@@ -43,12 +43,20 @@
     ]
   },
   "build": {
-    "appId": "com.supplier.bot",
+    "appId": "com.supplier.bot.io",
     "productName": "Supplier",
     "copyright": "Copyright © 2020 ${author}",
+    "afterSign": "tools/notarization/notarize.js",
     "mac": {
-      "category": "supplier.bot",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "tools/notarization/entitlements.mac.plist",
+      "entitlementsInherit": "tools/notarization/entitlements.mac.plist",
+      "category": "supplier.bot.io",
       "electronUpdaterCompatibility": ">= 2.16"
+    },
+    "dmg": {
+      "backgroundColor": "#1B191C"
     },
     "win": {
       "target": "nsis",
@@ -82,6 +90,7 @@
     "crypto-js": "^3.1.9-1",
     "discord-rpc": "^3.1.0",
     "electron-better-ipc": "^0.8.0",
+    "electron-notarize": "^0.3.0",
     "electron-updater": "^4.2.5",
     "firebase": "^7.8.0",
     "formik": "^2.1.3",
