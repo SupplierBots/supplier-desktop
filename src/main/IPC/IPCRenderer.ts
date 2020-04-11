@@ -41,6 +41,7 @@ import {
   setUpdateError,
 } from 'store/update/updateSlice';
 import { incrementCheckouts } from 'store/statistics/statisticsSlice';
+import { SchedulerState } from 'main/types/SchedulerState';
 
 export abstract class IPCRenderer {
   private constructor() {}
@@ -122,8 +123,8 @@ export abstract class IPCRenderer {
     ipc.send(WINDOW_CLOSE);
   };
 
-  public static startTasks = (tasks: Task[]) => {
-    ipc.send(START_TASKS, tasks);
+  public static startTasks = (tasks: Task[], scheduler: SchedulerState) => {
+    ipc.send(START_TASKS, tasks, scheduler);
   };
 
   public static stopTasks = () => {

@@ -119,7 +119,7 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
     const options = dataArr
       .filter(
         data =>
-          (site && data.site && data.site.label === site.label) ||
+          (site && data.site && data.site.value === site.value) ||
           (data.site && data.site.label === 'Both'),
       )
       .map(data => {
@@ -182,7 +182,7 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
             <StyledHeading>Create new task</StyledHeading>
             <StyledForm>
               <ProductSelector
-                site={props.values.site && props.values.site.label}
+                site={props.values.site && props.values.site.value}
                 placeholder="+Another color"
                 onChange={props.setFieldValue}
                 setTouched={props.setFieldTouched}
@@ -241,7 +241,7 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
                       placeholder="Refresh rate (ms)"
                       width="48.5%"
                     />
-                    {props.values.site && props.values.site.label === 'Supreme' && (
+                    {props.values.site && props.values.site.value === 'supreme' && (
                       <Input
                         type="number"
                         name="checkoutDelay"
@@ -253,31 +253,6 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
                   <StyledSlider name="stopIfSoldOut" checked={props.values.stopIfSoldOut}>
                     Stop if any product sold out
                   </StyledSlider>
-                  <StyledSlider name="schedule" checked={props.values.schedule}>
-                    Schedule Task <GradientText>(Recommended)</GradientText>
-                  </StyledSlider>
-                  {props.values.schedule && (
-                    <InlineInputsContainer>
-                      <StyledInput
-                        type="text"
-                        name="scheduledDate"
-                        placeholder="DD/MM/YYYY"
-                        maskPlaceholder="DD/MM/YYYY"
-                        width="48.5%"
-                        masked
-                        mask="99/99/9999"
-                      />
-                      <StyledInput
-                        type="text"
-                        name="scheduledTime"
-                        placeholder="HH:MM:SS (24h)"
-                        maskPlaceholder="HH:MM:SS"
-                        width="48.5%"
-                        masked
-                        mask="99:99:99"
-                      />
-                    </InlineInputsContainer>
-                  )}
                 </Fieldset>
               </Fieldset>
               <ItemsCounter>

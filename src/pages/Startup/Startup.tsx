@@ -11,7 +11,7 @@ import { fadeIn } from 'theme/animations';
 
 import { IPCRenderer } from 'main/IPC/IPCRenderer';
 import { setActive } from 'store/browsers/browsersSlice';
-import { setAppDetails } from 'store/controller/controllerSlice';
+import { setAppDetails, setTimerState } from 'store/controller/controllerSlice';
 import { useStateSelector, useStateDispatch } from 'hooks/typedReduxHooks';
 
 export const StyledParticles = styled(Particles)`
@@ -34,6 +34,7 @@ const Startup = ({ history }: Props) => {
   const dispatch = useStateDispatch();
 
   const resetBrowsers = () => {
+    dispatch(setTimerState({ active: false }));
     browsers.forEach(b => {
       dispatch(setActive({ id: b.id, isActive: false }));
     });

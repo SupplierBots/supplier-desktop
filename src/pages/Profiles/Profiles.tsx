@@ -116,7 +116,7 @@ const Profiles = ({ match, history }: RouteComponentProps<{ id: string }>) => {
           <StyledForm autoComplete="new-password">
             <Wrapper>
               <Card>
-                <Heading>Billing detials</Heading>
+                <Heading>Billing details</Heading>
                 <Input type="text" name="firstName" placeholder="First Name" />
                 <Input type="text" name="lastName" placeholder="Last Name" />
                 <Input type="text" name="email" placeholder="Email" />
@@ -154,7 +154,7 @@ const Profiles = ({ match, history }: RouteComponentProps<{ id: string }>) => {
                 </InlineInputsContainer>
               </Card>
               <Card>
-                <Heading>Payment detials</Heading>
+                <Heading>Payment details</Heading>
                 <Select
                   name="creditCardType"
                   placeholder="Credit Card Type"

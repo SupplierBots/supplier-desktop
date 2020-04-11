@@ -2,7 +2,7 @@
   "name": "supplier",
   "productName": "Supplier",
   "description": "Supreme & Palace Bot",
-  "version": "0.2.6",
+  "version": "0.3.1",
   "copyright": "Supplier",
   "main": "build/electron.js",
   "homepage": ".",
@@ -46,7 +46,6 @@
     "appId": "com.supplier.bot.io",
     "productName": "Supplier",
     "copyright": "Copyright © 2020 ${author}",
-    "afterSign": "tools/notarization/notarize.js",
     "mac": {
       "hardenedRuntime": true,
       "gatekeeperAssess": false,
@@ -54,9 +53,6 @@
       "entitlementsInherit": "tools/notarization/entitlements.mac.plist",
       "category": "supplier.bot.io",
       "electronUpdaterCompatibility": ">= 2.16"
-    },
-    "dmg": {
-      "backgroundColor": "#1B191C"
     },
     "win": {
       "target": "nsis",

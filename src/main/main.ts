@@ -82,7 +82,7 @@ const createWindow = () => {
 };
 
 app.whenReady().then(createWindow);
-Menu.setApplicationMenu(menu);
+if (!isDev) Menu.setApplicationMenu(menu);
 powerSaveBlocker.start('prevent-display-sleep');
 
 app.on('window-all-closed', () => {

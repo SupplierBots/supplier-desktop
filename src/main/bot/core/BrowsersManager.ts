@@ -10,9 +10,12 @@ import { ProductsMonitor } from '../supreme/ProductsMonitor';
 import fs from 'fs-extra';
 import path from 'path';
 import { app } from 'electron';
+import { SchedulerState } from '../../types/SchedulerState';
+import moment from 'moment';
 
 class BrowsersManager {
   private static instance: BrowsersManager;
+  private static timerID: number;
   private browsers: Browser[] = [];
   private constructor() {}
 
@@ -40,8 +43,23 @@ class BrowsersManager {
     }
   }
 
-  public async startTasks(tasks: Task[]) {
-    await fs.ensureDir(path.resolve(app.getAppPath(), 'logs'));
+  public async startTasks(tasks: Task[], scheduler: SchedulerState) {
+    //await fs.ensureDir(path.resolve(app.getAppPath(), 'logs'));
+    if (!scheduler.enabled) {
+      this.initializeTasks(tasks);
+      return;
+    }
+
+    const scheduledDate = moment(`${scheduler.date} ${scheduler.time}`, 'DD/MM/YYYY HH:mm:ss');
+    BrowsersManager.timerID = setInterval(() => {
+      if (moment().valueOf() >= scheduledDate.valueOf()) {
+        clearInterval(BrowsersManager.timerID);
+        this.initializeTasks(tasks);
+      }
+    }, 1000);
+  }
+
+  public async initializeTasks(tasks: Task[]) {
     ProductsMonitor.init(2000);
 
     tasks.forEach(async (task, index) => {
@@ -64,7 +82,7 @@ class BrowsersManager {
 
   public async stopAll() {
     ProductsMonitor.unsubscribeAll();
-
+    clearInterval(BrowsersManager.timerID);
     const cleanUps: Promise<void>[] = [];
 
     this.browsers.forEach(b => {

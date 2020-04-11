@@ -1,14 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface ControllerState {
-  lockTasks: boolean;
+  isTimerActive: boolean;
   chromiumPath: string;
   appData: string;
   version: string;
 }
 
 const initialState: ControllerState = {
-  lockTasks: false,
+  isTimerActive: false,
   chromiumPath: '',
   appData: '',
   version: '',
@@ -28,7 +28,10 @@ export const controllerSlice = createSlice({
     setAppVersion: (state, { payload }: PayloadAction<{ version: string }>) => {
       state.version = payload.version;
     },
+    setTimerState: (state, { payload }: PayloadAction<{ active: boolean }>) => {
+      state.isTimerActive = payload.active;
+    },
   },
 });
 
-export const { setAppDetails, setAppDataPath } = controllerSlice.actions;
+export const { setAppDetails, setAppDataPath, setTimerState } = controllerSlice.actions;

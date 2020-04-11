@@ -118,7 +118,7 @@ const Products = ({ history, match }: RouteComponentProps<{ id: string }>) => {
           <StyledForm onKeyPress={disableEnter}>
             <Wrapper>
               <Card>
-                <Heading>Product detials</Heading>
+                <Heading>Product details</Heading>
                 <KeywordsManager
                   name="keywords"
                   placeholder="+Another keyword"
@@ -143,7 +143,7 @@ const Products = ({ history, match }: RouteComponentProps<{ id: string }>) => {
                 />
               </Card>
               <Card>
-                <Heading>Additional detials</Heading>
+                <Heading>Additional details</Heading>
                 <Select
                   name="size"
                   placeholder="Size"

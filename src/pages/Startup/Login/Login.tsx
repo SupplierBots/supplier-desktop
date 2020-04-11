@@ -123,7 +123,7 @@ const Login = ({ history }: Props) => {
                   <Contact>
                     <p>Do you have any problems?</p>
                     <Email>
-                      Contact us: <GradientText>support@safedropbot.com</GradientText>
+                      Contact us: <GradientText>contact@supplierbot.io</GradientText>
                     </Email>
                   </Contact>
                   <StyledButton

@@ -17,6 +17,8 @@ const Wrapper = styled.label`
 const Label = styled.span`
   font-size: ${fonts.regular};
   margin-left: 1rem;
+  display: flex;
+  align-items: center;
 `;
 
 const HiddenField = styled(Field)`

@@ -2,6 +2,7 @@ import { Response } from 'puppeteer';
 import { Supreme } from '../../../types/Supreme';
 import { TaskStatusType } from '../../../types/TaskStatus';
 import SupremeTask from './SupremeTask';
+import { IPCMain } from '../../../IPC/IPCMain';
 
 export async function parseResponse(response: Response, task: SupremeTask) {
   const status = response.status();
@@ -63,7 +64,7 @@ export async function parseResponse(response: Response, task: SupremeTask) {
           type: TaskStatusType.Success,
           additionalInfo: res.id,
         });
-
+        IPCMain.reportCheckout();
         await task.page.close();
         await task.browser.close();
         return;

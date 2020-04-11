@@ -24,10 +24,11 @@ const Navigation = () => {
   const lastVisited = useStateSelector(state => state.lastVisited);
   const browsers = useStateSelector(state => state.browsers);
   const router = useStateSelector(state => state.router);
+  const { isTimerActive } = useStateSelector(state => state.controller);
   const { isUpdateAvailable, number } = useStateSelector(state => state.update);
 
   const isAnyTaskActive = () =>
-    router.location.pathname.includes('tasks') && browsers.some(b => b.isActive);
+    isTimerActive || (router.location.pathname.includes('tasks') && browsers.some(b => b.isActive));
 
   return (
     <Wrapper>

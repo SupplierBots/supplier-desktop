@@ -25,21 +25,6 @@ export const taskValidationSchema = Yup.object().shape({
   }),
   products: Yup.array().min(1),
   stopIfSoldOut: Yup.boolean(),
-  schedule: Yup.boolean(),
-  scheduledDate: Yup.string().when('schedule', {
-    is: true,
-    then: Yup.string()
-      .required('!')
-      .matches(dateRegex, '!'),
-    otherwise: Yup.string(),
-  }),
-  scheduledTime: Yup.string().when('schedule', {
-    is: true,
-    then: Yup.string()
-      .required('!')
-      .matches(timeRegex, '!'),
-    otherwise: Yup.string(),
-  }),
   name: Yup.string().required('Required'),
   site: Yup.object().required(),
   browser: Yup.object().required(),
@@ -59,13 +44,7 @@ export const initialTaskValues: Task = {
   refreshRate: '',
   checkoutDelay: '',
   stopIfSoldOut: false,
-  schedule: false,
-  scheduledDate: '',
-  scheduledTime: '',
   name: '',
 };
 
-export const taskSiteOptions: Option[] = [
-  { value: 'supreme', label: 'Supreme' },
-  { value: 'palace', label: 'Palace' },
-];
+export const taskSiteOptions: Option[] = [{ value: 'supreme', label: 'Supreme Hybrid' }];

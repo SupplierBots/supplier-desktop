@@ -114,7 +114,7 @@ const Proxies = ({ match, history }: RouteComponentProps<{ id: string }>) => {
         <StyledForm>
           <Wrapper>
             <Card>
-              <Heading>Proxy detials</Heading>
+              <Heading>Proxy details</Heading>
               <Input type="text" name="ipPort" placeholder="IP:Port" />
               <Slider name="userPassAuth" checked={props.values.userPassAuth}>
                 User:Pass Authentication

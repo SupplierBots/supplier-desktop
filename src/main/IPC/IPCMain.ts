@@ -32,7 +32,7 @@ import { TaskStatus } from '../types/TaskStatus';
 import { Task } from '../types/Task';
 import { BrowserData } from '../types/BrowserData';
 import { Product } from '../types/Product';
-import { app } from 'electron';
+import { app, dialog } from 'electron';
 
 export abstract class IPCMain {
   private constructor() {}
@@ -40,7 +40,9 @@ export abstract class IPCMain {
     ipc.answerRenderer(VERIFY_CHROME, verifyChromium);
     ipc.on(DOWNLOAD_CHROMIUM, downloadChromium);
     ipc.on(SETUP_BROWSER, (e, data) => BrowsersManager.getInstance().setup(data));
-    ipc.on(START_TASKS, (e, tasks) => BrowsersManager.getInstance().startTasks(tasks));
+    ipc.on(START_TASKS, (e, tasks, scheduler) =>
+      BrowsersManager.getInstance().startTasks(tasks, scheduler),
+    );
     ipc.on(STOP_TASKS, e => BrowsersManager.getInstance().stopAll());
     ipc.on(WINDOW_MINIMIZE, () => mainWindow?.minimize());
     ipc.on(WINDOW_CLOSE, () => mainWindow?.close());
@@ -61,6 +63,7 @@ export abstract class IPCMain {
     });
 
     autoUpdater.on('error', error => {
+      dialog.showErrorBox('error', error.toString());
       mainWindow?.webContents.send(UPDATE_DOWNLOAD_ERROR, error);
     });
 

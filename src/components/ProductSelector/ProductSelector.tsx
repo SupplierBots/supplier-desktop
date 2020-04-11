@@ -61,7 +61,7 @@ const ProductSelector = ({ site, value, onChange, setTouched, error }: Props) =>
   const isInitialMount = useRef(true);
 
   const products = useStateSelector(state =>
-    state.products.filter(prod => prod.site && prod.site.label === site),
+    state.products.filter(prod => prod.site && prod.site.value === site),
   );
 
   const [selectedProducts, setSelectedProducts] = useState<string[]>(value);

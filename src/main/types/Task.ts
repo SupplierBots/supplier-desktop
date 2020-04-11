@@ -12,7 +12,4 @@ export interface Task extends SelectableUserData {
   refreshRate: number | string;
   checkoutDelay: number | string;
   stopIfSoldOut: boolean;
-  schedule: boolean;
-  scheduledDate: string;
-  scheduledTime: string;
 }

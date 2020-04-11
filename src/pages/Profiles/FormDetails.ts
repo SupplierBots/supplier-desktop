@@ -54,10 +54,10 @@ export const initialValues: Profile = {
 export const countryOptions: Option[] = [
   { value: 'USA', label: 'USA' },
   { value: 'Canada', label: 'Canada' },
-  { value: 'Poland', label: 'Poland' },
+  { value: 'PL', label: 'Poland' },
   { value: 'UK', label: 'UK' },
-  { value: 'Germany', label: 'Germany' },
-  { value: 'France', label: 'France' },
+  { value: 'DE', label: 'Germany' },
+  { value: 'FR', label: 'France' },
 ];
 
 const usStates: Option[] = [
