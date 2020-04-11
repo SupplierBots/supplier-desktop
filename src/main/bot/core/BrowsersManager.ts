@@ -77,7 +77,7 @@ class BrowsersManager {
         await supremeTask.init();
       } catch {}
     });
-
+    IPCMain.resetTimerState();
     const timeDifference = scheduledDate.valueOf() - moment().valueOf();
     await new Promise(resolve => setTimeout(resolve, timeDifference - 10000));
     ProductsMonitor.init(2000);

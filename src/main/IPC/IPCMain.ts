@@ -26,6 +26,7 @@ import {
   DOWNLOAD_UPDATE,
   RELAUNCH,
   REPORT_CHECKOUT,
+  RESET_TIMER_STATE,
 } from './IPCEvents';
 import { Profile } from '../types/Profile';
 import { TaskStatus } from '../types/TaskStatus';
@@ -117,5 +118,9 @@ export abstract class IPCMain {
 
   public static reportCheckout = () => {
     mainWindow?.webContents.send(REPORT_CHECKOUT);
+  };
+
+  public static resetTimerState = () => {
+    mainWindow?.webContents.send(RESET_TIMER_STATE);
   };
 }

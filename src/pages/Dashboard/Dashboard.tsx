@@ -47,7 +47,7 @@ const Info = styled.p<{ height: string }>`
   height: ${({ height }) => height};
 `;
 
-const ContactDescription = styled.p`
+const ContactDescription = styled.div`
   font-size: ${fonts.regular};
   color: ${colors.darkGrey};
   line-height: 2rem;
@@ -63,8 +63,12 @@ const ContactEmail = styled.span`
   color: transparent;
 `;
 
+const ContactParagraph = styled.p`
+  margin-top: 0.9rem;
+`;
+
 const Dashboard = () => {
-  const { news, tips, contactEmail, supportEmail } = useStateSelector(s => s.dashboard);
+  const { news, tips, contactEmail } = useStateSelector(s => s.dashboard);
   const update = useStateSelector(s => s.update);
   const { version } = useStateSelector(s => s.controller);
   const license = useStateSelector(s => s.auth.license);
@@ -118,12 +122,12 @@ const Dashboard = () => {
         )}
 
         <ContactDescription>
-          Did you notice any bugs or have some suggestions? Send us a message!
-          <ContactEmail>{supportEmail}</ContactEmail>
-        </ContactDescription>
-        <ContactDescription>
-          Business inquiries:
-          <ContactEmail>{contactEmail}</ContactEmail>
+          <p>Did you notice any bugs?</p>
+          <p>Have some suggestions?</p>
+          <p>Any business inquiries?</p>
+          <ContactParagraph>
+            Send us a message!<ContactEmail>{contactEmail}</ContactEmail>
+          </ContactParagraph>
         </ContactDescription>
       </StyledCard>
     </Wrapper>

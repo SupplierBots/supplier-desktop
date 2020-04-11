@@ -9,7 +9,6 @@ export interface Droplist {
 export interface DashboardInformation {
   news: string;
   tips: string;
-  supportEmail: string;
   contactEmail: string;
 }
 
@@ -34,8 +33,7 @@ const initialState: DashboardState = {
   news: "Couldn't retreive last message. Please check your connection.",
   tips:
     'We recommend to schedule your task. Bot will be able to preload some resources, which saves time during the drop',
-  supportEmail: 'support@safedropbot.com',
-  contactEmail: 'business@safedropbot.com',
+  contactEmail: 'contact@supplierbot.io',
   droplists: {
     supreme: [
       {
@@ -89,11 +87,10 @@ export const dashboardSlice = createSlice({
       state.selloutTimes.palace = payload.times;
     },
     setInformation: (state, { payload }: PayloadAction<{ information: DashboardInformation }>) => {
-      const { news, tips, contactEmail, supportEmail } = payload.information;
+      const { news, tips, contactEmail } = payload.information;
       state.news = news;
       state.tips = tips;
       state.contactEmail = contactEmail;
-      state.supportEmail = supportEmail;
     },
   },
 });

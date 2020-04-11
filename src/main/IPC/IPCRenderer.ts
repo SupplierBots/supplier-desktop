@@ -21,6 +21,7 @@ import {
   DOWNLOAD_UPDATE,
   RELAUNCH,
   REPORT_CHECKOUT,
+  RESET_TIMER_STATE,
 } from './IPCEvents';
 
 import store from 'store/configureStore';
@@ -42,6 +43,7 @@ import {
 } from 'store/update/updateSlice';
 import { incrementCheckouts } from 'store/statistics/statisticsSlice';
 import { SchedulerState } from 'main/types/SchedulerState';
+import { setTimerState } from 'store/controller/controllerSlice';
 
 export abstract class IPCRenderer {
   private constructor() {}
@@ -62,6 +64,10 @@ export abstract class IPCRenderer {
 
     ipc.on(REPORT_CHECKOUT, e => {
       store.dispatch(incrementCheckouts());
+    });
+
+    ipc.on(RESET_TIMER_STATE, e => {
+      store.dispatch(setTimerState({ active: false }));
     });
 
     ipc.answerMain(GET_SAME_EMAILS, (email: string) => {
