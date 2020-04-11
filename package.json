@@ -2,7 +2,7 @@
   "name": "supplier",
   "productName": "Supplier",
   "description": "Supreme & Palace Bot",
-  "version": "0.3.1",
+  "version": "0.3.4",
   "copyright": "Supplier",
   "main": "build/electron.js",
   "homepage": ".",
@@ -55,6 +55,7 @@
       "electronUpdaterCompatibility": ">= 2.16"
     },
     "win": {
+      "publisherName": "Supplier Patryk Heljasiński",
       "target": "nsis",
       "electronUpdaterCompatibility": ">= 2.16"
     },

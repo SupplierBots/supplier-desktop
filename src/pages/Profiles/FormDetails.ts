@@ -52,21 +52,49 @@ export const initialValues: Profile = {
 };
 
 export const countryOptions: Option[] = [
-  { value: 'USA', label: 'USA' },
-  { value: 'Canada', label: 'Canada' },
-  { value: 'PL', label: 'Poland' },
-  { value: 'UK', label: 'UK' },
-  { value: 'DE', label: 'Germany' },
+  { value: 'AT', label: 'Austria' },
+  { value: 'BY', label: 'Belarus' },
+  { value: 'BE', label: 'Belgium' },
+  { value: 'BG', label: 'Bulgaria' },
+  { value: 'HR', label: 'Croatia' },
+  { value: 'CZ', label: 'Czech Republic' },
+  { value: 'DK', label: 'Denmark' },
+  { value: 'EE', label: 'Estonia' },
+  { value: 'FI', label: 'Finland' },
   { value: 'FR', label: 'France' },
+  { value: 'DE', label: 'Germany' },
+  { value: 'GR', label: 'Greece' },
+  { value: 'HU', label: 'Hungary' },
+  { value: 'IS', label: 'Iceland' },
+  { value: 'IE', label: 'Ireland' },
+  { value: 'IT', label: 'Italy' },
+  { value: 'LV', label: 'Latvia' },
+  { value: 'LT', label: 'Lithuania' },
+  { value: 'LU', label: 'Luxembourg' },
+  { value: 'MC', label: 'Monaco' },
+  { value: 'NL', label: 'Netherlands' },
+  { value: 'NO', label: 'Norway' },
+  { value: 'PL', label: 'Poland' },
+  { value: 'PT', label: 'Portugal' },
+  { value: 'RO', label: 'Romania' },
+  { value: 'RU', label: 'Russia' },
+  { value: 'SK', label: 'Slovakia' },
+  { value: 'SI', label: 'Slovenia' },
+  { value: 'ES', label: 'Spain' },
+  { value: 'SE', label: 'Sweden' },
+  { value: 'CH', label: 'Switzerland' },
+  { value: 'TR', label: 'Turkey' },
+  { value: 'GB', label: 'UK' },
+  { value: 'NB', label: 'UK (N.IRELAND)' },
 ];
 
-const usStates: Option[] = [
+const usaRegions: Option[] = [
   { value: 'Ustate1', label: 'Ustate1' },
   { value: 'Ustate2', label: 'Ustate2' },
   { value: 'Ustate3', label: 'Ustate3' },
 ];
 
-const canadaStates: Option[] = [
+const canadaRegions: Option[] = [
   { value: 'cstate1', label: 'cstate1' },
   { value: 'cstate2', label: 'cstate2' },
   { value: 'cstate3', label: 'cstate3' },
@@ -79,9 +107,9 @@ export const getRegions = (country: string | undefined): Option[] => {
   if (!country) return [];
   switch (country) {
     case 'Canada':
-      return canadaStates;
+      return canadaRegions;
     case 'USA':
-      return usStates;
+      return usaRegions;
     default:
       return [];
   }
