@@ -21,6 +21,8 @@ import {
   setLastVisitedProxy,
 } from 'store/lastVisited/lastVisitedSlice';
 import { useStateDispatch, useStateSelector } from 'hooks/typedReduxHooks';
+import { removeTask } from 'store/tasks/tasksSlice';
+import { Task } from 'main/types/Task';
 
 interface Props {
   name: string;
@@ -77,6 +79,7 @@ const IconsContainer = styled.div<Props>`
 const SelectableItem = (props: Props) => {
   const dispatch = useStateDispatch();
   const userDataItems = useStateSelector(state => state[props.type]) as UserData[];
+  const tasks = useStateSelector(state => state.tasks);
 
   const duplicateItem = (event: MouseEvent<HTMLOrSVGElement>) => {
     event.stopPropagation();
@@ -98,16 +101,21 @@ const SelectableItem = (props: Props) => {
 
   const removeItem = (event: MouseEvent<HTMLOrSVGElement>) => {
     event.stopPropagation();
-
+    let tasksToRemove: Task[] = [];
     if (props.type === 'products') {
       dispatch(removeProduct({ id: props.id }));
+      tasksToRemove.push(...tasks.filter(t => t.products.some(p => p === props.id)));
     }
     if (props.type === 'profiles') {
       dispatch(removeProfile({ id: props.id }));
+      tasksToRemove.push(...tasks.filter(t => t.profile?.value === props.id));
     }
     if (props.type === 'proxies') {
+      tasksToRemove.push(...tasks.filter(t => t.proxy?.value === props.id));
       dispatch(removeProxy({ id: props.id }));
     }
+
+    tasksToRemove.forEach(t => dispatch(removeTask({ id: t.id })));
 
     if (props.active) {
       if (props.type === 'products') {

@@ -1,7 +1,7 @@
 import SupremeTask from './SupremeTask';
 import { TaskStatusType } from '../../../types/TaskStatus';
 import { selectors } from './selectors';
-import { waitTicket } from './waitTicket';
+import { waitTicket } from '../pageInject/waitTicket';
 
 export async function checkout(this: SupremeTask) {
   if (

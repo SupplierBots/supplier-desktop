@@ -45,7 +45,7 @@ const BrowserInstance = async (id: string, index = 0) => {
 
   browser.on('targetcreated', (target: Target) => {
     if (target.url().includes('devtools')) {
-      //browser.close();
+      browser.close();
     }
   });
 

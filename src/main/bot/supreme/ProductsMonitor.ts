@@ -11,6 +11,7 @@ import {
 } from 'rxjs/operators';
 
 import { Supreme } from '../../types/Supreme';
+import { getRandomString } from './browser/getRandomString';
 
 abstract class ProductsMonitor {
   private static observable: Observable<any>;
@@ -24,9 +25,12 @@ abstract class ProductsMonitor {
 
     const desktopStockMonitor = timer(0, refreshRate).pipe(
       switchMap(() =>
-        axios.get<string>('https://www.supremenewyork.com/shop.json', {
-          transformResponse: res => res,
-        }),
+        axios.get<string>(
+          `https://www.supremenewyork.com/shop.json?${getRandomString()}=${getRandomString()}`,
+          {
+            transformResponse: res => res,
+          },
+        ),
       ),
       pluck('data'),
       retryWhen(err => err.pipe(delay(refreshRate))),
@@ -34,9 +38,12 @@ abstract class ProductsMonitor {
 
     const mobileStockMonitor = timer(refreshRate / 2, refreshRate).pipe(
       switchMap(() =>
-        axios.get<string>('https://www.supremenewyork.com/mobile_stock.json', {
-          transformResponse: res => res,
-        }),
+        axios.get<string>(
+          `https://www.supremenewyork.com/mobile_stock.json?${getRandomString()}=${getRandomString()}`,
+          {
+            transformResponse: res => res,
+          },
+        ),
       ),
       pluck('data'),
       retryWhen(err => err.pipe(delay(refreshRate))),

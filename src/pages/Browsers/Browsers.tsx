@@ -9,6 +9,7 @@ import Button from 'components/Button/Button';
 import { IPCRenderer } from 'main/IPC/IPCRenderer';
 import { createBrowser, removeBrowser } from 'store/browsers/browsersSlice';
 import { useStateSelector, useStateDispatch } from 'hooks/typedReduxHooks';
+import { removeTask } from 'store/tasks/tasksSlice';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -28,6 +29,7 @@ const BrowsersContainer = styled.div`
 
 const Browsers = () => {
   const browsers = useStateSelector(state => state.browsers);
+  const tasks = useStateSelector(state => state.tasks);
   const dispatch = useStateDispatch();
 
   useEffect(
@@ -36,6 +38,13 @@ const Browsers = () => {
     },
     [],
   );
+
+  const deleteBrowser = (id: string) => {
+    dispatch(removeBrowser({ id }));
+    const tasksToRemove = tasks.filter(t => t.browser?.value === id);
+    console.log(tasksToRemove);
+    tasksToRemove.forEach(t => dispatch(removeTask({ id: t.id })));
+  };
 
   return (
     <Wrapper>
@@ -46,7 +55,7 @@ const Browsers = () => {
             <Browser
               key={b.id}
               data={b}
-              deleteAction={() => dispatch(removeBrowser({ id: b.id }))}
+              deleteAction={() => deleteBrowser(b.id)}
               canBeRemoved={browsers.length > 2 && !b.isActive}
               openAction={() => IPCRenderer.setupBrowser(b)}
             >

@@ -11,8 +11,9 @@ function generateJSAddressCookie({
   postcode,
   email,
   telephone,
+  country,
 }: Profile): SetCookie {
-  const value = `${firstName} ${lastName}|${email}|${telephone}|${address1}|${address2}|${city}|undefined|${postcode}|PL|`
+  const value = `${firstName} ${lastName}|${email}|${telephone}|${address1}|${address2}|${city}|undefined|${postcode}|${country?.value}|`
     .replace(/ /g, '%20')
     .replace(/@/g, '%40');
   return {

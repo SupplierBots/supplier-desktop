@@ -137,14 +137,14 @@ const Profiles = ({ match, history }: RouteComponentProps<{ id: string }>) => {
                       props.setFieldValue('region', null);
                     }}
                     error={!!props.errors.country && !!props.touched.country}
-                    width={isCountryWithRegions(props.values.country?.value) ? '48.5%' : '100%'}
+                    width={isCountryWithRegions(props.values.country?.label) ? '48.5%' : '100%'}
                   />
-                  {isCountryWithRegions(props.values.country?.value) && (
+                  {isCountryWithRegions(props.values.country?.label) && (
                     <Select
                       name="region"
                       placeholder="State/Region"
                       value={props.values.region}
-                      options={getRegions(props.values.country?.value)}
+                      options={getRegions(props.values.country?.label)}
                       onBlur={props.setFieldTouched}
                       onChange={props.setFieldValue}
                       error={!!props.errors.region && !!props.touched.region}

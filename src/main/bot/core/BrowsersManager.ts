@@ -11,7 +11,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import { app } from 'electron';
 import { SchedulerState } from '../../types/SchedulerState';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 
 class BrowsersManager {
   private static instance: BrowsersManager;
@@ -45,23 +45,22 @@ class BrowsersManager {
 
   public async startTasks(tasks: Task[], scheduler: SchedulerState) {
     //await fs.ensureDir(path.resolve(app.getAppPath(), 'logs'));
+    const scheduledDate = moment(`${scheduler.date} ${scheduler.time}`, 'DD/MM/YYYY HH:mm:ss');
+
     if (!scheduler.enabled) {
-      this.initializeTasks(tasks);
+      this.initializeTasks(tasks, scheduledDate);
       return;
     }
 
-    const scheduledDate = moment(`${scheduler.date} ${scheduler.time}`, 'DD/MM/YYYY HH:mm:ss');
     BrowsersManager.timerID = setInterval(() => {
-      if (moment().valueOf() >= scheduledDate.valueOf()) {
+      if (moment().valueOf() + 60000 >= scheduledDate.valueOf()) {
         clearInterval(BrowsersManager.timerID);
-        this.initializeTasks(tasks);
+        this.initializeTasks(tasks, scheduledDate);
       }
     }, 1000);
   }
 
-  public async initializeTasks(tasks: Task[]) {
-    ProductsMonitor.init(2000);
-
+  public async initializeTasks(tasks: Task[], scheduledDate: Moment) {
     tasks.forEach(async (task, index) => {
       if (!task.browser) return;
 
@@ -74,10 +73,14 @@ class BrowsersManager {
       if (!page || !product) return;
 
       try {
-        const supremeTask = new SupremeTask(page, task, product);
+        const supremeTask = new SupremeTask(page, task, product, scheduledDate);
         await supremeTask.init();
       } catch {}
     });
+
+    const timeDifference = scheduledDate.valueOf() - moment().valueOf();
+    await new Promise(resolve => setTimeout(resolve, timeDifference - 10000));
+    ProductsMonitor.init(2000);
   }
 
   public async stopAll() {

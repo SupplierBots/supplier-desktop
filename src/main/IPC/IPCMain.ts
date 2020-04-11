@@ -63,7 +63,6 @@ export abstract class IPCMain {
     });
 
     autoUpdater.on('error', error => {
-      dialog.showErrorBox('error', error.toString());
       mainWindow?.webContents.send(UPDATE_DOWNLOAD_ERROR, error);
     });
 

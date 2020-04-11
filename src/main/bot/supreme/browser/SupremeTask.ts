@@ -16,6 +16,7 @@ import { checkout } from './checkout';
 import { loadMainPage } from './loadPage';
 import { injectScript } from '../pageInject/injectScript';
 import { Logger } from '../Logger';
+import moment, { Moment } from 'moment';
 
 class SupremeTask {
   public browser: Browser;
@@ -24,7 +25,12 @@ class SupremeTask {
   public profile: Profile | null = null;
   public logger: Logger;
 
-  constructor(readonly page: Page, readonly task: Task, readonly product: Product) {
+  constructor(
+    readonly page: Page,
+    readonly task: Task,
+    readonly product: Product,
+    readonly scheduledDate: Moment,
+  ) {
     this.logger = new Logger(task.id, page);
     this.browser = this.page.browser();
     this.checkoutDelay =
@@ -49,11 +55,15 @@ class SupremeTask {
     try {
       const fullUrl = (await this.page.evaluate('window.location.href')) as string;
       if (!fullUrl.includes('#checkout')) {
+        const timeDifference = this.scheduledDate.valueOf() - moment().valueOf();
+        await new Promise(resolve => setTimeout(resolve, timeDifference));
         const source = injectScript(this.product, this.externalStock);
-        await await this.page.evaluate(source);
+        await this.page.evaluate(source);
       }
     } catch {}
   };
+
+  public loadPageScript = async () => {};
 
   public updateTaskStatus = ({ message, type, additionalInfo }: TaskStatus) => {
     IPCMain.updateTaskStatus(this.task, {
