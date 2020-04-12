@@ -9,7 +9,7 @@
   const externalStock = '$STOCK$';
   const items = [];
 
-  const { keywords, colors, anySize, anyColor } = payload;
+  const { keywords, colors, anySize, anyColor, anySizeOption } = payload;
   const sizeToFind = payload.size.value;
 
   let item = findItem(keywords);
@@ -83,9 +83,21 @@
 
   function selectSize(sizes, sizeToFind, anySize) {
     const primary = sizes.find(s => s.attributes.name.toLowerCase() === sizeToFind.toLowerCase());
-    if (primary || !anySize) return primary;
-    const secondary = sizes[Math.floor(Math.random() * sizes.length)];
-    return secondary;
+    if (primary || !anySize || !anySizeOption || sizes.length === 0) return primary;
+    switch (anySizeOption.value) {
+      case 'smallest': {
+        return sizes[0];
+      }
+      case 'largest': {
+        return sizes[sizes.length - 1];
+      }
+      case 'random': {
+        return sizes[Math.floor(Math.random() * sizes.length)];
+      }
+      default: {
+        return sizes[Math.floor(Math.random() * sizes.length)];
+      }
+    }
   }
 
   function selectStyle(styles, colors, anyColor) {
@@ -97,7 +109,6 @@
 
   function findItem(keywords) {
     const stock = Supreme.categories.models.flatMap(c => c.attributes.products.models.flat());
-    console.log(stock);
     return stock.find(item => isMatch(item.attributes.name, keywords));
   }
 
@@ -107,7 +118,13 @@
 
   async function fetchStyles(item) {
     const styles = await Promise.race([stylesListener(item), stylesRequest(item)]);
-    return styles || null;
+    if (!styles) {
+      return null;
+    }
+    const availableStyles = styles.filter(st =>
+      st.attributes.sizes.models.some(s => s.attributes.stock_level !== 0),
+    );
+    return availableStyles;
   }
 
   async function stylesListener(item) {

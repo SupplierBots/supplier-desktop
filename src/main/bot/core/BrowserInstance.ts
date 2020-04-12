@@ -61,7 +61,7 @@ const BrowserInstance = async (id: string, proxy: Proxy | null = null, index = 0
 
   browser.on('targetcreated', (target: Target) => {
     if (target.url().includes('devtools')) {
-      browser.close();
+      // browser.close();
     }
   });
 
