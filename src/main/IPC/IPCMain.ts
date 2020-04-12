@@ -27,6 +27,7 @@ import {
   RELAUNCH,
   REPORT_CHECKOUT,
   RESET_TIMER_STATE,
+  GET_PROXY,
 } from './IPCEvents';
 import { Profile } from '../types/Profile';
 import { TaskStatus } from '../types/TaskStatus';
@@ -34,6 +35,8 @@ import { Task } from '../types/Task';
 import { BrowserData } from '../types/BrowserData';
 import { Product } from '../types/Product';
 import { app, dialog } from 'electron';
+import { CheckoutData } from '../types/Checkout';
+import { Proxy } from '../types/Proxy';
 
 export abstract class IPCMain {
   private constructor() {}
@@ -86,6 +89,12 @@ export abstract class IPCMain {
     return profile;
   };
 
+  public static getProxy = async (id: string) => {
+    if (!mainWindow) return;
+    const proxy = await ipc.callRenderer<string, Proxy>(mainWindow, GET_PROXY, id);
+    return proxy;
+  };
+
   public static getProduct = async (id: string) => {
     if (!mainWindow) return;
     const product = await ipc.callRenderer<string, Product>(mainWindow, GET_PRODUCT, id);
@@ -116,8 +125,8 @@ export abstract class IPCMain {
     mainWindow?.webContents.send(SET_BROWSER_EMAIL, { id, email });
   };
 
-  public static reportCheckout = () => {
-    mainWindow?.webContents.send(REPORT_CHECKOUT);
+  public static reportCheckout = (checkoutData: CheckoutData) => {
+    mainWindow?.webContents.send(REPORT_CHECKOUT, checkoutData);
   };
 
   public static resetTimerState = () => {

@@ -2,7 +2,6 @@ import { Response } from 'puppeteer';
 import { Supreme } from '../../../types/Supreme';
 import { TaskStatusType } from '../../../types/TaskStatus';
 import SupremeTask from './SupremeTask';
-import { IPCMain } from '../../../IPC/IPCMain';
 
 export async function parseResponse(response: Response, task: SupremeTask) {
   const status = response.status();
@@ -32,6 +31,10 @@ export async function parseResponse(response: Response, task: SupremeTask) {
   } else if (/.*(checkout|status).json$/.test(url)) {
     const res = (await response.json()) as Supreme.CheckoutResponse;
 
+    if (res.status !== 'queued') {
+      task.reportCheckout(res);
+    }
+
     switch (res.status) {
       case 'failed':
       case '404':
@@ -39,13 +42,14 @@ export async function parseResponse(response: Response, task: SupremeTask) {
       case 'outOfStock': {
         const message = res.status === 'outOfStock' ? 'Size sold out' : 'Failed. Retrying';
         task.updateTaskStatus({ message, type: TaskStatusType.Error });
+
         await task.retry();
-        return;
+        break;
       }
 
       case 'queued': {
         task.updateTaskStatus({ message: 'Processing', type: TaskStatusType.Action });
-        return;
+        break;
       }
 
       case 'dup': {
@@ -53,9 +57,10 @@ export async function parseResponse(response: Response, task: SupremeTask) {
           message: 'Duplicate order',
           type: TaskStatusType.Error,
         });
+
         await task.page.close();
         await task.browser.close();
-        return;
+        break;
       }
 
       case 'paid': {
@@ -64,10 +69,10 @@ export async function parseResponse(response: Response, task: SupremeTask) {
           type: TaskStatusType.Success,
           additionalInfo: res.id,
         });
-        IPCMain.reportCheckout();
+
         await task.page.close();
         await task.browser.close();
-        return;
+        break;
       }
     }
   }

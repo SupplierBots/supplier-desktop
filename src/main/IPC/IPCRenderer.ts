@@ -22,6 +22,7 @@ import {
   RELAUNCH,
   REPORT_CHECKOUT,
   RESET_TIMER_STATE,
+  GET_PROXY,
 } from './IPCEvents';
 
 import store from 'store/configureStore';
@@ -44,6 +45,8 @@ import {
 import { incrementCheckouts } from 'store/statistics/statisticsSlice';
 import { SchedulerState } from 'main/types/SchedulerState';
 import { setTimerState } from 'store/controller/controllerSlice';
+import { CheckoutData } from 'main/types/Checkout';
+import { reportCheckout } from 'firebase/dropReporter';
 
 export abstract class IPCRenderer {
   private constructor() {}
@@ -62,7 +65,12 @@ export abstract class IPCRenderer {
       store.dispatch(updateTask({ item: task }));
     });
 
-    ipc.on(REPORT_CHECKOUT, e => {
+    ipc.on(REPORT_CHECKOUT, (e, checkoutData: CheckoutData) => {
+      reportCheckout({
+        ...checkoutData,
+        userId: store.getState().auth.uid,
+      });
+      if (checkoutData.status !== 'paid') return;
       store.dispatch(incrementCheckouts());
     });
 
@@ -83,6 +91,11 @@ export abstract class IPCRenderer {
     ipc.answerMain(GET_PRODUCT, (id: string) => {
       const product = store.getState().products.find(p => p.id === id);
       return product;
+    });
+
+    ipc.answerMain(GET_PROXY, (id: string) => {
+      const proxy = store.getState().proxies.find(p => p.id === id);
+      return proxy;
     });
 
     ipc.on(UPDATE_AVAILABLE, (e, info: UpdateInfo) => {

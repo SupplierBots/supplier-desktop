@@ -12,6 +12,7 @@ import path from 'path';
 import { app } from 'electron';
 import { SchedulerState } from '../../types/SchedulerState';
 import moment, { Moment } from 'moment';
+import { Proxy } from '../../types/Proxy';
 
 class BrowsersManager {
   private static instance: BrowsersManager;
@@ -61,26 +62,39 @@ class BrowsersManager {
   }
 
   public async initializeTasks(tasks: Task[], scheduledDate: Moment) {
-    tasks.forEach(async (task, index) => {
-      if (!task.browser) return;
+    const proxies: Proxy[] = [];
 
-      const browser = await BrowserInstance(task.browser?.value, index);
+    tasks.forEach(async (task, index) => {
+      if (!task.browser || !task.proxy || !task.profile) return;
+
+      const proxy = task.proxy.label !== 'None' ? await IPCMain.getProxy(task.proxy.value) : null;
+
+      if (proxy) proxies.push(proxy);
+
+      const browser = await BrowserInstance(task.browser?.value, proxy, index);
       const product = await IPCMain.getProduct(task.products[0]);
+      const profile = await IPCMain.getProfile(task.profile?.value);
+
       this.browsers.push(browser);
 
       const pages = await browser.pages();
       const page = R.last(pages);
-      if (!page || !product) return;
+
+      if (!page || !product || !profile) {
+        browser.close();
+        return;
+      }
 
       try {
-        const supremeTask = new SupremeTask(page, task, product, scheduledDate);
+        const supremeTask = new SupremeTask(page, task, product, profile, scheduledDate);
         await supremeTask.init();
       } catch {}
     });
     IPCMain.resetTimerState();
+
     const timeDifference = scheduledDate.valueOf() - moment().valueOf();
     await new Promise(resolve => setTimeout(resolve, timeDifference - 10000));
-    ProductsMonitor.init(2000);
+    ProductsMonitor.init(2000, proxies);
   }
 
   public async stopAll() {

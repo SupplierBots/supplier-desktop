@@ -7,6 +7,7 @@
 
   const payload = '$PRODUCT$';
   const externalStock = '$STOCK$';
+  const items = [];
 
   const { keywords, colors, anySize, anyColor } = payload;
   const sizeToFind = payload.size.value;
@@ -21,6 +22,8 @@
   if (!item) {
     return await reload();
   }
+
+  items.push(item.attributes.name);
 
   const styles = await fetchStyles(item);
   if (!styles) return;
@@ -37,9 +40,7 @@
   }
 
   await addToCart(size);
-  await sleep(250);
-
-  notifyTask('ATC', 'Action');
+  notifyTask('ATC', 'Action', items);
 
   async function reload() {
     await sleep(1500);
@@ -96,6 +97,7 @@
 
   function findItem(keywords) {
     const stock = Supreme.categories.models.flatMap(c => c.attributes.products.models.flat());
+    console.log(stock);
     return stock.find(item => isMatch(item.attributes.name, keywords));
   }
 
@@ -137,14 +139,14 @@
     return true;
   }
 
-  function notifyTask(message, type) {
+  function notifyTask(message, type, additionalInfo) {
     fetch('http://127.0.0.1:2140/status.json', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ message, type }),
+      body: JSON.stringify({ message, type, additionalInfo }),
     });
   }
 

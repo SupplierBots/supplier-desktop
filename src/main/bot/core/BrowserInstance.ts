@@ -7,8 +7,9 @@ import { app } from 'electron';
 import { Target } from 'puppeteer';
 import { IPCMain } from '../../IPC/IPCMain';
 import { config } from '../../../config';
+import { Proxy } from '../../types/Proxy';
 
-const BrowserInstance = async (id: string, index = 0) => {
+const BrowserInstance = async (id: string, proxy: Proxy | null = null, index = 0) => {
   IPCMain.browserStateChange(id, true);
 
   const appData = app.getPath('userData');
@@ -21,26 +22,41 @@ const BrowserInstance = async (id: string, index = 0) => {
   const { width, height, deviceScaleFactor } = devices['Pixel 2'].viewport;
 
   puppeteer.use(StealthPlugin());
+
+  const args = [
+    '--no-sandbox',
+    '--disable-gpu',
+    '--disable-infobars',
+    '--disable-setuid-sandbox',
+    '--disable-dev-shm-usage',
+    '--ignore-certifcate-errors',
+    '--ignore-certifcate-errors-spki-list',
+    `--user-data-dir=${userDataDirectory}`,
+    `--window-size=${width},${height + 82}`,
+    `--window-position=${0 + 500 * index},0`,
+  ];
+
+  if (proxy) {
+    args.push(`--proxy-server=${proxy.ipPort}`);
+  }
+
   const browser = await puppeteer.launch({
     headless: false,
     ignoreHTTPSErrors: true,
     ignoreDefaultArgs: ['--enable-automation'],
-    args: [
-      '--no-sandbox',
-      '--disable-gpu',
-      '--disable-infobars',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--ignore-certifcate-errors',
-      '--ignore-certifcate-errors-spki-list',
-      `--user-data-dir=${userDataDirectory}`,
-      `--window-size=${width},${height + 82}`,
-      `--window-position=${0 + 500 * index},0`,
-    ],
+    args,
     executablePath,
   });
 
   const page = await browser.newPage();
+
+  if (proxy?.userPassAuth) {
+    await page.authenticate({
+      username: proxy.username,
+      password: proxy.password,
+    });
+  }
+
   const client = await page.target().createCDPSession();
 
   browser.on('targetcreated', (target: Target) => {

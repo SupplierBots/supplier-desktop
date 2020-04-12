@@ -14,6 +14,7 @@ import { prepareCookies } from './prepareCookies';
 import { selectOption } from './selectOption';
 import { checkout } from './checkout';
 import { loadMainPage } from './loadPage';
+import { reportCheckout } from './reportCheckout';
 import { injectScript } from '../pageInject/injectScript';
 import { Logger } from '../Logger';
 import moment, { Moment } from 'moment';
@@ -22,17 +23,25 @@ class SupremeTask {
   public browser: Browser;
   public checkoutDelay: number;
   public externalStock: Supreme.Stock | null = null;
-  public profile: Profile | null = null;
   public logger: Logger;
+  public startTime: Moment = moment();
+  public submitTime: Moment = moment();
+  public items: string[] = [];
+  public region: 'us' | 'eu';
 
   constructor(
     readonly page: Page,
     readonly task: Task,
     readonly product: Product,
+    readonly profile: Profile,
     readonly scheduledDate: Moment,
   ) {
     this.logger = new Logger(task.id, page);
     this.browser = this.page.browser();
+
+    const country = this.profile?.country?.label;
+    this.region = country === 'USA' || country === 'Canada' ? 'us' : 'eu';
+
     this.checkoutDelay =
       typeof this.task.checkoutDelay === 'string'
         ? parseInt(this.task.checkoutDelay)
@@ -41,11 +50,9 @@ class SupremeTask {
 
   public init = async () => {
     ProductsMonitor.subscribe(this.setStock);
-    if (!this.task.profile) return;
-    this.profile = (await IPCMain.getProfile(this.task.profile.value)) ?? null;
     this.page.on('request', req => this.parseRequest(req, this));
     this.page.on('response', res => this.parseResponse(res, this));
-    this.page.on('load', () => this.onLoad());
+    this.page.on('domcontentloaded', () => this.onLoad());
     this.logger.writeString('Started fast task!');
     await this.prepareCookies();
     await this.loadMainPage();
@@ -58,12 +65,11 @@ class SupremeTask {
         const timeDifference = this.scheduledDate.valueOf() - moment().valueOf();
         await new Promise(resolve => setTimeout(resolve, timeDifference));
         const source = injectScript(this.product, this.externalStock);
+        this.startTime = moment();
         await this.page.evaluate(source);
       }
     } catch {}
   };
-
-  public loadPageScript = async () => {};
 
   public updateTaskStatus = ({ message, type, additionalInfo }: TaskStatus) => {
     IPCMain.updateTaskStatus(this.task, {
@@ -94,6 +100,7 @@ class SupremeTask {
   public selectOption = selectOption;
   public checkout = checkout;
   public loadMainPage = loadMainPage;
+  public reportCheckout = reportCheckout;
 }
 
 export default SupremeTask;

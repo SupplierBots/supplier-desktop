@@ -2,6 +2,7 @@ import SupremeTask from './SupremeTask';
 import { TaskStatusType } from '../../../types/TaskStatus';
 import { selectors } from './selectors';
 import { waitTicket } from '../pageInject/waitTicket';
+import moment from 'moment';
 
 export async function checkout(this: SupremeTask) {
   if (
@@ -11,11 +12,12 @@ export async function checkout(this: SupremeTask) {
     !this.profile.creditCardType?.value
   )
     return;
+  await new Promise(resolve => setTimeout(resolve, 250));
 
   const checkoutButton = await this.getVisibleElement(selectors.checkoutBtn);
   await checkoutButton.tap();
 
-  await this.page.waitForXPath(selectors.cardTypeSelect, { visible: true, timeout: 0 });
+  await this.page.waitForXPath(selectors.creditCardNumber, { visible: true, timeout: 0 });
 
   this.updateTaskStatus({
     message: 'Checking out',
@@ -23,10 +25,12 @@ export async function checkout(this: SupremeTask) {
   });
 
   const addToCartTime = Date.now();
-
   const { creditCardType, month, year, creditCardNumber, cvv } = this.profile;
 
-  await this.selectOption(selectors.cardTypeSelect, creditCardType.value);
+  if (this.region === 'eu') {
+    await this.selectOption(selectors.cardTypeSelect, creditCardType.value);
+  }
+
   await this.selectOption(selectors.monthSelect, month.value);
   await this.selectOption(selectors.yearSelect, year.value);
 
@@ -60,6 +64,7 @@ export async function checkout(this: SupremeTask) {
   await this.page.evaluate(waitTicket());
   const processBtn = await this.getVisibleElement(selectors.processBtn, false);
   await processBtn.tap();
+  this.submitTime = moment();
 
   this.updateTaskStatus({
     message: 'Waiting for response',

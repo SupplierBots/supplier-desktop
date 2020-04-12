@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosProxyConfig } from 'axios';
 import { timer, merge, Observable, Subscription } from 'rxjs';
 import {
   delay,
@@ -12,6 +12,7 @@ import {
 
 import { Supreme } from '../../types/Supreme';
 import { getRandomString } from './browser/getRandomString';
+import { Proxy } from '../../types/Proxy';
 
 abstract class ProductsMonitor {
   private static observable: Observable<any>;
@@ -19,7 +20,7 @@ abstract class ProductsMonitor {
 
   private constructor() {}
 
-  public static init(refreshRate: number) {
+  public static init(refreshRate: number, proxies: Proxy[]) {
     this.unsubscribeAll();
     this.subscriptions = [];
 
@@ -29,6 +30,7 @@ abstract class ProductsMonitor {
           `https://www.supremenewyork.com/shop.json?${getRandomString()}=${getRandomString()}`,
           {
             transformResponse: res => res,
+            proxy: this.getRandomProxy(proxies),
           },
         ),
       ),
@@ -42,6 +44,7 @@ abstract class ProductsMonitor {
           `https://www.supremenewyork.com/mobile_stock.json?${getRandomString()}=${getRandomString()}`,
           {
             transformResponse: res => res,
+            proxy: this.getRandomProxy(proxies),
           },
         ),
       ),
@@ -72,6 +75,28 @@ abstract class ProductsMonitor {
   public static unsubscribeAll() {
     this.subscriptions.forEach(s => s.unsubscribe());
   }
+
+  private static getRandomProxy = (proxies: Proxy[]) => {
+    if (proxies.length === 0) return false;
+
+    const { ipPort, username, password, userPassAuth } = proxies[
+      Math.floor(Math.random() * proxies.length)
+    ];
+    const [host, port] = ipPort.split(':');
+    const axiosProxy: AxiosProxyConfig = {
+      host,
+      port: parseInt(port),
+    };
+
+    if (userPassAuth) {
+      axiosProxy.auth = {
+        username,
+        password,
+      };
+    }
+
+    return axiosProxy;
+  };
 }
 
 export { ProductsMonitor };

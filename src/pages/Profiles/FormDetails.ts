@@ -87,7 +87,7 @@ export const countryOptions: Option[] = [
   { value: 'CH', label: 'Switzerland' },
   { value: 'TR', label: 'Turkey' },
   { value: 'GB', label: 'UK' },
-  { value: 'NB', label: 'UK (N.IRELAND)' },
+  { value: 'NB', label: 'UK (Northern Ireland)' },
 ];
 
 const usaRegions: Option[] = [

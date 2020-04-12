@@ -12,6 +12,7 @@ export async function parseRequest(req: Request, task: SupremeTask) {
   const status = JSON.parse(data) as TaskStatus;
 
   if (status.message === 'ATC') {
+    task.items = Array.isArray(status.additionalInfo) ? status.additionalInfo : [];
     return await task.checkout();
   }
 

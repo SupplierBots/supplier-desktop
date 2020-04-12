@@ -8,5 +8,5 @@ export enum TaskStatusType {
 export interface TaskStatus {
   message: string;
   type: TaskStatusType;
-  additionalInfo?: string | number;
+  additionalInfo?: string | number | string[];
 }

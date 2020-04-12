@@ -12,6 +12,7 @@ import { fadeIn } from 'theme/animations';
 import { TaskStatusType } from 'main/types/TaskStatus';
 import { removeTask } from 'store/tasks/tasksSlice';
 import { useStateSelector, useStateDispatch } from 'hooks/typedReduxHooks';
+import * as _ from 'lodash';
 
 const Wrapper = styled.div`
   display: grid;
@@ -144,7 +145,7 @@ const Task = ({ details }: Props) => {
       </WebsiteIconWrapper>
       <Text>{details.name}</Text>
       <Text>{details.profile && details.profile.label}</Text>
-      <Text>{details.proxy && details.proxy.label}</Text>
+      <Text>{details.proxy && _.take(details.proxy.label, 24)}</Text>
       <Status type={details.status.type}>{details.status.message}</Status>
       <ActionsContainer>
         <Action disabled={isBrowserActive()}>
