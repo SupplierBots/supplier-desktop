@@ -8,15 +8,15 @@ import { autoUpdater, UpdateInfo } from 'electron-updater';
 import {
   WINDOW_CLOSE,
   WINDOW_MINIMIZE,
-  SETUP_BROWSER,
+  SETUP_HARVESTER,
   DOWNLOAD_CHROMIUM,
   VERIFY_CHROME,
   START_TASKS,
   STOP_TASKS,
   GET_PROFILE,
   UPDATE_TASK_STATUS,
-  BROWSER_STATE_CHANGE,
-  SET_BROWSER_EMAIL,
+  HARVESTER_STATE_CHANGE,
+  SET_HARVESTER_EMAIL,
   GET_SAME_EMAILS,
   GET_PRODUCT,
   UPDATE_AVAILABLE,
@@ -32,18 +32,19 @@ import {
 import { Profile } from '../types/Profile';
 import { TaskStatus } from '../types/TaskStatus';
 import { Task } from '../types/Task';
-import { BrowserData } from '../types/BrowserData';
+import { HarvesterData } from '../types/HarvesterData';
 import { Product } from '../types/Product';
-import { app, dialog } from 'electron';
+import { app } from 'electron';
 import { CheckoutData } from '../types/Checkout';
 import { Proxy } from '../types/Proxy';
+import { HarvestersManager } from '../bot/harvesters/HarvestersManager';
 
 export abstract class IPCMain {
   private constructor() {}
   public static registerListeners = () => {
     ipc.answerRenderer(VERIFY_CHROME, verifyChromium);
     ipc.on(DOWNLOAD_CHROMIUM, downloadChromium);
-    ipc.on(SETUP_BROWSER, (e, data) => BrowsersManager.getInstance().setup(data));
+    ipc.on(SETUP_HARVESTER, (e, data: HarvesterData) => HarvestersManager.setupHarvester(data));
     ipc.on(START_TASKS, (e, tasks, scheduler) =>
       BrowsersManager.getInstance().startTasks(tasks, scheduler),
     );
@@ -53,6 +54,7 @@ export abstract class IPCMain {
     ipc.on(DOWNLOAD_UPDATE, () => {
       autoUpdater.downloadUpdate();
     });
+
     ipc.on(RELAUNCH, () => {
       app.relaunch();
       app.exit();
@@ -109,7 +111,7 @@ export abstract class IPCMain {
 
   public static getSameEmails = async (email: string) => {
     if (!mainWindow) return;
-    const emails = await ipc.callRenderer<string, BrowserData[]>(
+    const emails = await ipc.callRenderer<string, HarvesterData[]>(
       mainWindow,
       GET_SAME_EMAILS,
       email,
@@ -117,12 +119,12 @@ export abstract class IPCMain {
     return emails;
   };
 
-  public static browserStateChange = (id: string, status: boolean) => {
-    mainWindow?.webContents.send(BROWSER_STATE_CHANGE, { id, status });
+  public static harvesterStateChange = (id: string, status: boolean) => {
+    mainWindow?.webContents.send(HARVESTER_STATE_CHANGE, { id, status });
   };
 
-  public static setBrowserEmail = (id: string, email: string) => {
-    mainWindow?.webContents.send(SET_BROWSER_EMAIL, { id, email });
+  public static setHarvesterEmail = (id: string, email: string) => {
+    mainWindow?.webContents.send(SET_HARVESTER_EMAIL, { id, email });
   };
 
   public static reportCheckout = (checkoutData: CheckoutData) => {

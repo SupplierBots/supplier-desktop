@@ -17,8 +17,8 @@ export const proxyValidationSchema = Yup.object().shape({
     then: Yup.string().required('Required'),
     otherwise: Yup.string(),
   }),
-  name: Yup.string().required('Required'),
-  site: Yup.object().required(),
+  region: Yup.object().required(),
+  name: Yup.string(),
 });
 
 export const initialProxyValues: Proxy = {
@@ -27,12 +27,17 @@ export const initialProxyValues: Proxy = {
   userPassAuth: false,
   username: '',
   password: '',
+  region: null,
   name: '',
-  site: null,
 };
 
 export const siteOptions: Option[] = [
   { value: 'supreme', label: 'Supreme' },
   { value: 'palace', label: 'Palace' },
   { value: 'both', label: 'Both' },
+];
+
+export const proxyRegions: Option[] = [
+  { value: 'eu', label: 'Europe' },
+  { value: 'us', label: 'USA' },
 ];

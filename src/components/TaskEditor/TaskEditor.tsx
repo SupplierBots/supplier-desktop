@@ -132,7 +132,7 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
   };
 
   const getAvailableBrowsers = (): Option[] => {
-    return state.browsers
+    return state.harvesters
       .filter(b => !state.tasks.some(t => t.browser && t.browser.value === b.id))
       .map(b => ({ label: b.accountEmail, value: b.id }));
   };

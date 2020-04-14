@@ -1,9 +1,9 @@
 import {
-  BROWSER_STATE_CHANGE,
-  BrowserStatePayload,
-  SET_BROWSER_EMAIL,
+  HARVESTER_STATE_CHANGE,
+  HarvesterStatePayload,
+  SET_HARVESTER_EMAIL,
   GET_SAME_EMAILS,
-  SETUP_BROWSER,
+  SETUP_HARVESTER,
   VERIFY_CHROME,
   ChromiumVerifiedPayload,
   DOWNLOAD_CHROMIUM,
@@ -27,10 +27,10 @@ import {
 
 import store from 'store/configureStore';
 import { ipcRenderer as ipc } from 'electron-better-ipc';
-import { BrowserData } from 'main/types/BrowserData';
+import { HarvesterData } from 'main/types/HarvesterData';
 import { Task } from 'main/types/Task';
 import { updateTask } from 'store/tasks/tasksSlice';
-import { setAccountEmail, setActive } from 'store/browsers/browsersSlice';
+import { setAccountEmail, setActive } from 'store/harvesters/harvestersSlice';
 import { UpdateInfo, UpdateDownloadedEvent } from 'electron-updater';
 import { ProgressInfo } from 'builder-util-runtime';
 import { push } from 'connected-react-router';
@@ -53,11 +53,11 @@ export abstract class IPCRenderer {
   public static registerListeners = () => {
     store.dispatch(resetUpdateState());
 
-    ipc.on(BROWSER_STATE_CHANGE, (e, { id, status }: BrowserStatePayload) => {
+    ipc.on(HARVESTER_STATE_CHANGE, (e, { id, status }: HarvesterStatePayload) => {
       store.dispatch(setActive({ id, isActive: status }));
     });
 
-    ipc.on(SET_BROWSER_EMAIL, (e, { id, email }: { id: string; email: string }) => {
+    ipc.on(SET_HARVESTER_EMAIL, (e, { id, email }: { id: string; email: string }) => {
       store.dispatch(setAccountEmail({ id, email }));
     });
 
@@ -79,7 +79,7 @@ export abstract class IPCRenderer {
     });
 
     ipc.answerMain(GET_SAME_EMAILS, (email: string) => {
-      const sameEmails = store.getState().browsers.filter(b => b.accountEmail.includes(email));
+      const sameEmails = store.getState().harvesters.filter(b => b.accountEmail.includes(email));
       return sameEmails;
     });
 
@@ -121,8 +121,8 @@ export abstract class IPCRenderer {
     });
   };
 
-  public static setupBrowser = (data: BrowserData) => {
-    ipc.send(SETUP_BROWSER, data);
+  public static setupHarvester = (data: HarvesterData) => {
+    ipc.send(SETUP_HARVESTER, data);
   };
 
   public static verifyChromium = async () => {

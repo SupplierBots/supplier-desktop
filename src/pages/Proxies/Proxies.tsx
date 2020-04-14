@@ -13,7 +13,7 @@ import Select from 'components/Select/Select';
 import Input from 'components/Input/Input';
 
 import routes from 'constants/routes';
-import { proxyValidationSchema, initialProxyValues, siteOptions } from './FormDetails';
+import { proxyValidationSchema, initialProxyValues, proxyRegions } from './FormDetails';
 import Slider from 'components/Slider/Slider';
 import { Proxy } from 'main/types/Proxy';
 import Item from 'components/ChangeItemModal/SelectableItem';
@@ -21,6 +21,7 @@ import { colors, fonts } from 'theme/main';
 import { setLastVisitedProxy } from 'store/lastVisited/lastVisitedSlice';
 import { addProxy, updateProxy } from 'store/proxies/proxiesSlice';
 import { useStateDispatch, useStateSelector } from 'hooks/typedReduxHooks';
+import _ from 'lodash';
 
 const Wrapper = styled.div`
   display: grid;
@@ -89,6 +90,7 @@ const Proxies = ({ match, history }: RouteComponentProps<{ id: string }>) => {
   };
 
   const handleSubmit = (proxy: Proxy, actions: FormikHelpers<Proxy>) => {
+    if (!proxy.name) proxy.name = _.take(proxy.ipPort, 24).join('');
     if (isNew) {
       const newProxy = {
         ...proxy,
@@ -126,15 +128,15 @@ const Proxies = ({ match, history }: RouteComponentProps<{ id: string }>) => {
                 </>
               )}
               <StyledHeading>Other</StyledHeading>
-              <Input type="text" name="name" placeholder="Proxy Name" />
+              <Input type="text" name="name" placeholder="Proxy Name (optional)" />
               <Select
-                name="site"
-                placeholder="Site"
-                value={props.values.site}
-                options={siteOptions}
+                name="region"
+                placeholder="Region"
+                value={props.values.region}
+                options={proxyRegions}
                 onBlur={props.setFieldTouched}
                 onChange={props.setFieldValue}
-                error={!!props.errors.site && !!props.touched.site}
+                error={!!props.errors.region && !!props.touched.region}
               />
             </Card>
             <Card>
@@ -152,7 +154,7 @@ const Proxies = ({ match, history }: RouteComponentProps<{ id: string }>) => {
                   ))}
                 </ProxiesList>
               ) : (
-                <EmptyList>No proxies found</EmptyList>
+                <EmptyList>No proxies</EmptyList>
               )}
             </Card>
             <ButtonsContainer>

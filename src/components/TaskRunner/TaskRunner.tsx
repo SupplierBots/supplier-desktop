@@ -75,7 +75,7 @@ const ScheduledState = styled.div`
 `;
 
 const TaskRunner = () => {
-  const { tasks, browsers, scheduler, controller } = useStateSelector(state => state);
+  const { tasks, harvesters: browsers, scheduler, controller } = useStateSelector(state => state);
   const [intervalID, setIntervalID] = useState<number>();
   const [currentDate, setCurrentDate] = useState<Moment>();
 

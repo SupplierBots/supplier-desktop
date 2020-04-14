@@ -10,7 +10,7 @@ import Loader from './Loader/Loader';
 import { fadeIn } from 'theme/animations';
 
 import { IPCRenderer } from 'main/IPC/IPCRenderer';
-import { setActive } from 'store/browsers/browsersSlice';
+import { setActive } from 'store/harvesters/harvestersSlice';
 import { setAppDetails, setTimerState } from 'store/controller/controllerSlice';
 import { useStateSelector, useStateDispatch } from 'hooks/typedReduxHooks';
 
@@ -30,7 +30,7 @@ type Props = RouteComponentProps;
 
 const Startup = ({ history }: Props) => {
   const [loading, setLoading] = useState(true);
-  const browsers = useStateSelector(state => state.browsers);
+  const browsers = useStateSelector(state => state.harvesters);
   const dispatch = useStateDispatch();
 
   const resetBrowsers = () => {

@@ -117,7 +117,7 @@ interface Props {
 }
 const Task = ({ details }: Props) => {
   const dispatch = useStateDispatch();
-  const browsers = useStateSelector(state => state.browsers);
+  const browsers = useStateSelector(state => state.harvesters);
   const { isTimerActive } = useStateSelector(state => state.controller);
 
   const isBrowserActive = () => {

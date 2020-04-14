@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=0.7" />
+    <title>Captcha Harvester</title>
+    <script
+      src="https://www.google.com/recaptcha/api.js?hl=en&onload=initializeCaptcha"
+      async
+      defer
+    ></script>
+    <style>
+      @import url('https://fonts.googleapis.com/css?family=Lato:100,200,300,400&display=swap');
+
+      @keyframes rotate {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      *,
+      *::before,
+      *::after {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        /* 16px * 62.5% = 10px = 1rem */
+        font-size: 62.5%;
+      }
+
+      body {
+        font-family: 'Lato', sans-serif;
+        overflow: hidden;
+        background: #1b191c;
+        padding: 3.5rem 0;
+      }
+
+      a,
+      a:hover {
+        text-decoration: none;
+      }
+
+      .logo {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 2rem;
+      }
+
+      .text-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-top: 0.8rem;
+        font-weight: 300;
+      }
+
+      .logo img {
+        height: 115px;
+        width: 115px;
+      }
+
+      .primary-text {
+        font-size: 2.2rem;
+        letter-spacing: 2px;
+        color: #f1e3ff;
+        margin-bottom: 0.5rem;
+      }
+
+      .harvester-email {
+        font-size: 1.8rem;
+        color: #747273;
+      }
+
+      .status {
+        margin-top: 18rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: 3rem;
+      }
+
+      .spinner {
+        animation: rotate 1s infinite linear;
+        background: #c95ba3;
+        background: linear-gradient(to right, #c95ba3 10%, rgba(255, 255, 255, 0) 42%);
+        border-radius: 50%;
+
+        height: 3em;
+        position: relative;
+        width: 3em;
+      }
+
+      .spinner::before {
+        background: #c95ba3;
+        border-radius: 100% 0 0 0;
+        content: '';
+        position: absolute;
+        height: 50%;
+        width: 50%;
+        top: 0;
+        left: 0;
+      }
+
+      .spinner::after {
+        content: '';
+        background: #1b191c;
+        position: absolute;
+        height: 75%;
+        width: 75%;
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .current-status {
+        color: #f1e3ff;
+        font-size: 2.2rem;
+        margin-right: 1.7rem;
+        margin-bottom: 0.3rem;
+        letter-spacing: 1px;
+        font-weight: 300;
+      }
+
+      div[style*='opacity: 0.5'] {
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="logo">
+      <img src="https://i.imgur.com/ZHf6iun.png" alt="Supplier Logo" />
+      <div class="text-container">
+        <p class="primary-text">Captcha Harvester</p>
+        <p class="harvester-email">contact@supplierbot.io</p>
+      </div>
+    </div>
+    <div class="status">
+      <span class="current-status">Initializing</span>
+      <div class="spinner"></div>
+    </div>
+
+    <script>
+      let sitekey = '$SITE_KEY$';
+      const currentStatus = document.querySelector('.current-status');
+      const currentEmail = document.querySelector('.harvester-email');
+
+      function sendToken() {
+        const token = grecaptcha.getResponse();
+        fetch('http://127.0.0.1:2140/captcha.json', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token }),
+        });
+        setStatus('Waiting');
+        grecaptcha.reset();
+      }
+
+      function initializeCaptcha() {
+        grecaptcha.render('g-recaptcha', {
+          size: 'invisible',
+          callback: sendToken,
+          sitekey,
+        });
+      }
+
+      function executeCaptcha() {
+        setStatus('Solving');
+        grecaptcha.execute();
+      }
+
+      function setStatus(status) {
+        currentStatus.textContent = status;
+      }
+
+      function setEmail(email) {
+        currentEmail.textContent = email;
+      }
+
+      setTimeout(() => {
+        setStatus('Waiting');
+      }, 2500);
+    </script>
+    <div id="g-recaptcha"></div>
+  </body>
+</html>

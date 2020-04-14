@@ -1,13 +1,13 @@
 import { Page } from 'puppeteer';
 import { IPCMain } from '../../IPC/IPCMain';
+import _ from 'lodash';
 
-const setupBrowser = async (page: Page, id: string) => {
+const setupHarvester = async (page: Page, id: string) => {
   const browser = page.browser();
+  IPCMain.setHarvesterEmail(id, `Not-Logged-${_.takeRight(id, 5).join('')}`);
 
-  if (!page) {
-    browser.close();
-    return;
-  }
+  const cookies = await page.cookies('https://www.google.com/');
+  await page.deleteCookie(...cookies);
 
   await page.goto(
     'https://accounts.google.com/signin/v2/identifier?flowName=GlifWebSignIn&flowEntry=ServiceLogin&hl=en',
@@ -31,8 +31,8 @@ const setupBrowser = async (page: Page, id: string) => {
     if (sameEmails && sameEmails.length > 0) {
       email += ` (${sameEmails.length + 1})`;
     }
-    IPCMain.setBrowserEmail(id, email);
+    IPCMain.setHarvesterEmail(id, email);
     browser.close();
   });
 };
-export { setupBrowser };
+export { setupHarvester };

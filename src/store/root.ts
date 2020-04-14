@@ -10,7 +10,7 @@ import { controllerSlice } from './controller/controllerSlice';
 import { profilesSlice } from './profiles/profilesSlice';
 import { proxiesSlice } from './proxies/proxiesSlice';
 import { productsSlice } from './products/productsSlice';
-import { browsersSlice } from './browsers/browsersSlice';
+import { harvestersSlice } from './harvesters/harvestersSlice';
 import { combineReducers } from '@reduxjs/toolkit';
 import { tasksSlice } from './tasks/tasksSlice';
 import store from './configureStore';
@@ -46,7 +46,7 @@ export const rootReducer = combineReducers({
   profiles: profilesSlice.reducer,
   proxies: proxiesSlice.reducer,
   products: productsSlice.reducer,
-  browsers: browsersSlice.reducer,
+  harvesters: harvestersSlice.reducer,
   tasks: tasksSlice.reducer,
   dashboard: dashboardSlice.reducer,
   update: updateSlice.reducer,

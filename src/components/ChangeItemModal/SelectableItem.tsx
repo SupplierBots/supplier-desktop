@@ -23,6 +23,7 @@ import {
 import { useStateDispatch, useStateSelector } from 'hooks/typedReduxHooks';
 import { removeTask } from 'store/tasks/tasksSlice';
 import { Task } from 'main/types/Task';
+import { resetProxy } from 'store/harvesters/harvestersSlice';
 
 interface Props {
   name: string;
@@ -79,7 +80,7 @@ const IconsContainer = styled.div<Props>`
 const SelectableItem = (props: Props) => {
   const dispatch = useStateDispatch();
   const userDataItems = useStateSelector(state => state[props.type]) as UserData[];
-  const tasks = useStateSelector(state => state.tasks);
+  const { tasks, harvesters: browsers } = useStateSelector(state => state);
 
   const duplicateItem = (event: MouseEvent<HTMLOrSVGElement>) => {
     event.stopPropagation();
@@ -112,6 +113,8 @@ const SelectableItem = (props: Props) => {
     }
     if (props.type === 'proxies') {
       tasksToRemove.push(...tasks.filter(t => t.proxy?.value === props.id));
+      const harvestersToReset = browsers.filter(h => h.proxy.value === props.id);
+      harvestersToReset.forEach(h => dispatch(resetProxy({ id: h.id })));
       dispatch(removeProxy({ id: props.id }));
     }
 

@@ -7,7 +7,7 @@ import { ReactComponent as TasksIcon } from 'assets/Tasks.svg';
 import { ReactComponent as ProductsIcon } from 'assets/Products.svg';
 import { ReactComponent as ProfilesIcon } from 'assets/Profiles.svg';
 import { ReactComponent as ProxiesIcon } from 'assets/Proxies.svg';
-import { ReactComponent as BrowsersIcon } from 'assets/Harvesters.svg';
+import { ReactComponent as HarvestersIcon } from 'assets/Harvesters.svg';
 import { ReactComponent as HelpIcon } from 'assets/Help.svg';
 import { ReactComponent as DownloadIcon } from 'assets/Download.svg';
 import routes from 'constants/routes';
@@ -22,7 +22,7 @@ const NavigationList = styled.ul`
 
 const Navigation = () => {
   const lastVisited = useStateSelector(state => state.lastVisited);
-  const browsers = useStateSelector(state => state.browsers);
+  const browsers = useStateSelector(state => state.harvesters);
   const router = useStateSelector(state => state.router);
   const { isTimerActive } = useStateSelector(state => state.controller);
   const { isUpdateAvailable, number } = useStateSelector(state => state.update);
@@ -52,8 +52,8 @@ const Navigation = () => {
           <TasksIcon />
         </NavigationItem>
 
-        <NavigationItem link={routes.browsers} disabled={isAnyTaskActive()} name="Browsers">
-          <BrowsersIcon />
+        <NavigationItem link={routes.harvesters} disabled={isAnyTaskActive()} name="Harvesters">
+          <HarvestersIcon />
         </NavigationItem>
 
         <NavigationItem
