@@ -6,7 +6,16 @@ const HiddenRadio = styled.input`
   display: none;
 `;
 
-const StyledRadio = styled.div``;
+const StyledRadio = styled.div<{ checked: boolean }>`
+  color: ${colors.darkGrey};
+  ${({ checked }) =>
+    checked &&
+    css`
+      color: transparent;
+      background: ${colors.mainGradient45};
+      -webkit-background-clip: text;
+    `}
+`;
 
 const Wrapper = styled.div<{ checked: boolean }>`
   height: 3.7rem;
@@ -60,7 +69,9 @@ const Radio = (props: Props) => {
   return (
     <Wrapper checked={isSelected()} onClick={() => onChange(props.name, props.value)}>
       <HiddenRadio type="radio" checked={isSelected()} {...rest} />
-      <StyledRadio>{props.children}</StyledRadio>
+      <StyledRadio checked={isSelected()} {...rest}>
+        {props.children}
+      </StyledRadio>
     </Wrapper>
   );
 };

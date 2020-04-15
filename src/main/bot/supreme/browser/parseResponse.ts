@@ -17,6 +17,16 @@ export async function parseResponse(response: Response, task: SupremeTask) {
 
   if (status !== 200) return;
 
+  if (url === task.cardinalUrl) {
+    task.updateTaskStatus({ message: 'Awaiting 3D Secure', type: TaskStatusType.Action });
+    return;
+  }
+
+  if (url.includes('cardinal.json')) {
+    task.updateTaskStatus({ message: 'Submitting 3D Secure', type: TaskStatusType.Action });
+    return;
+  }
+
   if (/.*add.json$/.test(url)) {
     const res = (await response.json()) as Supreme.AddToCartResponse;
     if (res.length > 0) {
@@ -51,7 +61,13 @@ export async function parseResponse(response: Response, task: SupremeTask) {
         task.updateTaskStatus({ message: 'Processing', type: TaskStatusType.Action });
         break;
       }
-
+      case 'cca': {
+        if (res.acs_url?.includes('touchtechpayments')) {
+          task.cardinalUrl = res.acs_url;
+          task.updateTaskStatus({ message: 'Loading 3D Secure', type: TaskStatusType.Action });
+        }
+        break;
+      }
       case 'dup': {
         task.updateTaskStatus({
           message: 'Duplicate order',
@@ -62,7 +78,10 @@ export async function parseResponse(response: Response, task: SupremeTask) {
         await task.browser.close();
         break;
       }
-
+      case 'cardinal_queued': {
+        task.updateTaskStatus({ message: 'Processing 3D Secure', type: TaskStatusType.Action });
+        break;
+      }
       case 'paid': {
         task.updateTaskStatus({
           message: 'Success',

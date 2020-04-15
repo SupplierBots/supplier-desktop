@@ -117,15 +117,10 @@ interface Props {
 }
 const Task = ({ details }: Props) => {
   const dispatch = useStateDispatch();
-  const browsers = useStateSelector(state => state.harvesters);
   const { isTimerActive } = useStateSelector(state => state.controller);
 
   const isBrowserActive = () => {
-    if (isTimerActive) return true;
-    const browser = browsers.find(b => b.id === details.browser?.value);
-    if (!browser) return false;
-    if (browser.isActive) return true;
-    return false;
+    return isTimerActive || details.isActive;
   };
 
   const deleteTask = () => {

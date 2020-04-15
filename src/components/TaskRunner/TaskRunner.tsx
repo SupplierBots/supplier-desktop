@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { colors, fonts } from 'theme/main';
+import styled, { css } from 'styled-components';
+import { colors, fonts, shadows } from 'theme/main';
 import Slider from 'components/Slider/Slider';
 import { Formik, FormikProps, FormikHelpers, useFormikContext } from 'formik';
 import { GradientParagraph } from 'components/GradientParagraph/GradientParagraph';
 import { ReactComponent as TimerIcon } from 'assets/Timer.svg';
 import { ReactComponent as ProxiesIcon } from 'assets/Proxies.svg';
 import { ReactComponent as RestocksIcon } from 'assets/Restocks.svg';
+import { ReactComponent as StartIcon } from 'assets/Start.svg';
+import { ReactComponent as StopIcon } from 'assets/Stop.svg';
+import { ReactComponent as AddIcon } from 'assets/Plus.svg';
 import { InlineInputsContainer } from 'components/TaskEditor/TaskEditor';
 import Input from 'components/Input/Input';
 import { useStateDispatch, useStateSelector } from 'hooks/typedReduxHooks';
@@ -16,7 +19,7 @@ import Button from 'components/Button/Button';
 import { removeAllTasks } from 'store/tasks/tasksSlice';
 import { push } from 'connected-react-router';
 import { setScheduler } from 'store/runner/runnerSlice';
-import { schedulerValidationSchema } from './FormData';
+import { runnerValudationSchema } from './FormData';
 import Fieldset from 'components/Fieldset/Fieldset';
 import moment, { Moment } from 'moment';
 import { RunnerState } from 'main/types/RunnerState';
@@ -30,6 +33,7 @@ const ConfigBox = styled.div`
   background: ${colors.secondaryBackground};
   border-radius: 0.5rem;
   padding: 1.75rem 2.5rem;
+  box-shadow: ${shadows.primary};
 `;
 const Scheduler = styled(ConfigBox)`
   width: 22rem;
@@ -43,9 +47,33 @@ const ProxySelector = styled(ConfigBox)`
   margin-left: 1.5rem;
 `;
 
-const ButtonsPlaceholder = styled(ConfigBox)`
-  /* width: 0.5rem; */
+const ActionButton = styled.div<{ 'data-disabled'?: boolean }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 4.95rem;
+  height: 4.75rem;
+  border-radius: 0.5rem;
   margin-left: 1.5rem;
+  background: ${colors.secondaryBackground};
+  box-shadow: ${shadows.primary};
+  transition: 0.3s all;
+  backface-visibility: hidden;
+
+  ${({ 'data-disabled': disabled }) =>
+    !disabled &&
+    css`
+      cursor: pointer;
+      :hover {
+        transform: scale(1.1);
+      }
+    `};
+
+  ${({ 'data-disabled': disabled }) =>
+    disabled &&
+    css`
+      pointer-events: none;
+    `};
 `;
 
 const Restocks = styled(ConfigBox)`
@@ -96,12 +124,44 @@ const StyledRestocksIcon = styled(RestocksIcon)<{ 'data-enabled': boolean }>`
   }
 `;
 
+const StyledStartIcon = styled(StartIcon)<{ 'data-disabled'?: boolean }>`
+  height: 2.1rem;
+  width: 2.1rem;
+  margin-top: 0.3rem;
+  margin-left: 0.3rem;
+  ${({ 'data-disabled': disabled }) =>
+    disabled &&
+    css`
+      path {
+        fill: ${colors.darkGrey};
+      }
+    `};
+`;
+
+const StyledStopIcon = styled(StopIcon)`
+  height: 1.9rem;
+  width: 1.9rem;
+  margin-top: 0.3rem;
+  margin-left: 0.2rem;
+`;
+
+const StyledAddIcon = styled(AddIcon)<{ 'data-disabled'?: boolean }>`
+  height: 2.1rem;
+  width: 2.1rem;
+  margin-left: 0.1rem;
+  ${({ 'data-disabled': disabled }) =>
+    disabled &&
+    css`
+      path {
+        fill: ${colors.darkGrey};
+      }
+    `};
+`;
+
 const ButtonsContainer = styled.div`
   display: flex;
-  align-self: flex-end;
+  flex-direction: column;
   justify-content: space-between;
-  flex-basis: 55%;
-  margin-left: 3rem;
 `;
 
 const ScheduledState = styled.div`
@@ -137,9 +197,9 @@ const SoonParagraph = styled.p`
 `;
 
 const TaskRunner = () => {
-  const { tasks, harvesters, runner, controller } = useStateSelector(state => state);
+  const { tasks, harvesters, runner, controller, proxies } = useStateSelector(state => state);
   const [intervalID, setIntervalID] = useState<number>();
-  const [currentDate, setCurrentDate] = useState<Moment>();
+  const [currentDate, setCurrentDate] = useState<Moment>(moment());
 
   const dispatch = useStateDispatch();
 
@@ -153,32 +213,26 @@ const TaskRunner = () => {
     return null;
   };
 
-  const isAnyBrowserAvailable = () => {
-    return (
-      harvesters.filter(b => !tasks.some(t => t.browser && t.browser.value === b.id)).length > 0
-    );
-  };
+  const isAnyTaskActive = () => tasks.some(t => t.isActive) || controller.isTimerActive;
 
   const createNewTask = () => {
-    if (!isAnyBrowserAvailable()) return;
+    if (isAnyTaskActive()) return;
     dispatch(push(routes.tasksEditor + '/new'));
   };
 
-  const isAnyTaskActive = () => harvesters.some(b => b.isActive) || controller.isTimerActive;
+  const startTasks = async () => {
+    dispatch(setTimerState({ active: true }));
 
-  const handleTasks = async () => {
-    if (!isAnyTaskActive()) {
-      dispatch(setTimerState({ active: true }));
+    IPCRenderer.startTasks(tasks, proxies, harvesters, runner);
+    setCurrentDate(moment());
+    setIntervalID(
+      setInterval(() => {
+        setCurrentDate(moment());
+      }, 1000),
+    );
+  };
 
-      IPCRenderer.startTasks(tasks, runner);
-      setCurrentDate(moment());
-      setIntervalID(
-        setInterval(() => {
-          setCurrentDate(moment());
-        }, 1000),
-      );
-      return;
-    }
+  const stopTasks = async () => {
     dispatch(setTimerState({ active: false }));
     IPCRenderer.stopTasks();
     clearInterval(intervalID);
@@ -190,6 +244,9 @@ const TaskRunner = () => {
 
   const getRemainingTime = () => {
     const scheduledDate = moment(runner.time, 'HH:mm:ss');
+    if (scheduledDate.valueOf() < moment().valueOf()) {
+      scheduledDate.add(1, 'day');
+    }
     if (!currentDate) return 'Unknown time, start again!';
 
     const timeDifference = Math.abs(currentDate.valueOf() - scheduledDate.valueOf());
@@ -207,7 +264,7 @@ const TaskRunner = () => {
       <Formik
         enableReinitialize
         initialValues={runner}
-        validationSchema={schedulerValidationSchema}
+        validationSchema={runnerValudationSchema}
         onSubmit={handleSubmit}
       >
         {(props: FormikProps<RunnerState>) => (
@@ -253,12 +310,14 @@ const TaskRunner = () => {
                   <Slider
                     name="proxies"
                     checked={props.values.proxies}
-                    onClick={() => props.setFieldValue('proxiesRegion', '')}
+                    onClick={() => {
+                      props.setFieldValue('proxiesRegion', !props.values.proxies ? 'eu' : '');
+                    }}
                   >
                     {props.values.proxies ? (
-                      <StyledGradientParagraph>Proxies</StyledGradientParagraph>
+                      <StyledGradientParagraph>Auto rotating proxies</StyledGradientParagraph>
                     ) : (
-                      <DisabledParagraph>Proxies</DisabledParagraph>
+                      <DisabledParagraph>Auto rotating proxies</DisabledParagraph>
                     )}
                   </Slider>
                   <StyledProxiesIcon data-enabled={props.values.proxies} />
@@ -285,14 +344,15 @@ const TaskRunner = () => {
                     </Radio>
                   </RadioContainer>
                   <Separator />
-                  <p>Local IP Tasks</p>
+                  <p>Local IP tasks</p>
                   <StyledInput
-                    type="text"
+                    type="tel"
                     name="localIPTasks"
                     placeholder="10"
                     hideErrors
                     width="19%"
                     centered
+                    maxlength="2"
                   />
                 </StyledInputsContainer>
               </Fieldset>
@@ -311,37 +371,26 @@ const TaskRunner = () => {
                 </InlineInputsContainer>
               </Fieldset>
               <Fieldset disabled={!props.values.restocks}>
-                <SoonParagraph>Soon</SoonParagraph>
+                <SoonParagraph>- Soon -</SoonParagraph>
               </Fieldset>
             </Restocks>
-            <ButtonsPlaceholder />
-            {/* <ButtonsContainer>
-              <Button
-                disabled={isAnyTaskActive() || tasks.length === 0}
-                secondary
-                onClick={() => dispatch(removeAllTasks())}
-                width="12rem"
-              >
-                Remove All
-              </Button>
-
-              <Button
-                submit
-                secondary
-                onClick={handleTasks}
-                disabled={tasks.length === 0}
-                width="12rem"
-              >
-                {isAnyTaskActive() ? 'Stop All' : 'Start All'}
-              </Button>
-
-              <Button
-                disabled={!isAnyBrowserAvailable() || isAnyTaskActive()}
-                onClick={createNewTask}
-              >
-                {!isAnyBrowserAvailable() ? 'All Browsers Used' : 'Create Task'}
-              </Button>
-            </ButtonsContainer> */}
+            <ButtonsContainer>
+              {!isAnyTaskActive() ? (
+                <ActionButton
+                  onClick={startTasks}
+                  data-disabled={tasks.length === 0 || harvesters.length === 0}
+                >
+                  <StyledStartIcon data-disabled={tasks.length === 0 || harvesters.length === 0} />
+                </ActionButton>
+              ) : (
+                <ActionButton onClick={stopTasks}>
+                  <StyledStopIcon />
+                </ActionButton>
+              )}
+              <ActionButton data-disabled={isAnyTaskActive()} onClick={createNewTask}>
+                <StyledAddIcon data-disabled={isAnyTaskActive()} />
+              </ActionButton>
+            </ButtonsContainer>
           </>
         )}
       </Formik>

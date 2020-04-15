@@ -45,6 +45,12 @@ const SlidersContainer = styled.div`
   display: flex;
 `;
 
+const StyledSlider = styled(Slider)`
+  :first-child {
+    margin-right: 7rem;
+  }
+`;
+
 const StyledHeading = styled(Heading)`
   margin-top: 2rem;
 `;
@@ -154,12 +160,12 @@ const Products = ({ history, match }: RouteComponentProps<{ id: string }>) => {
                   error={!!props.errors.size && !!props.touched.size}
                 />
                 <SlidersContainer>
-                  <Slider name="anySize" checked={props.values.anySize}>
+                  <StyledSlider name="anySize" checked={props.values.anySize}>
                     Any Size
-                  </Slider>
-                  <Slider name="anyColor" checked={props.values.anyColor}>
+                  </StyledSlider>
+                  <StyledSlider name="anyColor" checked={props.values.anyColor}>
                     Any Color
-                  </Slider>
+                  </StyledSlider>
                 </SlidersContainer>
                 {props.values.anySize && (
                   <Select

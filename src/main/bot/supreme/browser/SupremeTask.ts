@@ -28,6 +28,7 @@ class SupremeTask {
   public submitTime: Moment = moment();
   public items: string[] = [];
   public region: 'us' | 'eu';
+  public cardinalUrl: string = '';
 
   constructor(
     readonly page: Page,
@@ -72,7 +73,7 @@ class SupremeTask {
   };
 
   public updateTaskStatus = ({ message, type, additionalInfo }: TaskStatus) => {
-    IPCMain.updateTaskStatus(this.task, {
+    IPCMain.updateTaskStatus(this.task.id, {
       message,
       type,
       additionalInfo,

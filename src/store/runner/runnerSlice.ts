@@ -5,7 +5,7 @@ const initialState: RunnerState = {
   scheduled: false,
   time: '',
   proxies: false,
-  proxiesRegion: '',
+  proxiesRegion: 'eu',
   localIPTasks: 0,
   restocks: false,
   monitorDelay: 1000,

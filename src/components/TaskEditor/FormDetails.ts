@@ -23,15 +23,14 @@ export const taskValidationSchema = Yup.object().shape({
   stopIfSoldOut: Yup.boolean(),
   name: Yup.string().required('Required'),
   site: Yup.object().required(),
-  browser: Yup.object().required(),
 });
 
 export const initialTaskValues: Task = {
+  isActive: false,
   id: '',
   site: null,
   profile: null,
   proxy: null,
-  browser: null,
   products: [],
   status: {
     message: 'Inactive',

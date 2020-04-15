@@ -109,6 +109,7 @@ interface Props {
   maskPlaceholder?: string;
   hideErrors?: boolean;
   centered?: boolean;
+  maxlength?: string;
 }
 
 const Input = (props: Props) => {

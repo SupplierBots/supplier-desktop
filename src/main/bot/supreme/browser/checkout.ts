@@ -3,6 +3,8 @@ import { TaskStatusType } from '../../../types/TaskStatus';
 import { selectors } from './selectors';
 import { waitTicket } from '../pageInject/waitTicket';
 import moment from 'moment';
+import uuid from 'uuid-random';
+import { HarvestersManager } from '../../../bot/harvesters/HarvestersManager';
 
 export async function checkout(this: SupremeTask) {
   if (
@@ -12,8 +14,9 @@ export async function checkout(this: SupremeTask) {
     !this.profile.creditCardType?.value
   )
     return;
-  await new Promise(resolve => setTimeout(resolve, 250));
 
+  const addToCartTime = Date.now();
+  await new Promise(resolve => setTimeout(resolve, 500));
   const checkoutButton = await this.getVisibleElement(selectors.checkoutBtn);
   await checkoutButton.tap();
 
@@ -24,7 +27,6 @@ export async function checkout(this: SupremeTask) {
     type: TaskStatusType.Action,
   });
 
-  const addToCartTime = Date.now();
   const { creditCardType, month, year, creditCardNumber, cvv } = this.profile;
 
   if (this.region === 'eu') {
@@ -45,8 +47,13 @@ export async function checkout(this: SupremeTask) {
   const termsCheckbox = await this.getVisibleElement(selectors.termsLabel, false);
   await termsCheckbox.tap();
 
-  const checkoutTime = Date.now() - addToCartTime.valueOf();
+  if (this.region === 'eu') {
+    await this.page.evaluate(
+      `$('#checkout-form').prepend($('<input type="hidden" name="cardinal_id" value="0_${uuid()}" external="true">'));`,
+    );
+  }
 
+  const checkoutTime = Date.now() - addToCartTime.valueOf();
   const delay =
     typeof this.task.checkoutDelay === 'string'
       ? parseInt(this.task.checkoutDelay)
@@ -61,9 +68,23 @@ export async function checkout(this: SupremeTask) {
     const requiredDelay = delay - checkoutTime;
     await new Promise(resolve => setTimeout(resolve, requiredDelay));
   }
+
   await this.page.evaluate(waitTicket());
-  const processBtn = await this.getVisibleElement(selectors.processBtn, false);
-  await processBtn.tap();
+
+  const sitekey = (await this.page.evaluate(`$('#g-recaptcha').attr('data-sitekey');`)) as string;
+
+  this.updateTaskStatus({
+    message: 'Waiting for captcha',
+    type: TaskStatusType.Action,
+  });
+  const captchaToken = await HarvestersManager.getCaptchaToken(sitekey);
+  await this.page.evaluate(`$('[id*="g-recaptcha-response"]').html('${captchaToken}');`);
+
+  if (this.region === 'eu') {
+    await this.page.evaluate(`$('input[name*="cardinal"]:not([external="true"])').remove();`);
+  }
+
+  await this.page.evaluate(`window.recaptchaCallback();`);
   this.submitTime = moment();
 
   this.updateTaskStatus({

@@ -94,9 +94,6 @@ export const InlineInputsContainer = styled.div`
 const StyledSlider = styled(Slider)`
   margin: 1.25rem 0 1.85rem 0;
 `;
-const StyledInput = styled(Input)`
-  margin-bottom: 0;
-`;
 
 const ButtonsContainer = styled.div`
   display: flex;
@@ -131,12 +128,6 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
     return options;
   };
 
-  const getAvailableBrowsers = (): Option[] => {
-    return state.harvesters
-      .filter(b => !state.tasks.some(t => t.browser && t.browser.value === b.id))
-      .map(b => ({ label: b.accountEmail, value: b.id }));
-  };
-
   const getInitialValues = (): Task => {
     if (!match.params.id) {
       return initialTaskValues;
@@ -151,6 +142,7 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
     if (isNew) {
       const newTask = {
         ...task,
+        isActive: false,
         status: { message: 'Inactive', type: TaskStatusType.Inactive },
         id: uuid(),
       };
@@ -190,16 +182,6 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
                 value={props.values.products}
               />
               <Fieldset>
-                <Select
-                  specialPlaceholder
-                  name="browser"
-                  placeholder="Browser"
-                  value={props.values.browser}
-                  options={getAvailableBrowsers()}
-                  onBlur={props.setFieldTouched}
-                  onChange={props.setFieldValue}
-                  error={!!props.errors.site && !!props.touched.site}
-                />
                 <Select
                   specialPlaceholder
                   name="site"
@@ -256,9 +238,7 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
                 </Fieldset>
               </Fieldset>
               <ItemsCounter>
-                {!props.values.site && (
-                  <GradientText>Firstly, select the browser and site</GradientText>
-                )}
+                {!props.values.site && <GradientText>Firstly, select the site</GradientText>}
                 {props.values.site && props.values.products.length > 0 && (
                   <span>
                     You've selected{' '}

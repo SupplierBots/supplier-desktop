@@ -1,4 +1,13 @@
-export type CheckoutStatus = 'paid' | 'failed' | 'dup' | 'outOfStock' | 'queued' | '404' | '500';
+export type CheckoutStatus =
+  | 'paid'
+  | 'failed'
+  | 'dup'
+  | 'outOfStock'
+  | 'queued'
+  | '404'
+  | '500'
+  | 'cca'
+  | 'cardinal_queued';
 
 export interface CheckoutData {
   status: CheckoutStatus;

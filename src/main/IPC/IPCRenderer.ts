@@ -23,13 +23,14 @@ import {
   REPORT_CHECKOUT,
   RESET_TIMER_STATE,
   GET_PROXY,
+  SET_TASK_ACTIVITY,
 } from './IPCEvents';
 
 import store from 'store/configureStore';
 import { ipcRenderer as ipc } from 'electron-better-ipc';
 import { HarvesterData } from 'main/types/HarvesterData';
 import { Task } from 'main/types/Task';
-import { updateTask } from 'store/tasks/tasksSlice';
+import { updateTaskStatus, setTaskActivity } from 'store/tasks/tasksSlice';
 import { setAccountEmail, setActive } from 'store/harvesters/harvestersSlice';
 import { UpdateInfo, UpdateDownloadedEvent } from 'electron-updater';
 import { ProgressInfo } from 'builder-util-runtime';
@@ -47,6 +48,8 @@ import { RunnerState } from 'main/types/RunnerState';
 import { setTimerState } from 'store/controller/controllerSlice';
 import { CheckoutData } from 'main/types/Checkout';
 import { reportCheckout } from 'firebase/dropReporter';
+import { Proxy } from 'main/types/Proxy';
+import { TaskStatus } from 'main/types/TaskStatus';
 
 export abstract class IPCRenderer {
   private constructor() {}
@@ -61,8 +64,12 @@ export abstract class IPCRenderer {
       store.dispatch(setAccountEmail({ id, email }));
     });
 
-    ipc.on(UPDATE_TASK_STATUS, (e, task: Task) => {
-      store.dispatch(updateTask({ item: task }));
+    ipc.on(UPDATE_TASK_STATUS, (e, status: { id: string; status: TaskStatus }) => {
+      store.dispatch(updateTaskStatus(status));
+    });
+
+    ipc.on(SET_TASK_ACTIVITY, (e, state: { id: string; isActive: boolean }) => {
+      store.dispatch(setTaskActivity(state));
     });
 
     ipc.on(REPORT_CHECKOUT, (e, checkoutData: CheckoutData) => {
@@ -142,8 +149,13 @@ export abstract class IPCRenderer {
     ipc.send(WINDOW_CLOSE);
   };
 
-  public static startTasks = (tasks: Task[], scheduler: RunnerState) => {
-    ipc.send(START_TASKS, tasks, scheduler);
+  public static startTasks = (
+    tasks: Task[],
+    proxies: Proxy[],
+    harvesters: HarvesterData[],
+    scheduler: RunnerState,
+  ) => {
+    ipc.send(START_TASKS, tasks, proxies, harvesters, scheduler);
   };
 
   public static stopTasks = () => {

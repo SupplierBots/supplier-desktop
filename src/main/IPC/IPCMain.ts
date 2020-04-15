@@ -28,6 +28,7 @@ import {
   REPORT_CHECKOUT,
   RESET_TIMER_STATE,
   GET_PROXY,
+  SET_TASK_ACTIVITY,
 } from './IPCEvents';
 import { Profile } from '../types/Profile';
 import { TaskStatus } from '../types/TaskStatus';
@@ -38,6 +39,7 @@ import { app } from 'electron';
 import { CheckoutData } from '../types/Checkout';
 import { Proxy } from '../types/Proxy';
 import { HarvestersManager } from '../bot/harvesters/HarvestersManager';
+import { TasksManager } from '../bot/core/TasksManager';
 
 export abstract class IPCMain {
   private constructor() {}
@@ -45,10 +47,10 @@ export abstract class IPCMain {
     ipc.answerRenderer(VERIFY_CHROME, verifyChromium);
     ipc.on(DOWNLOAD_CHROMIUM, downloadChromium);
     ipc.on(SETUP_HARVESTER, (e, data: HarvesterData) => HarvestersManager.setupHarvester(data));
-    ipc.on(START_TASKS, (e, tasks, scheduler) =>
-      BrowsersManager.getInstance().startTasks(tasks, scheduler),
+    ipc.on(START_TASKS, (e, tasks, proxies, harvesters, runner) =>
+      TasksManager.start(tasks, proxies, harvesters, runner),
     );
-    ipc.on(STOP_TASKS, e => BrowsersManager.getInstance().stopAll());
+    ipc.on(STOP_TASKS, e => TasksManager.stopAllHybirdTasks());
     ipc.on(WINDOW_MINIMIZE, () => mainWindow?.minimize());
     ipc.on(WINDOW_CLOSE, () => mainWindow?.close());
     ipc.on(DOWNLOAD_UPDATE, () => {
@@ -103,10 +105,9 @@ export abstract class IPCMain {
     return product;
   };
 
-  public static updateTaskStatus = (task: Task, status: TaskStatus) => {
+  public static updateTaskStatus = (id: string, status: TaskStatus) => {
     if (!mainWindow) return;
-    const newState = { ...task, status };
-    mainWindow.webContents.send(UPDATE_TASK_STATUS, newState);
+    mainWindow.webContents.send(UPDATE_TASK_STATUS, { id, status });
   };
 
   public static getSameEmails = async (email: string) => {
@@ -133,5 +134,9 @@ export abstract class IPCMain {
 
   public static resetTimerState = () => {
     mainWindow?.webContents.send(RESET_TIMER_STATE);
+  };
+
+  public static setTaskActivity = (id: string, isActive: boolean) => {
+    mainWindow?.webContents.send(SET_TASK_ACTIVITY, { id, isActive });
   };
 }

@@ -93,10 +93,20 @@ export namespace Supreme {
   export type AddToCartResponse = { size_id: string; in_stock: boolean }[];
 
   export interface CheckoutResponse {
-    status: 'paid' | 'failed' | 'dup' | 'outOfStock' | 'queued' | '404' | '500';
+    status:
+      | 'paid'
+      | 'failed'
+      | 'dup'
+      | 'outOfStock'
+      | 'queued'
+      | '404'
+      | '500'
+      | 'cca'
+      | 'cardinal_queued';
     slug?: string;
     error?: string;
     id?: number;
+    acs_url?: string;
     info?: {
       billing_name: string;
       email: string;

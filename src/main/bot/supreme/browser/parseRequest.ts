@@ -16,7 +16,7 @@ export async function parseRequest(req: Request, task: SupremeTask) {
     return await task.checkout();
   }
 
-  IPCMain.updateTaskStatus(task.task, status);
+  IPCMain.updateTaskStatus(task.task.id, status);
 
   if (status.message !== 'Sold out') return;
   await task.page.close();

@@ -2,7 +2,7 @@
   "name": "supplier",
   "productName": "Supplier",
   "description": "Supreme & Palace Bot",
-  "version": "0.3.9",
+  "version": "0.4.0",
   "copyright": "Supplier",
   "main": "build/electron.js",
   "homepage": ".",
@@ -126,6 +126,7 @@
     "semver": "^7.1.3",
     "unlazy-loader": "^0.1.3",
     "uuid": "^3.4.0",
+    "uuid-random": "^1.3.0",
     "yup": "^0.28.1"
   },
   "devDependencies": {
