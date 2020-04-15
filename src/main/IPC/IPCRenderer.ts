@@ -43,7 +43,7 @@ import {
   setUpdateError,
 } from 'store/update/updateSlice';
 import { incrementCheckouts } from 'store/statistics/statisticsSlice';
-import { SchedulerState } from 'main/types/SchedulerState';
+import { RunnerState } from 'main/types/RunnerState';
 import { setTimerState } from 'store/controller/controllerSlice';
 import { CheckoutData } from 'main/types/Checkout';
 import { reportCheckout } from 'firebase/dropReporter';
@@ -142,7 +142,7 @@ export abstract class IPCRenderer {
     ipc.send(WINDOW_CLOSE);
   };
 
-  public static startTasks = (tasks: Task[], scheduler: SchedulerState) => {
+  public static startTasks = (tasks: Task[], scheduler: RunnerState) => {
     ipc.send(START_TASKS, tasks, scheduler);
   };
 

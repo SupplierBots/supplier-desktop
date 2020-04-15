@@ -52,8 +52,9 @@ const styledInput = css`
   }
 `;
 
-const StyledField = styled(Field)`
+const StyledField = styled(Field)<{ centered?: boolean }>`
   ${styledInput}
+  ${({ centered }) => centered && 'text-align: center;'}
 `;
 
 const StyledMask = styled(InputMask)`
@@ -81,6 +82,18 @@ const Error = styled.div`
   }
 `;
 
+const Empty = styled.div`
+  display: none;
+
+  /* first-of-type used to increase specificity*/
+  ${Wrapper} &:first-of-type ~ ${InputBorder} {
+    background-image: linear-gradient(${colors.tertiaryBackground}, ${colors.tertiaryBackground}),
+      ${colors.redDanger};
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+  }
+`;
+
 interface Props {
   name: string;
   type: string;
@@ -94,10 +107,12 @@ interface Props {
   masked?: boolean;
   mask?: string | (string | RegExp)[];
   maskPlaceholder?: string;
+  hideErrors?: boolean;
+  centered?: boolean;
 }
 
 const Input = (props: Props) => {
-  const { masked, ...rest } = props;
+  const { masked, hideErrors, ...rest } = props;
   return (
     <Wrapper {...rest}>
       {props.masked && props.mask ? (
@@ -109,7 +124,7 @@ const Input = (props: Props) => {
           {...(props.custom && { as: 'input', onChange: props.onChange, value: props.value })}
         />
       )}
-      <ErrorMessage name={props.name} component={Error} />
+      <ErrorMessage name={props.name} component={hideErrors ? Empty : Error} />
       {props.customError && <Error>{props.customError}</Error>}
       <InputBorder />
     </Wrapper>

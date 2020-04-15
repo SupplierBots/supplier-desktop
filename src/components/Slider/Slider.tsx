@@ -9,9 +9,6 @@ const Wrapper = styled.label`
   cursor: pointer;
   margin-top: 0.2rem;
   margin-bottom: 1.3rem;
-  :nth-child(1) {
-    margin-right: 7rem;
-  }
 `;
 
 const Label = styled.span`
@@ -50,6 +47,7 @@ interface Props {
   name: string;
   checked: boolean;
   children: ReactNode;
+  onClick?: () => void;
 }
 
 const Slider = (props: Props) => {

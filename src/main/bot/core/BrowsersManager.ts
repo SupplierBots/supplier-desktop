@@ -10,7 +10,7 @@ import { ProductsMonitor } from '../supreme/ProductsMonitor';
 import fs from 'fs-extra';
 import path from 'path';
 import { app } from 'electron';
-import { SchedulerState } from '../../types/SchedulerState';
+import { RunnerState } from '../../types/RunnerState';
 import moment, { Moment } from 'moment';
 import { Proxy } from '../../types/Proxy';
 import { HarvestersManager } from '../harvesters/HarvestersManager';
@@ -42,21 +42,19 @@ class BrowsersManager {
     // }
   }
 
-  public async startTasks(tasks: Task[], scheduler: SchedulerState) {
+  public async startTasks(tasks: Task[], runner: RunnerState) {
     //await fs.ensureDir(path.resolve(app.getAppPath(), 'logs'));
-    const scheduledDate = moment(`${scheduler.date} ${scheduler.time}`, 'DD/MM/YYYY HH:mm:ss');
-
-    if (!scheduler.enabled) {
-      this.initializeTasks(tasks, scheduledDate);
-      return;
-    }
-
-    BrowsersManager.timerID = setInterval(() => {
-      if (moment().valueOf() + 60000 >= scheduledDate.valueOf()) {
-        clearInterval(BrowsersManager.timerID);
-        this.initializeTasks(tasks, scheduledDate);
-      }
-    }, 1000);
+    // const scheduledDate = moment(`${runner.date} ${runner.time}`, 'DD/MM/YYYY HH:mm:ss');
+    // if (!runner.enabled) {
+    //   this.initializeTasks(tasks, scheduledDate);
+    //   return;
+    // }
+    // BrowsersManager.timerID = setInterval(() => {
+    //   if (moment().valueOf() + 60000 >= scheduledDate.valueOf()) {
+    //     clearInterval(BrowsersManager.timerID);
+    //     this.initializeTasks(tasks, scheduledDate);
+    //   }
+    // }, 1000);
   }
 
   public async initializeTasks(tasks: Task[], scheduledDate: Moment) {

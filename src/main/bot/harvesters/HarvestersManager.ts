@@ -69,7 +69,7 @@ class HarvestersManager {
     puppeteer.use(StealthPlugin());
 
     const screenSize = screen.getPrimaryDisplay().workAreaSize;
-    const maxHorizontaly = Math.floor((screenSize.width + 150) / 500);
+    const maxHorizontaly = Math.floor(screenSize.width / 500);
     const y = Math.floor(index / maxHorizontaly + 1) - 1;
     const x = index % maxHorizontaly;
 

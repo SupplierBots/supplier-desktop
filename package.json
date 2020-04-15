@@ -38,7 +38,6 @@
     "*.{ts,tsx,css,scss}": [
       "prettier --config .prettierrc --write",
       "eslint --fix",
-      "stylelint 'src/**/*'",
       "git add"
     ]
   },
