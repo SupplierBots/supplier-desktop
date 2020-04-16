@@ -3,12 +3,19 @@ import { AxiosProxyConfig } from 'axios';
 
 class ProxiesManager {
   public static proxies: Proxy[] = [];
+  public static enabled = false;
 
-  public static setProxies(proxies: Proxy[], region: 'eu' | 'us') {
+  public static setProxies(enabled: boolean, proxies: Proxy[], region: 'eu' | 'us') {
+    this.enabled = enabled;
+    if (!enabled) {
+      this.proxies = [];
+      return;
+    }
     this.proxies = proxies.filter(p => p.region?.value === region);
   }
 
   public static getRandomAxios() {
+    if (!this.enabled) return false;
     const random = this.getRandom();
     if (!random) return false;
     const { ipPort, username, password, userPassAuth } = random;
@@ -25,6 +32,8 @@ class ProxiesManager {
         password,
       };
     }
+
+    console.log('[PROXIES MANAGER] Sent to axios: ' + ipPort);
     return axiosProxy;
   }
 

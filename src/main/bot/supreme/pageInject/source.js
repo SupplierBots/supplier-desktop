@@ -26,9 +26,16 @@
   items.push(item.attributes.name);
 
   const styles = await fetchStyles(item);
-  if (!styles) return;
+  if (!styles) {
+    return await reload();
+  }
+
   const selectedStyle = selectStyle(styles, colors, anyColor);
-  if (!selectedStyle) return;
+  if (!selectedStyle) {
+    notifyTask('Sold out', 'Error');
+    return;
+  }
+
   const availableSizes = selectedStyle.attributes.sizes.models.filter(
     s => s.attributes.stock_level !== 0,
   );
@@ -101,9 +108,11 @@
   }
 
   function selectStyle(styles, colors, anyColor) {
-    const primary = styles.find(s => isMatch(s.attributes.name, colors));
+    const filteredStyles = filterStyles(colors, styles);
+    const primary = findMatchingStyle(colors, filteredStyles);
+
     if (primary || !anyColor) return primary;
-    const secondary = styles[Math.floor(Math.random() * styles.length)];
+    const secondary = filteredStyles[Math.floor(Math.random() * filteredStyles.length)];
     return secondary;
   }
 
@@ -165,6 +174,22 @@
       },
       body: JSON.stringify({ message, type, additionalInfo }),
     });
+  }
+
+  function filterStyles(colors, styles) {
+    for (let negative of colors.negative) {
+      styles = styles.filter(s => !s.attributes.name.toLowerCase().includes(negative));
+    }
+    return styles;
+  }
+
+  function findMatchingStyle(colors, styles) {
+    for (let targetColor of colors.positive) {
+      const match = styles.find(s => s.attributes.name.toLowerCase().includes(targetColor));
+      if (!match) continue;
+      return match;
+    }
+    return null;
   }
 
   function loadExternalStock(externalStock) {

@@ -26,11 +26,11 @@ class HarvestersManager {
   }
 
   public static async getCaptchaToken(sitekey = this.sitekey): Promise<string> {
-    const availableHarvester = this.harvesters.find(h => h.ready && !h.solving);
+    const availableHarvester = this.getRandomAvailable();
 
     if (!availableHarvester) {
       await new Promise(resolve => setTimeout(resolve, 100));
-      return this.getCaptchaToken();
+      return this.getCaptchaToken(sitekey);
     }
 
     const token = await availableHarvester.getCaptchaToken(sitekey);
@@ -41,6 +41,11 @@ class HarvestersManager {
     this.harvesters.forEach(harvester => {
       harvester.page.browser().close();
     });
+  }
+
+  private static getRandomAvailable() {
+    const availableHarvesters = this.harvesters.filter(h => h.ready && !h.solving);
+    return availableHarvesters[Math.floor(Math.random() * availableHarvesters.length)];
   }
 
   public static async setupHarvester(harvesterData: HarvesterData) {

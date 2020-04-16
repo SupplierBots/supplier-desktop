@@ -21,8 +21,8 @@ export const tasksSlice = createUserDataSlice<Task, SliceCaseReducers<Task[]>>({
         if (
           !payload.isActive &&
           task.status.message !== 'Success' &&
-          task.status.message !== 'Sold Out' &&
-          task.status.message !== 'Duplicate Order'
+          task.status.message !== 'Sold out' &&
+          task.status.message !== 'Duplicate order'
         ) {
           task.status = {
             message: 'Inactive',

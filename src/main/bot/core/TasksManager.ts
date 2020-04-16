@@ -29,12 +29,10 @@ class TasksManager {
     harvesters: HarvesterData[],
     runner: RunnerState,
   ) {
-    HarvestersManager.initialize(harvesters);
     this.runner = runner;
 
-    if (runner.proxies) {
-      ProxiesManager.setProxies(proxies, runner.proxiesRegion);
-    }
+    HarvestersManager.initialize(harvesters);
+    ProxiesManager.setProxies(runner.proxies, proxies, runner.proxiesRegion);
 
     await this.stopAllHybirdTasks();
     this.hybridTasks = [];
