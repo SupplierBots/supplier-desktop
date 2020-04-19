@@ -387,8 +387,11 @@ const TaskRunner = () => {
                   <StyledStopIcon />
                 </ActionButton>
               )}
-              <ActionButton data-disabled={isAnyTaskActive()} onClick={createNewTask}>
-                <StyledAddIcon data-disabled={isAnyTaskActive()} />
+              <ActionButton
+                data-disabled={isAnyTaskActive() || tasks.length >= 8}
+                onClick={createNewTask}
+              >
+                <StyledAddIcon data-disabled={isAnyTaskActive() || tasks.length >= 8} />
               </ActionButton>
             </ButtonsContainer>
           </>

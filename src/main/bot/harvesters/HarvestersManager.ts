@@ -1,14 +1,10 @@
-import { Harvester } from './Harvester';
 import * as _ from 'lodash';
 import { HarvesterData } from '../../types/HarvesterData';
-import { app, screen } from 'electron';
-import { config } from '../../../config';
+import { screen, session, BrowserWindowConstructorOptions, BrowserWindow } from 'electron';
 import path from 'path';
-import puppeteer from 'puppeteer-extra';
-import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import { Target } from 'puppeteer';
 import { IPCMain } from '../../IPC/IPCMain';
 import { setupHarvester } from './setupHarvester';
+import { Harvester } from './Harvester';
 
 class HarvestersManager {
   private static sitekey = '6LeWwRkUAAAAAOBsau7KpuC9AV-6J8mhw4AjC3Xz';
@@ -18,8 +14,8 @@ class HarvestersManager {
     this.harvesters = [];
 
     harvestersData.forEach(async (harvester, index) => {
-      const page = await this.createBrowser(harvester, index);
-      const instance = new Harvester(page, harvester, this.sitekey);
+      const browser = await this.createBrowser(harvester, index);
+      const instance = new Harvester(browser, harvester, this.sitekey);
       await instance.init();
       this.harvesters.push(instance);
     });
@@ -39,7 +35,7 @@ class HarvestersManager {
 
   public static async closeAll() {
     this.harvesters.forEach(harvester => {
-      harvester.page.browser().close();
+      harvester.browser.close();
     });
   }
 
@@ -50,8 +46,8 @@ class HarvestersManager {
 
   public static async setupHarvester(harvesterData: HarvesterData) {
     try {
-      const page = await this.createBrowser(harvesterData);
-      setupHarvester(page, harvesterData.id);
+      const browser = await this.createBrowser(harvesterData, 0, true);
+      setupHarvester(browser, harvesterData.id);
     } catch {
       IPCMain.harvesterStateChange(harvesterData.id, false);
     }
@@ -61,73 +57,88 @@ class HarvestersManager {
     this.harvesters = this.harvesters.filter(h => h.data.id !== id);
   }
 
-  public static createBrowser = async ({ id, proxy }: HarvesterData, index = 0) => {
+  public static createBrowser = async (
+    { id, proxy }: HarvesterData,
+    index = 0,
+    showFrame = false,
+  ) => {
     IPCMain.harvesterStateChange(id, true);
 
-    const appData = app.getPath('userData');
-    const fetcher = puppeteer.createBrowserFetcher({
-      path: path.resolve(appData, '.local-chromium'),
-    });
-
-    const executablePath = fetcher.revisionInfo(config.chromiumVersion).executablePath;
-    const userDataDirectory = path.resolve(appData, id);
-    puppeteer.use(StealthPlugin());
-
-    const screenSize = screen.getPrimaryDisplay().workAreaSize;
-    const maxHorizontaly = Math.floor(screenSize.width / 500);
-    const y = Math.floor(index / maxHorizontaly + 1) - 1;
-    const x = index % maxHorizontaly;
-
-    const args = [
-      '--no-sandbox',
-      '--disable-gpu',
-      '--disable-infobars',
-      `--user-data-dir=${userDataDirectory}`,
-      `--window-size=${500},${550}`,
-      `--window-position=${500 * x},${(550 + 82) * y}`,
-    ];
+    const width = 400;
+    const height = 550;
 
     const proxyData = proxy.value !== 'none' ? await IPCMain.getProxy(proxy.value) : null;
 
+    const ses = session.fromPartition(`persist:${id}`);
+    ses.setUserAgent(
+      'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36',
+      'en-US,en',
+    );
+
     if (proxyData) {
-      args.push(`--proxy-server=${proxyData.ipPort}`);
-    }
-
-    const browser = await puppeteer.launch({
-      headless: false,
-      ignoreHTTPSErrors: true,
-      ignoreDefaultArgs: ['--enable-automation'],
-      args,
-      executablePath,
-    });
-
-    const page = await browser.newPage();
-    const [firstPage] = await browser.pages();
-    await firstPage.close();
-
-    if (proxyData?.userPassAuth) {
-      await page.authenticate({
-        username: proxyData.username,
-        password: proxyData.password,
+      ses.setProxy({
+        proxyRules: `http://${proxyData.ipPort}`,
       });
     }
 
-    page.on('close', async () => {
-      await browser.close();
-    });
+    const launchOptions: BrowserWindowConstructorOptions = {
+      width,
+      height,
+      frame: showFrame,
+      show: showFrame,
+      resizable: false,
+      maximizable: false,
+      minimizable: false,
+      fullscreenable: false,
+      title: showFrame ? 'Google Login' : 'Captcha Harvester',
+      titleBarStyle: showFrame ? 'default' : 'hiddenInset',
+      backgroundColor: showFrame ? '#fff' : '#1b191c',
+      webPreferences: {
+        nodeIntegration: false,
+        preload: path.join(__dirname, 'harvesterPreload.js'),
+        backgroundThrottling: false,
+        session: ses,
+      },
+    };
 
-    browser.on('targetcreated', (target: Target) => {
-      if (target.url().includes('devtools')) {
-        browser.close();
-      }
-    });
+    const browser = new BrowserWindow(launchOptions);
 
-    browser.on('disconnected', async () => {
+    if (proxyData && proxyData.userPassAuth) {
+      browser.webContents.on(
+        'login',
+        HarvestersManager.authenticateProxy(proxyData.username, proxyData.password),
+      );
+    }
+
+    const screenSize = screen.getPrimaryDisplay().workAreaSize;
+    const maxHorizontaly = Math.floor(screenSize.width / width);
+    const x = index % maxHorizontaly;
+    const y = Math.floor(index / maxHorizontaly + 1) - 1;
+
+    browser.setPosition(x * width, y * height);
+
+    browser.on('closed', () => {
       HarvestersManager.disableHarvester(id);
       IPCMain.harvesterStateChange(id, false);
     });
 
-    return page;
+    browser.webContents.on('devtools-opened', () => {
+      browser.close();
+    });
+
+    return browser;
+  };
+
+  private static authenticateProxy = (username: string, password: string) => (
+    event: Electron.Event,
+    details: Electron.AuthenticationResponseDetails,
+    authInfo: Electron.AuthInfo,
+    callback: (username?: string | undefined, password?: string | undefined) => void,
+  ) => {
+    if (authInfo.isProxy) {
+      callback(username, password);
+    }
+    event.preventDefault();
   };
 }
 

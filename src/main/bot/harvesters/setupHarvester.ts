@@ -1,30 +1,19 @@
-import { Page } from 'puppeteer';
 import { IPCMain } from '../../IPC/IPCMain';
 import _ from 'lodash';
+import { BrowserWindow } from 'electron';
+import { ipcMain } from 'electron-better-ipc';
 
-const setupHarvester = async (page: Page, id: string) => {
-  const browser = page.browser();
+const setupHarvester = async (browser: BrowserWindow, id: string) => {
   IPCMain.setHarvesterEmail(id, `Not-Logged-${_.takeRight(id, 5).join('')}`);
+  await browser.webContents.session.clearStorageData({ storages: ['cookies'] });
 
-  const cookies = await page.cookies('https://www.google.com/');
-  await page.deleteCookie(...cookies);
-
-  await page.goto(
+  browser.loadURL(
     'https://accounts.google.com/signin/v2/identifier?flowName=GlifWebSignIn&flowEntry=ServiceLogin&hl=en',
   );
+  browser.webContents.on('did-finish-load', async () => {
+    if (!browser.webContents.getURL().includes('myaccount')) return;
 
-  page.on('load', async () => {
-    const url = page.url();
-    if (!url.includes('https://myaccount.google.com/')) return;
-
-    await page.waitForXPath("//div[contains(text(),'@gmail.com')]");
-
-    const accountEmailElements = await page.$x("//div[contains(text(),'@gmail.com')]");
-    if (accountEmailElements.length < 1) return;
-    const [accountEmailNode] = accountEmailElements;
-
-    const emailProperty = await accountEmailNode.getProperty('innerText');
-    let email = (await emailProperty.jsonValue()) as string;
+    let email = await ipcMain.callRenderer<null, string>(browser, 'get-email');
 
     const sameEmails = await IPCMain.getSameEmails(email);
 

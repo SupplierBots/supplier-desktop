@@ -140,7 +140,7 @@ const Task = ({ details }: Props) => {
       </WebsiteIconWrapper>
       <Text>{details.name}</Text>
       <Text>{details.profile && details.profile.label}</Text>
-      <Text>{details.proxy && _.take(details.proxy.label, 24)}</Text>
+      <Text>Proxy</Text>
       <Status type={details.status.type}>{details.status.message}</Status>
       <ActionsContainer>
         <Action disabled={isBrowserActive()}>

@@ -112,7 +112,6 @@ const SelectableItem = (props: Props) => {
       tasksToRemove.push(...tasks.filter(t => t.profile?.value === props.id));
     }
     if (props.type === 'proxies') {
-      tasksToRemove.push(...tasks.filter(t => t.proxy?.value === props.id));
       const harvestersToReset = browsers.filter(h => h.proxy.value === props.id);
       harvestersToReset.forEach(h => dispatch(resetProxy({ id: h.id })));
       dispatch(removeProxy({ id: props.id }));

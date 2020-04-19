@@ -7,7 +7,7 @@ import { ReactComponent as TasksIcon } from 'assets/Tasks.svg';
 import { ReactComponent as ProductsIcon } from 'assets/Products.svg';
 import { ReactComponent as ProfilesIcon } from 'assets/Profiles.svg';
 import { ReactComponent as ProxiesIcon } from 'assets/Proxies.svg';
-import { ReactComponent as HarvestersIcon } from 'assets/Harvesters.svg';
+import { ReactComponent as SettingsIcon } from 'assets/Settings.svg';
 import { ReactComponent as HelpIcon } from 'assets/Help.svg';
 import { ReactComponent as DownloadIcon } from 'assets/Download.svg';
 import routes from 'constants/routes';
@@ -52,10 +52,6 @@ const Navigation = () => {
           <TasksIcon />
         </NavigationItem>
 
-        <NavigationItem link={routes.harvesters} disabled={isAnyTaskActive()} name="Harvesters">
-          <HarvestersIcon />
-        </NavigationItem>
-
         <NavigationItem
           link={routes.products + `/${lastVisited.product}`}
           disabled={isAnyTaskActive()}
@@ -78,6 +74,10 @@ const Navigation = () => {
           name="Proxies"
         >
           <ProxiesIcon />
+        </NavigationItem>
+
+        <NavigationItem link={routes.settings} disabled={isAnyTaskActive()} name="Settings">
+          <SettingsIcon />
         </NavigationItem>
 
         <NavigationItem external link={'https://safedropbot.com/'} name="Help">

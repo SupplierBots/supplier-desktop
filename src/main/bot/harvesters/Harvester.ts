@@ -1,58 +1,62 @@
-import { Page, Request } from 'puppeteer';
 import { getPageContent } from './pageContent';
 import { HarvesterData } from '../../types/HarvesterData';
+import { BrowserWindow } from 'electron';
+import { ipcMain } from 'electron-better-ipc';
 
 class Harvester {
   private sitekey: string;
   public solving = false;
   public ready = false;
 
-  constructor(readonly page: Page, readonly data: HarvesterData, sitekey: string) {
+  constructor(readonly browser: BrowserWindow, readonly data: HarvesterData, sitekey: string) {
     this.sitekey = sitekey;
   }
 
   public init = async () => {
-    await this.page.setRequestInterception(true);
-    this.page.on('request', this.parseRequest);
+    this.ready = false;
+    this.solving = false;
 
-    this.page.on('domcontentloaded', () => {
-      this.page.evaluate(`setEmail('${this.data.accountEmail}');`);
+    this.browser.webContents.session.protocol.uninterceptProtocol('http');
+    this.browser.webContents.session.protocol.interceptStringProtocol('http', (req, handler) => {
+      if (req.url === 'http://www.supremenewyork.com/') {
+        handler({
+          mimeType: 'text/html',
+          charset: 'UTF-8',
+          data: getPageContent(this.sitekey),
+        });
+      }
     });
-    await this.load();
+
+    this.browser.loadURL('http://www.supremenewyork.com/');
+
+    this.browser.once('ready-to-show', () => {
+      this.browser.webContents.send('set-email', this.data.accountEmail);
+    });
+
+    this.browser.webContents.once('did-finish-load', async () => {
+      this.browser.show();
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      this.ready = true;
+    });
   };
 
-  public load = async () => {
+  public reload = async () => {
     this.ready = false;
-    this.page.goto('https://www.supremenewyork.com/');
+    this.browser.reload();
     await new Promise(resolve => setTimeout(resolve, 2500));
+    this.browser.webContents.send('set-email', this.data.accountEmail);
     this.ready = true;
   };
 
-  public parseRequest = (request: Request) => {
-    if (request.url().includes('supremenewyork')) {
-      request.respond({
-        status: 200,
-        contentType: 'text/html',
-        body: getPageContent(this.sitekey),
-      });
-    } else {
-      request.continue();
-    }
-  };
-
   public getCaptchaToken = async (sitekey = this.sitekey) => {
+    this.solving = true;
+
     if (sitekey !== this.sitekey) {
       this.sitekey = sitekey;
-      await this.load();
+      await this.reload();
     }
 
-    this.solving = true;
-    await this.page.evaluate('executeCaptcha();');
-    const request = await this.page.waitForRequest('http://127.0.0.1:2140/captcha.json', {
-      timeout: 0,
-    });
-    const data = request.postData() || "{token: 'invalid'}";
-    const { token } = JSON.parse(data) as { token: string };
+    const token = await ipcMain.callRenderer<null, string>(this.browser, 'solve-captcha');
     this.solving = false;
     return token;
   };

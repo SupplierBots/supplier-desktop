@@ -110,7 +110,7 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
   const state = useStateSelector(state => state);
   const [isNew, setIsNew] = useState(match.params.id && match.params.id === 'new');
 
-  const getOptions = (type: 'profiles' | 'products' | 'proxies', site: Option | null): Option[] => {
+  const getOptions = (type: 'profiles' | 'products', site: Option | null): Option[] => {
     const dataArr = state[type] as SelectableUserData[];
 
     const options = dataArr
@@ -122,9 +122,6 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
       .map(data => {
         return { label: data.name, value: data.id };
       });
-    if (type === 'proxies') {
-      options.unshift({ label: 'None', value: 'none' });
-    }
     return options;
   };
 
@@ -206,15 +203,6 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
                     onChange={props.setFieldValue}
                     error={!!props.errors.profile && !!props.touched.profile}
                   />
-                  <Select
-                    name="proxy"
-                    placeholder="Proxy"
-                    value={props.values.proxy}
-                    options={getOptions('proxies', props.values.site)}
-                    onBlur={props.setFieldTouched}
-                    onChange={props.setFieldValue}
-                    error={!!props.errors.proxy && !!props.touched.proxy}
-                  />
                   <Input type="text" name="name" placeholder="Task name" />
                   <InlineInputsContainer>
                     <Input
@@ -253,7 +241,7 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
                 )}
               </ItemsCounter>
               <ButtonsContainer>
-                {!isNew && props.dirty && (
+                {!isNew && props.dirty && state.tasks.length < 8 && (
                   <Button
                     medium
                     secondary

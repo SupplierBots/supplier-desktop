@@ -14,8 +14,8 @@ import moment, { Moment } from 'moment';
 import SupremeTask from '../supreme/browser/SupremeTask';
 import { Proxy } from '../../types/Proxy';
 import { ProductsMonitor } from '../supreme/ProductsMonitor';
-import { HarvestersManager } from '../harvesters/HarvestersManager';
 import { HarvesterData } from '../../types/HarvesterData';
+import { HarvestersManager } from '../harvesters/HarvestersManager';
 
 class TasksManager {
   public static runner: RunnerState;
@@ -32,6 +32,16 @@ class TasksManager {
     this.runner = runner;
 
     HarvestersManager.initialize(harvesters);
+
+    // const tokens = await Promise.all([
+    //   HarvestersManager.getCaptchaToken(),
+    //   HarvestersManager.getCaptchaToken(),
+    //   HarvestersManager.getCaptchaToken(),
+    //   HarvestersManager.getCaptchaToken(),
+    //   HarvestersManager.getCaptchaToken(),
+    // ]);
+    // console.log(tokens);
+
     ProxiesManager.setProxies(runner.proxies, proxies, runner.proxiesRegion);
 
     await this.stopAllHybirdTasks();

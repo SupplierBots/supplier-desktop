@@ -6,7 +6,6 @@ export interface Task extends SelectableUserData {
   isActive: boolean;
   site: Option | null;
   profile: Option | null;
-  proxy: Option | null;
   products: string[];
   status: TaskStatus;
   refreshRate: number | string;

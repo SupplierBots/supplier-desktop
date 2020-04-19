@@ -167,7 +167,7 @@ const Harvester = ({ data }: Props) => {
                 onClick={() => IPCRenderer.setupHarvester(data)}
                 width="30%"
               >
-                {data.isActive ? 'Active' : 'Login'}
+                {data.isActive ? 'Active' : data.isLogged ? 'Relogin' : 'Login'}
               </Button>
             </InputsContainer>
           </HarvesterBody>

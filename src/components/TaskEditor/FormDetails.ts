@@ -6,7 +6,6 @@ import { TaskStatusType } from 'main/types/TaskStatus';
 export const taskValidationSchema = Yup.object().shape({
   id: Yup.string(),
   profile: Yup.object().required(),
-  proxy: Yup.object().required(),
   refreshRate: Yup.number()
     .required('Required')
     .moreThan(250, '> 250ms')
@@ -30,7 +29,6 @@ export const initialTaskValues: Task = {
   id: '',
   site: null,
   profile: null,
-  proxy: null,
   products: [],
   status: {
     message: 'Inactive',

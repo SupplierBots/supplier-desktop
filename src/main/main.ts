@@ -10,6 +10,7 @@ import path from 'path';
 import { IPCMain } from './IPC/IPCMain';
 import { menu } from './menu';
 import { setDiscordActivity } from './discordRPC';
+
 export const isDev = process.env.NODE_ENV === 'development';
 
 let mainWindow: electron.BrowserWindow | null = null;
@@ -82,6 +83,7 @@ const createWindow = () => {
 };
 
 app.whenReady().then(createWindow);
+
 if (!isDev) Menu.setApplicationMenu(menu);
 powerSaveBlocker.start('prevent-display-sleep');
 
@@ -95,6 +97,10 @@ app.on('activate', () => {
   if (mainWindow === null) {
     createWindow();
   }
+});
+
+app.on('login', (event, webContents, request, authInfo, callback) => {
+  event.preventDefault();
 });
 
 IPCMain.registerListeners();

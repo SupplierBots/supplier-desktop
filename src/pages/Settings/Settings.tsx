@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import Card from 'components/Card/Card';
 import Heading from 'components/Heading/Heading';
 import Harvester from 'components/Harvester/Harvester';
 import ButtonsContainer from 'components/ButtonsContainer/ButtonsContainer';
@@ -36,7 +35,7 @@ const Main = styled.div`
   max-height: 55rem;
 `;
 
-const Harvesters = () => {
+const Settings = () => {
   const harvesters = useStateSelector(state => state.harvesters);
   const dispatch = useStateDispatch();
 
@@ -60,4 +59,4 @@ const Harvesters = () => {
   );
 };
 
-export default Harvesters;
+export default Settings;

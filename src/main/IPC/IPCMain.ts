@@ -31,14 +31,13 @@ import {
 } from './IPCEvents';
 import { Profile } from '../types/Profile';
 import { TaskStatus } from '../types/TaskStatus';
-import { Task } from '../types/Task';
 import { HarvesterData } from '../types/HarvesterData';
 import { Product } from '../types/Product';
 import { app } from 'electron';
 import { CheckoutData } from '../types/Checkout';
 import { Proxy } from '../types/Proxy';
-import { HarvestersManager } from '../bot/harvesters/HarvestersManager';
 import { TasksManager } from '../bot/core/TasksManager';
+import { HarvestersManager } from '../bot/harvesters/HarvestersManager';
 
 export abstract class IPCMain {
   private constructor() {}

@@ -9,6 +9,6 @@ export default {
   products: '/products',
   profiles: '/profiles',
   proxies: '/proxies',
-  harvesters: '/harvesters',
+  settings: '/settings',
   update: '/update',
 };

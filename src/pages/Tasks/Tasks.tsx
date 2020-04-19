@@ -23,6 +23,7 @@ const StyledHeading = styled(Heading)`
   ::after {
     width: calc(100% + 5.5rem);
   }
+  margin-bottom: 4rem;
 `;
 
 const Main = styled.div`
@@ -35,7 +36,7 @@ const TasksList = styled.div`
 `;
 
 const NoTaskInformation = styled.p`
-  height: 50rem;
+  height: 48rem;
   display: flex;
   justify-content: center;
   align-items: center;

@@ -6,7 +6,7 @@ import Products from 'pages/Products/Products';
 import Proxies from 'pages/Proxies/Proxies';
 import Tasks from 'pages/Tasks/Tasks';
 import Dashboard from 'pages/Dashboard/Dashboard';
-import Harvesters from 'pages/Harvesters/Harvesters';
+import Settings from 'pages/Settings/Settings';
 import Update from 'pages/Update/Update';
 
 const AuthenticatedRoutes = () => (
@@ -19,7 +19,7 @@ const AuthenticatedRoutes = () => (
     <Route exact path={routes.profiles} component={Profiles} />
     <Route path={routes.proxies + '/:id'} component={Proxies} />
     <Route exact path={routes.proxies} component={Proxies} />
-    <Route exact path={routes.harvesters} component={Harvesters} />
+    <Route exact path={routes.settings} component={Settings} />
     <Route exact path={routes.update} component={Update} />
   </>
 );

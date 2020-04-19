@@ -175,6 +175,7 @@ export const creditCardTypeOptions: Option[] = [
   { value: 'master', label: 'Mastercard' },
   { value: 'american', label: 'American Express' },
   { value: 'solo', label: 'Solo' },
+  { value: 'other', label: 'Other' },
 ];
 
 export const monthOptions: Option[] = [

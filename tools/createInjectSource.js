@@ -39,6 +39,7 @@ const ticketScript = path.resolve(injectScriptDir, 'ticket.js');
   await fs.writeFileSync(path.resolve(injectScriptDir, 'injectScript.ts'), finalContent);
   await fs.writeFileSync(path.resolve(injectScriptDir, 'waitTicket.ts'), finalTicketContent);
   await createHarvesterCode();
+  await minifyHarvesterPreload();
 })();
 
 async function createHarvesterCode() {
@@ -55,4 +56,21 @@ async function createHarvesterCode() {
             String.fromCharCode(...${encryptedFirstPart}) + sitekey + String.fromCharCode(...${encryptedSecondPart});`;
 
   await fs.promises.writeFile(path.resolve(sourcePath, 'pageContent.ts'), content);
+}
+
+async function minifyHarvesterPreload() {
+  const sourcePath = path.resolve(process.cwd(), 'src', 'main', 'bot', 'harvesters');
+  const source = await fs.readFileSync(path.resolve(sourcePath, 'harvesterPreload.js'), {
+    encoding: 'UTF-8',
+  });
+  const minified = babel.transform(source, {
+    comments: false,
+    minified: true,
+    plugins: ['minify-mangle-names'],
+  });
+
+  await fs.promises.writeFile(
+    path.resolve(process.cwd(), 'public', 'harvesterPreload.js'),
+    minified.code,
+  );
 }
