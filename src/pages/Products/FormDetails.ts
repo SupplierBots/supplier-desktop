@@ -41,6 +41,7 @@ export const initialProductsValues: Product = {
 };
 
 export const sizeOptions: Option[] = [
+  { value: 'None', label: 'None / One-Size' },
   { value: 'Small', label: 'Small' },
   { value: 'Medium', label: 'Medium' },
   { value: 'Large', label: 'Large' },

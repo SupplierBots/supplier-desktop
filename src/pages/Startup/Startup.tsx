@@ -13,6 +13,7 @@ import { IPCRenderer } from 'main/IPC/IPCRenderer';
 import { setActive } from 'store/harvesters/harvestersSlice';
 import { setAppDetails, setTimerState } from 'store/controller/controllerSlice';
 import { useStateSelector, useStateDispatch } from 'hooks/typedReduxHooks';
+import { setTaskActivity } from 'store/tasks/tasksSlice';
 
 export const StyledParticles = styled(Particles)`
   position: absolute;
@@ -30,14 +31,16 @@ type Props = RouteComponentProps;
 
 const Startup = ({ history }: Props) => {
   const [loading, setLoading] = useState(true);
-  const browsers = useStateSelector(state => state.harvesters);
+  const { harvesters, tasks } = useStateSelector(state => state);
   const dispatch = useStateDispatch();
 
   const resetBrowsers = () => {
     dispatch(setTimerState({ active: false }));
-    browsers.forEach(b => {
-      dispatch(setActive({ id: b.id, isActive: false }));
+    harvesters.forEach(h => {
+      dispatch(setActive({ id: h.id, isActive: false }));
     });
+
+    tasks.forEach(t => dispatch(setTaskActivity({ id: t.id, isActive: false })));
   };
 
   useEffect(resetBrowsers, []);

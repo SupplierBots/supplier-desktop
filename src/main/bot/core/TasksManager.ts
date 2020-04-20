@@ -33,14 +33,15 @@ class TasksManager {
 
     HarvestersManager.initialize(harvesters);
 
-    // const tokens = await Promise.all([
+    // await Promise.all([
     //   HarvestersManager.getCaptchaToken(),
     //   HarvestersManager.getCaptchaToken(),
     //   HarvestersManager.getCaptchaToken(),
     //   HarvestersManager.getCaptchaToken(),
     //   HarvestersManager.getCaptchaToken(),
     // ]);
-    // console.log(tokens);
+    // await new Promise(resolve => setTimeout(resolve, 5000));
+    // await HarvestersManager.getCaptchaToken();
 
     ProxiesManager.setProxies(runner.proxies, proxies, runner.proxiesRegion);
 
@@ -69,14 +70,14 @@ class TasksManager {
   }
 
   private static async startHybridTasks(tasks: Task[]) {
-    for (let task of tasks) {
-      this.startHybridTask(task);
+    for (let i = 0; i < tasks.length; i++) {
+      this.startHybridTask(tasks[i], i);
     }
   }
 
-  private static async startHybridTask(task: Task) {
+  private static async startHybridTask(task: Task, index = 0) {
     if (!task.profile) return;
-    const page = await this.createBrowser(task);
+    const page = await this.createBrowser(task, index);
     const product = await IPCMain.getProduct(task.products[0]);
     const profile = await IPCMain.getProfile(task.profile?.value);
 
@@ -119,7 +120,7 @@ class TasksManager {
     this.hybridTasks = this.hybridTasks.filter(t => t.task.id !== id);
   }
 
-  private static async createBrowser(task: Task) {
+  private static async createBrowser(task: Task, index = 0) {
     const { id } = task;
     IPCMain.setTaskActivity(id, true);
 
@@ -133,26 +134,17 @@ class TasksManager {
     const { height, width, deviceScaleFactor } = iPhone.viewport;
     puppeteer.use(StealthPlugin());
 
-    const args = [
-      '--no-sandbox',
-      '--disable-gpu',
-      '--disable-infobars',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--ignore-certifcate-errors',
-      '--ignore-certifcate-errors-spki-list',
-      `--window-size=${500},${height + 70}`,
-    ];
+    const args = ['--disable-gpu', '--disable-infobars', `--window-size=${500},${height + 70}`];
 
-    const proxy = this.runner.proxies ? ProxiesManager.getRandom() : null;
+    const proxy =
+      this.runner.proxies && index > this.runner.localIPTasks ? ProxiesManager.getRandom() : null;
+
     if (proxy) {
       args.push(`--proxy-server=${proxy.ipPort}`);
     }
 
     const browser = await puppeteer.launch({
       headless: !config.tasksDebug,
-      ignoreHTTPSErrors: true,
-      ignoreDefaultArgs: ['--enable-automation'],
       args,
       executablePath,
     });
@@ -197,7 +189,7 @@ class TasksManager {
 
     browser.on('targetcreated', (target: Target) => {
       if (target.url().includes('devtools')) {
-        browser.close();
+        //browser.close();
       }
     });
 
@@ -214,7 +206,7 @@ class TasksManager {
       page,
       task,
     });
-
+    //
     return page;
   }
 }

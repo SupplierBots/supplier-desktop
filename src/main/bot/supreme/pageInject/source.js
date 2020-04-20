@@ -39,10 +39,15 @@
   const availableSizes = selectedStyle.attributes.sizes.models.filter(
     s => s.attributes.stock_level !== 0,
   );
-  const size = selectSize(availableSizes, sizeToFind, anySize);
+
+  const size =
+    selectedStyle.attributes.sizes.models.length > 1
+      ? selectSize(availableSizes, sizeToFind, anySize)
+      : availableSizes[0];
 
   if (!size) {
-    notifyTask('Sold out', 'Error');
+    console.log(selectedStyle);
+    //notifyTask('Sold out', 'Error');
     return;
   }
 

@@ -48,9 +48,12 @@ export async function checkout(this: SupremeTask) {
   await termsCheckbox.tap();
 
   if (this.region === 'eu') {
+    const cardinalID = uuid();
     await this.page.evaluate(
-      `$('#checkout-form').prepend($('<input type="hidden" name="cardinal_id" value="0_${uuid()}" external="true">'));`,
+      `$('#checkout-form').prepend($('<input type="hidden" name="cardinal_id" value="0_${cardinalID}" external="true">'));`,
     );
+
+    console.log(`[Checkout] Generated cardinal id: 0_${cardinalID}`);
   }
 
   const checkoutTime = Date.now() - addToCartTime.valueOf();

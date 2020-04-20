@@ -6,9 +6,9 @@ const HiddenRadio = styled.input`
   display: none;
 `;
 
-const StyledRadio = styled.div<{ checked: boolean }>`
+const StyledRadio = styled.div<{ 'data-checked': boolean }>`
   color: ${colors.darkGrey};
-  ${({ checked }) =>
+  ${({ 'data-checked': checked }) =>
     checked &&
     css`
       color: transparent;
@@ -17,7 +17,7 @@ const StyledRadio = styled.div<{ checked: boolean }>`
     `}
 `;
 
-const Wrapper = styled.div<{ checked: boolean }>`
+const Wrapper = styled.div<{ 'data-checked': boolean }>`
   height: 3.7rem;
   background-color: ${colors.tertiaryBackground};
   border-radius: 0.5rem;
@@ -34,7 +34,7 @@ const Wrapper = styled.div<{ checked: boolean }>`
     margin-left: 0.7rem;
   }
 
-  ${({ checked }) =>
+  ${({ 'data-checked': checked }) =>
     checked &&
     css`
       background: linear-gradient(
@@ -67,9 +67,9 @@ const Radio = (props: Props) => {
   const isSelected = () => props.currentValue === props.value;
 
   return (
-    <Wrapper checked={isSelected()} onClick={() => onChange(props.name, props.value)}>
-      <HiddenRadio type="radio" checked={isSelected()} {...rest} />
-      <StyledRadio checked={isSelected()} {...rest}>
+    <Wrapper data-checked={isSelected()} onClick={() => onChange(props.name, props.value)}>
+      <HiddenRadio type="radio" defaultChecked={isSelected()} {...rest} />
+      <StyledRadio data-checked={isSelected()} {...rest}>
         {props.children}
       </StyledRadio>
     </Wrapper>

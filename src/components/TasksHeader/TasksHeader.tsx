@@ -5,7 +5,7 @@ import { ReactComponent as WebsiteIcon } from 'assets/Website.svg';
 
 const Wrapper = styled.div`
   display: grid;
-  grid-template-columns: 6.7% 23% 20% 19% 23% 8.3%;
+  grid-template-columns: 6.7% 29% 26% 30% 8.3%;
   width: 100%;
   color: ${colors.lightPurple};
 `;
@@ -29,7 +29,6 @@ const TasksHeader = () => {
       </WebsiteIconWrapper>
       <Text>Name</Text>
       <Text>Profile</Text>
-      <Text>Proxy</Text>
       <Text>Status</Text>
       <Text>Actions</Text>
     </Wrapper>

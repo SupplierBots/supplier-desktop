@@ -30,6 +30,7 @@ class HarvestersManager {
     }
 
     const token = await availableHarvester.getCaptchaToken(sitekey);
+    console.log('[HarvestersManager] Returned token: ' + token);
     return token;
   }
 

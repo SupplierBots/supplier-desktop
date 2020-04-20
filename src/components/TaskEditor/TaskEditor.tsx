@@ -37,9 +37,9 @@ const StyledHeading = styled(Heading)`
 
 const StyledCard = styled(Card)`
   width: 80rem;
-  height: 66rem;
+  height: 60rem;
   padding: 5rem 7rem;
-  margin-top: 5rem;
+  margin-top: 6.5rem;
   z-index: 2000;
 `;
 
@@ -93,6 +93,7 @@ export const InlineInputsContainer = styled.div`
 
 const StyledSlider = styled(Slider)`
   margin: 1.25rem 0 1.85rem 0;
+  display: none;
 `;
 
 const ButtonsContainer = styled.div`
@@ -100,7 +101,7 @@ const ButtonsContainer = styled.div`
   justify-content: flex-end;
   grid-row: 3;
   grid-column: 1 / 3;
-  margin-top: 2.5rem;
+  margin-top: 6.5rem;
   button:not(:last-child) {
     margin-right: 1rem;
   }

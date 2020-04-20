@@ -16,7 +16,7 @@ import * as _ from 'lodash';
 
 const Wrapper = styled.div`
   display: grid;
-  grid-template-columns: 6.7% 23% 20% 19% 23% 8.3%;
+  grid-template-columns: 6.7% 29% 26% 30% 8.3%;
   width: 100%;
   height: 5rem;
   align-items: center;
@@ -140,7 +140,6 @@ const Task = ({ details }: Props) => {
       </WebsiteIconWrapper>
       <Text>{details.name}</Text>
       <Text>{details.profile && details.profile.label}</Text>
-      <Text>Proxy</Text>
       <Status type={details.status.type}>{details.status.message}</Status>
       <ActionsContainer>
         <Action disabled={isBrowserActive()}>

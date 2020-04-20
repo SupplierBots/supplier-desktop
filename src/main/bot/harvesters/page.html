@@ -199,35 +199,6 @@
         </defs>
       </svg>
 
-      <div class="window-close">
-        <svg
-          width="26"
-          height="26"
-          viewBox="0 0 26 26"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
-            d="M18.0602 7.93972C17.8739 7.75341 17.5719 7.75341 17.3855 7.93972L13 12.3253L8.61444 7.93978C8.42812 7.75346 8.12605 7.75346 7.93974 7.93978C7.75342 8.12609 7.75342 8.42817 7.93974 8.61448L12.3253 13L7.93975 17.3855C7.75343 17.5719 7.75343 17.8739 7.93975 18.0603C8.12606 18.2466 8.42813 18.2466 8.61445 18.0603L13 13.6747L17.3855 18.0603C17.5719 18.2466 17.8739 18.2466 18.0602 18.0603C18.2466 17.874 18.2466 17.5719 18.0602 17.3856L13.6747 13L18.0602 8.61442C18.2466 8.42811 18.2466 8.12604 18.0602 7.93972Z"
-            fill="url(#closeGradient)"
-          />
-          <defs>
-            <linearGradient
-              id="closeGradient"
-              x1="7.8"
-              y1="7.79999"
-              x2="20.2621"
-              y2="14.1582"
-              gradientUnits="userSpaceOnUse"
-            >
-              <stop stop-color="#C95BA3" />
-              <stop offset="1" stop-color="#9253C1" />
-            </linearGradient>
-          </defs>
-        </svg>
-      </div>
       <div class="text-container">
         <p class="primary-text">Captcha Harvester</p>
         <p class="harvester-email">contact@supplierbot.io</p>
@@ -243,11 +214,6 @@
       const currentStatus = document.querySelector('.current-status');
       const currentEmail = document.querySelector('.harvester-email');
       const closeButton = document.querySelector('.window-close');
-
-      closeButton.addEventListener('click', window.closeHarvester);
-      if (!window.isWindows()) {
-        closeButton.remove();
-      }
 
       window.token = '';
 

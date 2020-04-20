@@ -351,8 +351,8 @@ const TaskRunner = () => {
                     placeholder="10"
                     hideErrors
                     width="19%"
-                    centered
-                    maxlength="2"
+                    data-centered
+                    maxLength={2}
                   />
                 </StyledInputsContainer>
               </Fieldset>

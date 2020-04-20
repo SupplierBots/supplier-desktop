@@ -10,7 +10,7 @@ const StickyBottomBorder = styled.div`
   bottom: -0.1rem;
   left: 0;
   width: 100%;
-  height: 3.6rem;
+  height: 3rem;
   background: ${colors.tertiaryBackground};
 `;
 const Title = styled.p`
@@ -20,7 +20,7 @@ const Title = styled.p`
 
 const Wrapper = styled.div<{ error: boolean }>`
   width: 29.5rem;
-  height: 40.15rem;
+  height: 30.15rem;
   border-radius: 0.5rem;
   background-color: ${colors.tertiaryBackground};
   padding: 1.5rem 3.6rem 0 3.6rem;
@@ -83,7 +83,8 @@ const ProductSelector = ({ site, value, onChange, setTouched, error }: Props) =>
     if (selectedProducts.includes(productID)) {
       setSelectedProducts(selectedProducts.filter(selectedID => selectedID !== productID));
     } else {
-      setSelectedProducts([...selectedProducts, productID]);
+      //setSelectedProducts([...selectedProducts, productID]);
+      setSelectedProducts([productID]);
     }
   };
 

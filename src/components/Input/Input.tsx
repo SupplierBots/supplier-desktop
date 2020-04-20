@@ -52,9 +52,9 @@ const styledInput = css`
   }
 `;
 
-const StyledField = styled(Field)<{ centered?: boolean }>`
+const StyledField = styled(Field)<{ 'data-centered'?: boolean }>`
   ${styledInput}
-  ${({ centered }) => centered && 'text-align: center;'}
+  ${({ 'data-centered': centered }) => centered && 'text-align: center;'}
 `;
 
 const StyledMask = styled(InputMask)`
@@ -108,8 +108,8 @@ interface Props {
   mask?: string | (string | RegExp)[];
   maskPlaceholder?: string;
   hideErrors?: boolean;
-  centered?: boolean;
-  maxlength?: string;
+  'data-centered'?: boolean;
+  maxLength?: number;
 }
 
 const Input = (props: Props) => {
