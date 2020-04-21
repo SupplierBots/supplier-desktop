@@ -21,6 +21,7 @@ class TasksManager {
   public static runner: RunnerState;
   public static hybridTasks: HybridTask[] = [];
   public static scheduledDate: Moment = moment();
+  public static isScheduled: boolean = false;
   private static timerID: number;
 
   public static async start(
@@ -48,6 +49,7 @@ class TasksManager {
     await this.stopAllHybirdTasks();
     this.hybridTasks = [];
     ProductsMonitor.init(2000);
+    this.isScheduled = runner.scheduled;
 
     if (!runner.scheduled) {
       this.startHybridTasks(tasks);
@@ -59,7 +61,6 @@ class TasksManager {
       scheduled.add(1, 'day');
     }
     this.scheduledDate = scheduled;
-
     this.timerID = setInterval(async () => {
       if (moment().valueOf() + 60000 >= this.scheduledDate.valueOf()) {
         clearInterval(this.timerID);
@@ -86,7 +87,14 @@ class TasksManager {
       return;
     }
     try {
-      const supremeTask = new SupremeTask(page, task, product, profile, this.scheduledDate);
+      const supremeTask = new SupremeTask(
+        page,
+        task,
+        product,
+        profile,
+        this.scheduledDate,
+        this.isScheduled,
+      );
       await supremeTask.init();
     } catch (ex) {
       console.log('Couldnt initiate task: ' + ex);
@@ -137,7 +145,7 @@ class TasksManager {
     const args = ['--disable-gpu', '--disable-infobars', `--window-size=${500},${height + 70}`];
 
     const proxy =
-      this.runner.proxies && index > this.runner.localIPTasks ? ProxiesManager.getRandom() : null;
+      this.runner.proxies && index >= this.runner.localIPTasks ? ProxiesManager.getRandom() : null;
 
     if (proxy) {
       args.push(`--proxy-server=${proxy.ipPort}`);
@@ -189,7 +197,7 @@ class TasksManager {
 
     browser.on('targetcreated', (target: Target) => {
       if (target.url().includes('devtools')) {
-        //browser.close();
+        browser.close();
       }
     });
 

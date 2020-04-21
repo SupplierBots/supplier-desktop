@@ -36,6 +36,7 @@ class SupremeTask {
     readonly product: Product,
     readonly profile: Profile,
     readonly scheduledDate: Moment,
+    readonly isScheduled: boolean,
   ) {
     this.logger = new Logger(task.id, page);
     this.browser = this.page.browser();

@@ -12,6 +12,7 @@ import { ReactComponent as HelpIcon } from 'assets/Help.svg';
 import { ReactComponent as DownloadIcon } from 'assets/Download.svg';
 import routes from 'constants/routes';
 import { useStateSelector } from 'hooks/typedReduxHooks';
+import { config } from 'config';
 
 const Wrapper = styled.nav``;
 
@@ -80,7 +81,7 @@ const Navigation = () => {
           <SettingsIcon />
         </NavigationItem>
 
-        <NavigationItem external link={'https://safedropbot.com/'} name="Help">
+        <NavigationItem external link={config.tutorialUrl} name="Help">
           <HelpIcon />
         </NavigationItem>
       </NavigationList>

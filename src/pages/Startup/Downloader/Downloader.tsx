@@ -4,10 +4,11 @@ import InlineLogo from 'components/InlineLogo/InlineLogo';
 import { colors, fonts } from 'theme/main';
 import ProgressBar from 'components/ProgressBar/ProgressBar';
 import { RouteComponentProps } from 'react-router';
-import { ipcRenderer as ipc, IpcRendererEvent } from 'electron';
+import { ipcRenderer as ipc, IpcRendererEvent, shell } from 'electron';
 import { IPCRenderer } from 'main/IPC/IPCRenderer';
 import { CHROMIUM_DOWNLOAD_PROGRESS } from '../../../main/IPC/IPCEvents';
 import { StyledSpinner } from 'pages/Update/Update';
+import { config } from 'config';
 
 const Wrapper = styled.div`
   display: flex;
@@ -90,7 +91,8 @@ const Downloader = ({ history }: Props) => {
       </ProgressMessage>
       {!downloaded && <ProgressBar progressPercentage={progress} />}
       <TutorialMessage>
-        In the meantime you can read our <TutLink>detailed tutorial</TutLink>
+        In the meantime you can read our{' '}
+        <TutLink onClick={() => shell.openExternal(config.tutorialUrl)}>detailed tutorial</TutLink>
       </TutorialMessage>
     </Wrapper>
   );

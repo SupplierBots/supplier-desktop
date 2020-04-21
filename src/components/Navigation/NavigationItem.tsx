@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 import { NavLink } from 'react-router-dom';
 import { colors, fonts } from 'theme/main';
 import { shell } from 'electron';
+import { config } from 'config';
 
 //Unfortunately kind of tricky way to style it:
 //svgs with gradients, react-router and styled-components don't like each other
@@ -22,6 +23,7 @@ const StyledNavLink = styled(NavLink)<{ disabled?: boolean; 'data-active'?: bool
   font-size: ${fonts.big};
   height: 5rem;
   display: flex;
+  vertical-align: middle;
   align-items: center;
   transition: all 0.3s;
   cursor: pointer;
@@ -82,14 +84,15 @@ const StyledNavLink = styled(NavLink)<{ disabled?: boolean; 'data-active'?: bool
 `;
 
 const NavigationName = styled.span`
-  margin-top: 0.2rem;
+  /* margin-top: 0.2rem; */
+  font-size: 1.55rem;
 `;
 
 const NavigationItem = ({ link, children, external, disabled, name, alwaysActive }: Props) => {
   const additionalProps = external && {
     onClick: (e: MouseEvent) => {
       e.preventDefault();
-      shell.openExternal('https://safedropbot.com/');
+      shell.openExternal(config.tutorialUrl);
     },
   };
 

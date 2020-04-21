@@ -9,6 +9,8 @@ import particlesConfig from 'constants/particlesConfig';
 import Spinner from 'components/Spinner/Spinner';
 import { setUpdateStart } from 'store/update/updateSlice';
 import { IPCRenderer } from 'main/IPC/IPCRenderer';
+import { shell } from 'electron';
+import { config } from 'config';
 
 const Wrapper = styled.div`
   display: flex;
@@ -82,7 +84,10 @@ const Update = () => {
           {downloading && <StyledSpinner />}
         </ProgressMessage>
         <TutorialMessage>
-          In the meantime you can read <Changelog>release notes</Changelog>
+          In the meantime you can read{' '}
+          <Changelog onClick={() => shell.openExternal(config.changelogUrl)}>
+            release notes
+          </Changelog>
         </TutorialMessage>
       </Wrapper>
     </>

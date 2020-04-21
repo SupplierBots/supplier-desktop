@@ -200,6 +200,7 @@ const TaskRunner = () => {
   const { tasks, harvesters, runner, controller, proxies } = useStateSelector(state => state);
   const [intervalID, setIntervalID] = useState<number>();
   const [currentDate, setCurrentDate] = useState<Moment>(moment());
+  const [scheduledDate, setScheduledDate] = useState<Moment>(moment());
 
   const dispatch = useStateDispatch();
 
@@ -223,6 +224,14 @@ const TaskRunner = () => {
   const startTasks = async () => {
     dispatch(setTimerState({ active: true }));
 
+    const date = moment(runner.time, 'HH:mm:ss');
+
+    if (date.valueOf() < moment().valueOf()) {
+      date.add(1, 'day');
+    }
+
+    setScheduledDate(date);
+
     IPCRenderer.startTasks(tasks, proxies, harvesters, runner);
     setCurrentDate(moment());
     setIntervalID(
@@ -243,10 +252,6 @@ const TaskRunner = () => {
   };
 
   const getRemainingTime = () => {
-    const scheduledDate = moment(runner.time, 'HH:mm:ss');
-    if (scheduledDate.valueOf() < moment().valueOf()) {
-      scheduledDate.add(1, 'day');
-    }
     if (!currentDate) return 'Unknown time, start again!';
 
     const timeDifference = Math.abs(currentDate.valueOf() - scheduledDate.valueOf());

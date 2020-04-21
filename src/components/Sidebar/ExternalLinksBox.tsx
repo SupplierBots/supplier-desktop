@@ -42,11 +42,11 @@ const ExternalLinksBox = () => {
         <LogoutIcon />
       </ExternalLink>
 
-      <ExternalLink onClick={() => shell.openExternal('https://safedropbot.com/')}>
+      <ExternalLink onClick={() => shell.openExternal('https://discordapp.com/')}>
         <DiscordIcon />
       </ExternalLink>
 
-      <ExternalLink onClick={() => shell.openExternal('https://safedropbot.com/')}>
+      <ExternalLink onClick={() => shell.openExternal('https://twitter.com/safedropbot')}>
         <TwitterIcon />
       </ExternalLink>
     </Wrapper>
