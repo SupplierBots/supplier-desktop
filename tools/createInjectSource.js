@@ -25,16 +25,27 @@ const ticketScript = path.resolve(injectScriptDir, 'ticket.js');
   const encryptedTicket = JSON.stringify([...ticket.code].map(s => s.charCodeAt()));
   const finalTicketContent = `export const waitTicket = () => String.fromCharCode(...${encryptedTicket});`;
 
-  const regex = /(.*)"\$PRODUCT\$"(.*)/s;
+  // const regex = /(.*)"\$PRODUCT\$"(.*)/s;
+  // const match = regex.exec(code);
+  // const content = `/* eslint-disable no-template-curly-in-string */ export const injectScript = (payload: any, externalStock: any, region: any) => '${match[1]}' + JSON.stringify(payload) + '${match[2]}`;
+
+  // const externalStockRegex = /(.*)"\$STOCK\$"(.*)/s;
+  // const exernalStockMatch = externalStockRegex.exec(content);
+
+  // const encryptedString = JSON.stringify([...exernalStockMatch[2]].map(s => s.charCodeAt()));
+  // const finalContent = `${exernalStockMatch[1]}' + JSON.stringify(externalStock) + 'const region = ' + region + ';' + String.fromCharCode(...${encryptedString})`;
+
+  const regex = /(.*)"\$PRODUCT\$"(.*)(.*)"\$STOCK\$"(.*)(.*)\$REGION\$(.*)/s;
   const match = regex.exec(code);
-  const content = `/* eslint-disable no-template-curly-in-string */ export const injectScript = (payload: any, externalStock: any) => '${match[1]}' + JSON.stringify(payload) + '${match[2]}`;
-
-  const externalStockRegex = /(.*)"\$STOCK\$"(.*)/s;
-  const exernalStockMatch = externalStockRegex.exec(content);
-
-  const encryptedString = JSON.stringify([...exernalStockMatch[2]].map(s => s.charCodeAt()));
-
-  const finalContent = `${exernalStockMatch[1]}' + JSON.stringify(externalStock) + String.fromCharCode(...${encryptedString})`;
+  const finalContent = `/* eslint-disable no-template-curly-in-string */ export const injectScript = (payload: any, externalStock: any, region: any) => String.fromCharCode(${[
+    ...match[1],
+  ].map(s => s.charCodeAt())}) + JSON.stringify(payload) + String.fromCharCode(${[
+    ...match[2],
+  ].map(s => s.charCodeAt())}) + JSON.stringify(externalStock) + String.fromCharCode(${[
+    ...match[4],
+  ].map(s => s.charCodeAt())}) + region + String.fromCharCode(${[...match[6]].map(s =>
+    s.charCodeAt(),
+  )})`;
 
   await fs.writeFileSync(path.resolve(injectScriptDir, 'injectScript.ts'), finalContent);
   await fs.writeFileSync(path.resolve(injectScriptDir, 'waitTicket.ts'), finalTicketContent);

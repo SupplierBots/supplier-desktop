@@ -66,7 +66,7 @@ class SupremeTask {
       if (!fullUrl.includes('#checkout')) {
         const timeDifference = this.scheduledDate.valueOf() - moment().valueOf();
         await new Promise(resolve => setTimeout(resolve, timeDifference));
-        const source = injectScript(this.product, this.externalStock);
+        const source = injectScript(this.product, this.externalStock, this.region);
         this.startTime = moment();
         await this.page.evaluate(source);
       }
