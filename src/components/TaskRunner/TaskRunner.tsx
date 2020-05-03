@@ -79,7 +79,6 @@ const ActionButton = styled.div<{ 'data-disabled'?: boolean }>`
 const Restocks = styled(ConfigBox)`
   width: 22rem;
   margin-left: 1.5rem;
-  pointer-events: none;
 `;
 const StyledGradientParagraph = styled(GradientParagraph)`
   font-size: ${fonts.big};
@@ -188,16 +187,10 @@ const Separator = styled.div`
   background-color: ${colors.darkGrey};
 `;
 
-const SoonParagraph = styled.p`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: ${fonts.big};
-  margin-top: 1.35rem;
-`;
-
 const TaskRunner = () => {
-  const { tasks, harvesters, runner, controller, proxies } = useStateSelector(state => state);
+  const { tasks, harvesters, runner, controller, proxies, webhook } = useStateSelector(
+    state => state,
+  );
   const [intervalID, setIntervalID] = useState<number>();
   const [currentDate, setCurrentDate] = useState<Moment>(moment());
   const [scheduledDate, setScheduledDate] = useState<Moment>(moment());
@@ -222,6 +215,11 @@ const TaskRunner = () => {
   };
 
   const startTasks = async () => {
+    if (!runner.scheduled) {
+      IPCRenderer.startTasks(tasks, proxies, harvesters, runner, webhook);
+      return;
+    }
+
     dispatch(setTimerState({ active: true }));
 
     const date = moment(runner.time, 'HH:mm:ss');
@@ -232,7 +230,7 @@ const TaskRunner = () => {
 
     setScheduledDate(date);
 
-    IPCRenderer.startTasks(tasks, proxies, harvesters, runner);
+    IPCRenderer.startTasks(tasks, proxies, harvesters, runner, webhook);
     setCurrentDate(moment());
     setIntervalID(
       setInterval(() => {
@@ -255,7 +253,10 @@ const TaskRunner = () => {
     if (!currentDate) return 'Unknown time, start again!';
 
     const timeDifference = Math.abs(currentDate.valueOf() - scheduledDate.valueOf());
-    if (currentDate >= scheduledDate || timeDifference <= 1000) return 'Started!';
+    if (currentDate >= scheduledDate || timeDifference <= 1000) {
+      clearInterval(intervalID);
+      return 'Started!';
+    }
 
     if (timeDifference < 60000) {
       return `Starts within ${Math.floor(timeDifference / 1000)} seconds`;
@@ -376,7 +377,18 @@ const TaskRunner = () => {
                 </InlineInputsContainer>
               </Fieldset>
               <Fieldset disabled={!props.values.restocks}>
-                <SoonParagraph>- Soon -</SoonParagraph>
+                <StyledInputsContainer>
+                  <p>Monitor delay</p>
+                  <StyledInput
+                    type="tel"
+                    name="monitorDelay"
+                    placeholder="500"
+                    hideErrors
+                    width="40%"
+                    data-centered
+                    maxLength={4}
+                  />
+                </StyledInputsContainer>
               </Fieldset>
             </Restocks>
             <ButtonsContainer>

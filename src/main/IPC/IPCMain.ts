@@ -1,3 +1,4 @@
+import { WebhookConfig } from './../types/WebhookConfig';
 import { ipcMain as ipc } from 'electron-better-ipc';
 import { verifyChromium } from '../chromium/verifyChromium';
 import { downloadChromium } from '../chromium/downloadChromium';
@@ -8,7 +9,6 @@ import {
   WINDOW_CLOSE,
   WINDOW_MINIMIZE,
   SETUP_HARVESTER,
-  DOWNLOAD_CHROMIUM,
   VERIFY_CHROME,
   START_TASKS,
   STOP_TASKS,
@@ -28,6 +28,8 @@ import {
   RESET_TIMER_STATE,
   GET_PROXY,
   SET_TASK_ACTIVITY,
+  DOWNLOAD_CHROMIUM,
+  TEST_WEBHOOK,
 } from './IPCEvents';
 import { Profile } from '../types/Profile';
 import { TaskStatus } from '../types/TaskStatus';
@@ -38,6 +40,7 @@ import { CheckoutData } from '../types/Checkout';
 import { Proxy } from '../types/Proxy';
 import { TasksManager } from '../bot/core/TasksManager';
 import { HarvestersManager } from '../bot/harvesters/HarvestersManager';
+import { DiscordManager } from '../DiscordManager';
 
 export abstract class IPCMain {
   private constructor() {}
@@ -45,8 +48,8 @@ export abstract class IPCMain {
     ipc.answerRenderer(VERIFY_CHROME, verifyChromium);
     ipc.on(DOWNLOAD_CHROMIUM, downloadChromium);
     ipc.on(SETUP_HARVESTER, (e, data: HarvesterData) => HarvestersManager.setupHarvester(data));
-    ipc.on(START_TASKS, (e, tasks, proxies, harvesters, runner) =>
-      TasksManager.start(tasks, proxies, harvesters, runner),
+    ipc.on(START_TASKS, (e, tasks, proxies, harvesters, runner, webhook) =>
+      TasksManager.start(tasks, proxies, harvesters, runner, webhook),
     );
     ipc.on(STOP_TASKS, e => TasksManager.stopAllHybirdTasks());
     ipc.on(WINDOW_MINIMIZE, () => mainWindow?.minimize());
@@ -54,6 +57,8 @@ export abstract class IPCMain {
     ipc.on(DOWNLOAD_UPDATE, () => {
       autoUpdater.downloadUpdate();
     });
+
+    ipc.on(TEST_WEBHOOK, (e, config: WebhookConfig) => DiscordManager.sendTestWebhook(config));
 
     ipc.on(RELAUNCH, () => {
       app.relaunch();

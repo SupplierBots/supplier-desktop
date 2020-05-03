@@ -1,3 +1,4 @@
+import { ItemDetails } from './ItemDetails';
 export enum TaskStatusType {
   Inactive = 'Inactive',
   Action = 'Action',
@@ -9,4 +10,5 @@ export interface TaskStatus {
   message: string;
   type: TaskStatusType;
   additionalInfo?: string | number | string[];
+  item?: ItemDetails;
 }

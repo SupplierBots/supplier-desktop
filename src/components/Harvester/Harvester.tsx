@@ -21,22 +21,19 @@ interface Props {
 }
 
 const Wrapper = styled.div`
-  height: 14rem;
-  width: 48.2%;
-  background-color: ${colors.secondaryBackground};
+  height: 12rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-radius: 0.5rem;
-  box-shadow: ${shadows.primary};
-  padding: 1.5rem 4rem;
-
-  :nth-of-type(odd) {
-    margin-right: 3rem;
-  }
+  padding: 1.5rem 0 1.3rem 0;
+  margin-top: 1rem;
 
   :not(:last-of-type) {
-    margin-bottom: 3rem;
+    border-bottom: 1px solid ${colors.tertiaryBackground};
+  }
+
+  :last-of-type {
+    border-bottom: 1px solid transparent;
   }
 `;
 
@@ -44,7 +41,6 @@ const StyledRemoveIcon = styled(RemoveIcon)<{ 'data-removable'?: boolean }>`
   width: 1.6rem;
   transition: all 0.3s;
   align-self: flex-start;
-  margin-top: 2rem;
   path {
     fill: ${({ 'data-removable': canBeRemoved }) =>
       canBeRemoved ? 'url(#iconGradient)' : colors.darkGrey};
@@ -68,7 +64,7 @@ const Name = styled.p`
   font-size: ${fonts.regular};
   color: ${colors.lightGrey};
   margin-right: auto;
-  margin-top: 2.3rem;
+  margin-top: 0.5rem;
 `;
 
 const HarvesterBody = styled.div`

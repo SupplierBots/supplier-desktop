@@ -7,6 +7,7 @@
 
   const payload = '$PRODUCT$';
   const externalStock = '$STOCK$';
+  const restocks = '$RESTOCKS$';
   const region = '$REGION$';
   const items = [];
 
@@ -27,6 +28,12 @@
 
   items.push(item.attributes.name);
 
+  try {
+    setSessionIDs();
+    Backbone.history.fragment = `products/${item.attributes.id}`;
+    setLastVisitedFragment();
+  } catch {}
+
   const styles = await fetchStyles(item);
   if (!styles) {
     return await reload();
@@ -34,7 +41,11 @@
 
   const selectedStyle = selectStyle(styles, colors, anyColor);
   if (!selectedStyle) {
-    notifyTask('Sold out', 'Error');
+    if (!restocks.enabled) {
+      notifyTask('Sold out', 'Error');
+      return;
+    }
+    waitForRestock();
     return;
   }
 
@@ -48,15 +59,36 @@
       : availableSizes[0];
 
   if (!size) {
-    notifyTask('Sold out', 'Error');
+    if (!restocks.enabled) {
+      notifyTask('Sold out', 'Error');
+      return;
+    }
+    waitForRestock();
     return;
   }
 
+  try {
+    Backbone.history.fragment = `products/${item.attributes.id}/${selectedStyle.attributes.id}`;
+    setLastVisitedFragment();
+  } catch {}
+
   await addToCart(size);
-  notifyTask('ATC', 'Action', items);
+  notifyTask('ATC', 'Action', {
+    name: item.attributes.name,
+    image: selectedStyle.attributes.image_url.replace('//', 'https://'),
+    style: selectedStyle.attributes.name,
+    size: size.attributes.name,
+  });
+  Supreme.app.navigate('#checkout', { trigger: true });
 
   async function reload() {
     await sleep(1500);
+    window.location.reload();
+  }
+
+  async function waitForRestock() {
+    notifyTask('Waiting for restock', 'Action');
+    await sleep(restocks.delay);
     window.location.reload();
   }
 
@@ -68,7 +100,6 @@
       Supreme.app.cart.addSizeToLocalStorage(size, 1);
       Supreme.app.cart.attributes.sizes.add(size, 1);
     }
-    setSessionIDs();
     return result;
   }
 
@@ -171,14 +202,14 @@
     return true;
   }
 
-  function notifyTask(message, type, additionalInfo) {
+  function notifyTask(message, type, item) {
     fetch('http://127.0.0.1:2140/status.json', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ message, type, additionalInfo }),
+      body: JSON.stringify({ message, type, item }),
     });
   }
 

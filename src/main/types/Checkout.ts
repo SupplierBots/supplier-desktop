@@ -1,3 +1,5 @@
+import { Profile } from './Profile';
+import { ItemDetails } from './ItemDetails';
 export type CheckoutStatus =
   | 'paid'
   | 'failed'
@@ -12,9 +14,18 @@ export type CheckoutStatus =
 export interface CheckoutData {
   status: CheckoutStatus;
   checkoutTime: number;
-  items: string[];
+  item: ItemDetails;
+  ticketDecline: boolean;
   site: 'supreme' | 'palace';
   region: 'eu' | 'us';
+}
+
+export interface CheckoutWebhook {
+  id: string;
+  profile: Profile;
+  mode: string;
+  item: ItemDetails;
+  status: CheckoutStatus;
 }
 
 export interface Checkout extends CheckoutData {

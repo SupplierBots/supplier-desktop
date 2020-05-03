@@ -4,9 +4,11 @@ import puppeteer from 'puppeteer-extra';
 import { mainWindow } from '../main';
 import { config } from '../../config';
 import { CHROMIUM_DOWNLOAD_PROGRESS } from '../IPC/IPCEvents';
+import fs from 'fs-extra';
 
 const downloadChromium = (e: IpcMainEvent) => {
   const chromiumPath = path.resolve(app.getPath('userData'), '.local-chromium');
+  fs.removeSync(chromiumPath);
   const fetcher = puppeteer.createBrowserFetcher({ path: chromiumPath });
 
   let prevPercentage = 0;

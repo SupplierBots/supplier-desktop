@@ -9,7 +9,7 @@ import electron, {
 import path from 'path';
 import { IPCMain } from './IPC/IPCMain';
 import { menu } from './menu';
-import { setDiscordActivity } from './discordRPC';
+import { DiscordManager } from './DiscordManager';
 
 export const isDev = process.env.NODE_ENV === 'development';
 
@@ -57,7 +57,7 @@ const createWindow = () => {
   mainWindow.loadURL(url);
 
   mainWindow.once('ready-to-show', () => {
-    setDiscordActivity();
+    DiscordManager.setDiscordActivity();
     mainWindow?.show();
   });
 
@@ -105,5 +105,11 @@ app.on('login', (event, webContents, request, authInfo, callback) => {
 
 IPCMain.registerListeners();
 if (!isDev) IPCMain.setupUpdater();
+
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+  app.exit(0);
+}
 
 export { mainWindow };

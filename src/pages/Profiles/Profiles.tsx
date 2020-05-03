@@ -120,7 +120,7 @@ const Profiles = ({ match, history }: RouteComponentProps<{ id: string }>) => {
                 <Input type="text" name="firstName" placeholder="First Name" />
                 <Input type="text" name="lastName" placeholder="Last Name" />
                 <Input type="text" name="email" placeholder="Email" />
-                <Input type="text" name="telephone" placeholder="Telephone" />
+                <Input type="text" name="telephone" placeholder="Phone Number" />
                 <Input type="text" name="address1" placeholder="Address 1" />
                 <Input type="text" name="address2" placeholder="Address 2" />
                 <Input type="text" name="city" placeholder="City" />

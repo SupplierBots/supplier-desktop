@@ -7,6 +7,7 @@
 .todos
 /.local-chromium
 *.env
+/chromium
 
 # testing
 /coverage

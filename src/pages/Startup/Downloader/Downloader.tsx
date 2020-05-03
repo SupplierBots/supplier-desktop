@@ -68,7 +68,7 @@ const Downloader = ({ history }: Props) => {
     //* Wait to install
     await new Promise(resolve => setTimeout(resolve, 10000));
     const { success } = await IPCRenderer.verifyChromium();
-    if (!success && attempt < 5) {
+    if (!success && attempt < 25) {
       await verifyChromium(++attempt);
       return;
     }

@@ -121,7 +121,7 @@ const Login = ({ history }: Props) => {
                 <>
                   <StyledError visible={error !== ''}>{error || 'No error'}</StyledError>
                   <Contact>
-                    <p>Do you have any problems?</p>
+                    <p>Do you have any questions?</p>
                     <Email>
                       Contact us: <GradientText>contact@supplierbot.io</GradientText>
                     </Email>

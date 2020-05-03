@@ -52,7 +52,7 @@ export async function parseResponse(response: Response, task: SupremeTask) {
       case 'outOfStock': {
         const message = res.status === 'outOfStock' ? 'Size sold out' : 'Failed. Retrying';
         task.updateTaskStatus({ message, type: TaskStatusType.Error });
-
+        task.sendWebhook(res);
         await task.retry();
         break;
       }
@@ -62,7 +62,7 @@ export async function parseResponse(response: Response, task: SupremeTask) {
         break;
       }
       case 'cca': {
-        if (res.acs_url?.includes('touchtechpayments')) {
+        if (res.acs_url) {
           task.cardinalUrl = res.acs_url;
           task.updateTaskStatus({ message: 'Loading 3D Secure', type: TaskStatusType.Action });
         }
@@ -73,7 +73,7 @@ export async function parseResponse(response: Response, task: SupremeTask) {
           message: 'Duplicate order',
           type: TaskStatusType.Error,
         });
-
+        task.sendWebhook(res);
         await task.page.close();
         await task.browser.close();
         break;
@@ -88,6 +88,7 @@ export async function parseResponse(response: Response, task: SupremeTask) {
           type: TaskStatusType.Success,
           additionalInfo: res.id,
         });
+        task.sendWebhook(res);
 
         await task.page.close();
         await task.browser.close();

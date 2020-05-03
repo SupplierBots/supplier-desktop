@@ -1,3 +1,5 @@
+import { ItemDetails } from './../../../types/ItemDetails';
+import { Subscription } from 'rxjs';
 import { Browser, Page } from 'puppeteer';
 import { Task } from '../../../types/Task';
 import { Supreme } from '../../../types/Supreme';
@@ -9,15 +11,19 @@ import { Product } from '../../../types/Product';
 
 import { parseRequest } from './parseRequest';
 import { parseResponse } from './parseResponse';
+import { sendRequest } from '../../requests/sendRequest';
 import { getVisibleElement } from './getVisibleElement';
-import { prepareCookies } from './prepareCookies';
+import { prepareCookies, setAddressCookie } from './prepareCookies';
 import { selectOption } from './selectOption';
 import { checkout } from './checkout';
 import { loadMainPage } from './loadPage';
+import { sendWebhook } from './sendWebhook';
 import { reportCheckout } from './reportCheckout';
+import { checkoutThroughRequest } from '../../requests/checkoutThroughRequest';
 import { injectScript } from '../pageInject/injectScript';
 import { Logger } from '../Logger';
 import moment, { Moment } from 'moment';
+import { Proxy } from '../../../types/Proxy';
 
 class SupremeTask {
   public browser: Browser;
@@ -26,23 +32,43 @@ class SupremeTask {
   public logger: Logger;
   public startTime: Moment = moment();
   public submitTime: Moment = moment();
-  public items: string[] = [];
+  public item: ItemDetails = null;
   public region: 'us' | 'eu';
   public cardinalUrl: string = '';
+  public isActive = true;
+  public checkoutHeaders: Record<string, string> = {};
+  public slug: string = '';
+  public checkoutPostData: string = '';
+  public cookies: string = '';
+  public restocks: {
+    enabled: boolean;
+    delay: number;
+  };
+  public stockMonitor: Subscription;
 
   constructor(
     readonly page: Page,
     readonly task: Task,
     readonly product: Product,
     readonly profile: Profile,
+    readonly proxy: Proxy | null,
     readonly scheduledDate: Moment,
     readonly isScheduled: boolean,
+    restocks: boolean,
+    monitorDelay: number,
   ) {
     this.logger = new Logger(task.id, page);
     this.browser = this.page.browser();
 
+    this.stockMonitor = ProductsMonitor.subscribe(this.setStock);
+
     const country = this.profile?.country?.label;
     this.region = country === 'USA' || country === 'Canada' ? 'us' : 'eu';
+
+    this.restocks = {
+      enabled: restocks,
+      delay: monitorDelay,
+    };
 
     this.checkoutDelay =
       typeof this.task.checkoutDelay === 'string'
@@ -51,7 +77,7 @@ class SupremeTask {
   }
 
   public init = async () => {
-    ProductsMonitor.subscribe(this.setStock);
+    //this.page.setRequestInterception(true);
     this.page.on('request', req => this.parseRequest(req, this));
     this.page.on('response', res => this.parseResponse(res, this));
     this.page.on('domcontentloaded', () => this.onLoad());
@@ -64,9 +90,11 @@ class SupremeTask {
     try {
       const fullUrl = (await this.page.evaluate('window.location.href')) as string;
       if (!fullUrl.includes('#checkout')) {
-        const timeDifference = this.scheduledDate.valueOf() - moment().valueOf();
-        await new Promise(resolve => setTimeout(resolve, timeDifference));
-        const source = injectScript(this.product, this.externalStock, this.region);
+        if (this.isScheduled) {
+          const timeDifference = this.scheduledDate.valueOf() - moment().valueOf();
+          await new Promise(resolve => setTimeout(resolve, timeDifference));
+        }
+        const source = injectScript(this.product, this.externalStock, this.region, this.restocks);
         this.startTime = moment();
         await this.page.evaluate(source);
       }
@@ -103,6 +131,10 @@ class SupremeTask {
   public checkout = checkout;
   public loadMainPage = loadMainPage;
   public reportCheckout = reportCheckout;
+  public setAddressCookie = setAddressCookie;
+  public checkoutThroughRequest = checkoutThroughRequest;
+  public sendRequest = sendRequest;
+  public sendWebhook = sendWebhook;
 }
 
 export default SupremeTask;

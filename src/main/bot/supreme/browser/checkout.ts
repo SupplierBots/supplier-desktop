@@ -14,11 +14,11 @@ export async function checkout(this: SupremeTask) {
     !this.profile.creditCardType?.value
   )
     return;
-
   const addToCartTime = Date.now();
+
+  this.stockMonitor.unsubscribe();
+
   await new Promise(resolve => setTimeout(resolve, 500));
-  const checkoutButton = await this.getVisibleElement(selectors.checkoutBtn);
-  await checkoutButton.tap();
 
   await this.page.waitForXPath(selectors.creditCardNumber, { visible: true, timeout: 0 });
 
@@ -53,7 +53,7 @@ export async function checkout(this: SupremeTask) {
       `$('#checkout-form').prepend($('<input type="hidden" name="cardinal_id" value="0_${cardinalID}" external="true">'));`,
     );
 
-    console.log(`[Checkout] Generated cardinal id: 0_${cardinalID}`);
+    //console.log(`[Checkout] Generated cardinal id: 0_${cardinalID}`);
   }
 
   const checkoutTime = Date.now() - addToCartTime.valueOf();
@@ -80,6 +80,7 @@ export async function checkout(this: SupremeTask) {
     message: 'Waiting for captcha',
     type: TaskStatusType.Action,
   });
+
   const captchaToken = await HarvestersManager.getCaptchaToken(sitekey);
   await this.page.evaluate(`$('[id*="g-recaptcha-response"]').html('${captchaToken}');`);
 
@@ -87,6 +88,7 @@ export async function checkout(this: SupremeTask) {
     await this.page.evaluate(`$('input[name*="cardinal"]:not([external="true"])').remove();`);
   }
 
+  await this.page.evaluate("$('[name*=\"terms\"]').attr('checked', true);");
   await this.page.evaluate(`window.recaptchaCallback();`);
   this.submitTime = moment();
 

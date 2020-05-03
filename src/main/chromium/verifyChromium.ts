@@ -12,9 +12,12 @@ export const verifyChromium = async (e: IpcMainInvokeEvent) => {
     const fetcher = puppeteer.createBrowserFetcher({
       path: chromiumPath,
     });
-
     const versions = await fetcher.localRevisions();
-    if (versions.length < 1) return false;
+
+    if (versions.length < 1) {
+      //dialog.showErrorBox('Error', 'No revision available');
+      return { success: false, executablePath: 'fail-no-version', version: app.getVersion() };
+    }
 
     const executablePath = fetcher.revisionInfo(config.chromiumVersion).executablePath;
 
@@ -23,15 +26,13 @@ export const verifyChromium = async (e: IpcMainInvokeEvent) => {
       headless: true,
     });
 
-    const page = await browser.newPage();
-    await page.goto('http://example.com/');
     await browser.close();
 
     return { success: true, executablePath, version: app.getVersion() };
   } catch (ex) {
     console.log('Error while testing browser.');
     console.log(ex);
-    fs.removeSync(chromiumPath);
+    //dialog.showErrorBox('Error', ex.toString());
     return { success: false, executablePath: 'fail', version: app.getVersion() };
   }
 };

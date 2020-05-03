@@ -38,6 +38,10 @@ export async function prepareCookies(this: SupremeTask) {
   if (!this.profile) return;
   const cookies = await this.page.cookies('https://www.supremenewyork.com/');
   await this.page.deleteCookie(...cookies);
-  await this.page.setCookie(generateJSAddressCookie(this.profile, this));
+  this.setAddressCookie();
   this.logger.writeObject({ message: 'Prepared cookies!' });
+}
+
+export async function setAddressCookie(this: SupremeTask) {
+  await this.page.setCookie(generateJSAddressCookie(this.profile, this));
 }

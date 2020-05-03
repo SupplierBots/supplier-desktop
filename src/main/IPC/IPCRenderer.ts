@@ -1,3 +1,4 @@
+import { WebhookConfig } from './../types/WebhookConfig';
 import {
   HARVESTER_STATE_CHANGE,
   HarvesterStatePayload,
@@ -6,7 +7,6 @@ import {
   SETUP_HARVESTER,
   VERIFY_CHROME,
   ChromiumVerifiedPayload,
-  DOWNLOAD_CHROMIUM,
   WINDOW_MINIMIZE,
   WINDOW_CLOSE,
   START_TASKS,
@@ -24,6 +24,8 @@ import {
   RESET_TIMER_STATE,
   GET_PROXY,
   SET_TASK_ACTIVITY,
+  DOWNLOAD_CHROMIUM,
+  TEST_WEBHOOK,
 } from './IPCEvents';
 
 import store from 'store/configureStore';
@@ -154,8 +156,9 @@ export abstract class IPCRenderer {
     proxies: Proxy[],
     harvesters: HarvesterData[],
     scheduler: RunnerState,
+    webhook: WebhookConfig,
   ) => {
-    ipc.send(START_TASKS, tasks, proxies, harvesters, scheduler);
+    ipc.send(START_TASKS, tasks, proxies, harvesters, scheduler, webhook);
   };
 
   public static stopTasks = () => {
@@ -168,5 +171,9 @@ export abstract class IPCRenderer {
 
   public static relaunch = () => {
     ipc.send(RELAUNCH);
+  };
+
+  public static testWebhook = (config: WebhookConfig) => {
+    ipc.send(TEST_WEBHOOK, config);
   };
 }

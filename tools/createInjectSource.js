@@ -35,15 +35,18 @@ const ticketScript = path.resolve(injectScriptDir, 'ticket.js');
   // const encryptedString = JSON.stringify([...exernalStockMatch[2]].map(s => s.charCodeAt()));
   // const finalContent = `${exernalStockMatch[1]}' + JSON.stringify(externalStock) + 'const region = ' + region + ';' + String.fromCharCode(...${encryptedString})`;
 
-  const regex = /(.*)"\$PRODUCT\$"(.*)(.*)"\$STOCK\$"(.*)(.*)\$REGION\$(.*)/s;
+  const regex = /(.*)"\$PRODUCT\$"(.*)(.*)"\$STOCK\$"(.*)(.*)"\$RESTOCKS\$"(.*)(.*)\$REGION\$(.*)/s;
   const match = regex.exec(code);
-  const finalContent = `/* eslint-disable no-template-curly-in-string */ export const injectScript = (payload: any, externalStock: any, region: any) => String.fromCharCode(${[
+
+  const finalContent = `/* eslint-disable no-template-curly-in-string */ export const injectScript = (payload: any, externalStock: any, region: any, restocks: any) => String.fromCharCode(${[
     ...match[1],
   ].map(s => s.charCodeAt())}) + JSON.stringify(payload) + String.fromCharCode(${[
     ...match[2],
   ].map(s => s.charCodeAt())}) + JSON.stringify(externalStock) + String.fromCharCode(${[
     ...match[4],
-  ].map(s => s.charCodeAt())}) + region + String.fromCharCode(${[...match[6]].map(s =>
+  ].map(s => s.charCodeAt())}) + JSON.stringify(restocks) + String.fromCharCode(${[
+    ...match[6],
+  ].map(s => s.charCodeAt())}) + region + String.fromCharCode(${[...match[8]].map(s =>
     s.charCodeAt(),
   )})`;
 

@@ -1,13 +1,12 @@
+import { WebhookConfig } from '../../types/WebhookConfig';
 import { Task } from '../../types/Task';
-import { app } from 'electron';
 import puppeteer from 'puppeteer-extra';
 import devices from 'puppeteer/DeviceDescriptors';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import path from 'path';
 import { config } from '../../../config';
 import { RunnerState } from '../../types/RunnerState';
 import ProxiesManager from './ProxiesManager';
-import { Target } from 'puppeteer';
+import { Target, Page } from 'puppeteer';
 import { IPCMain } from '../../IPC/IPCMain';
 import { HybridTask } from '../../types/HybridTask';
 import moment, { Moment } from 'moment';
@@ -16,6 +15,9 @@ import { Proxy } from '../../types/Proxy';
 import { ProductsMonitor } from '../supreme/ProductsMonitor';
 import { HarvesterData } from '../../types/HarvesterData';
 import { HarvestersManager } from '../harvesters/HarvestersManager';
+import { app } from 'electron';
+import path from 'path';
+import { DiscordManager } from '../../DiscordManager';
 
 class TasksManager {
   public static runner: RunnerState;
@@ -29,9 +31,11 @@ class TasksManager {
     proxies: Proxy[],
     harvesters: HarvesterData[],
     runner: RunnerState,
+    webhook: WebhookConfig,
   ) {
     this.runner = runner;
 
+    DiscordManager.setupWebhook(webhook);
     HarvestersManager.initialize(harvesters);
 
     // await Promise.all([
@@ -78,7 +82,7 @@ class TasksManager {
 
   private static async startHybridTask(task: Task, index = 0) {
     if (!task.profile) return;
-    const page = await this.createBrowser(task, index);
+    const [page, proxy] = await this.createBrowser(task, index);
     const product = await IPCMain.getProduct(task.products[0]);
     const profile = await IPCMain.getProfile(task.profile?.value);
 
@@ -92,8 +96,11 @@ class TasksManager {
         task,
         product,
         profile,
+        proxy,
         this.scheduledDate,
         this.isScheduled,
+        this.runner.restocks,
+        this.runner.monitorDelay,
       );
       await supremeTask.init();
     } catch (ex) {
@@ -126,9 +133,13 @@ class TasksManager {
 
   private static clearHybirdTask(id: string) {
     this.hybridTasks = this.hybridTasks.filter(t => t.task.id !== id);
+    if (this.hybridTasks.length !== 0) return;
+    HarvestersManager.closeAll();
+    ProductsMonitor.unsubscribeAll();
+    clearInterval(this.timerID);
   }
 
-  private static async createBrowser(task: Task, index = 0) {
+  private static async createBrowser(task: Task, index = 0): Promise<[Page, Proxy | null]> {
     const { id } = task;
     IPCMain.setTaskActivity(id, true);
 
@@ -138,11 +149,17 @@ class TasksManager {
     });
 
     const executablePath = fetcher.revisionInfo(config.chromiumVersion).executablePath;
+
     const iPhone = devices['iPhone X'];
     const { height, width, deviceScaleFactor } = iPhone.viewport;
     puppeteer.use(StealthPlugin());
 
-    const args = ['--disable-gpu', '--disable-infobars', `--window-size=${500},${height + 70}`];
+    const args = [
+      '--disable-gpu',
+      '--disable-infobars',
+      '--disable-web-security',
+      `--window-size=${500},${height + 70}`,
+    ];
 
     const proxy =
       this.runner.proxies && index >= this.runner.localIPTasks ? ProxiesManager.getRandom() : null;
@@ -173,7 +190,7 @@ class TasksManager {
 
     client.send('Network.setUserAgentOverride', {
       userAgent:
-        '"Mozilla/5.0 (iPhone; CPU iPhone OS 13_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/80.0.3987.149 Mobile/15E148 Safari/604.1"',
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/81.0.4044.122 Mobile/15E148 Safari/604.1',
       locale: `en-US,en`,
       platform: 'iOS',
     });
@@ -196,7 +213,7 @@ class TasksManager {
     ]);
 
     browser.on('targetcreated', (target: Target) => {
-      if (target.url().includes('devtools')) {
+      if (target.url().includes('devtools') && !config.tasksDebug) {
         browser.close();
       }
     });
@@ -215,7 +232,7 @@ class TasksManager {
       task,
     });
     //
-    return page;
+    return [page, proxy];
   }
 }
 

@@ -31,9 +31,9 @@ export const runnerValudationSchema = Yup.object().shape({
     then: Yup.number()
       .required()
       .min(100)
-      .max(10000),
+      .max(9999),
     otherwise: Yup.number()
       .min(100)
-      .max(10000),
+      .max(9999),
   }),
 });

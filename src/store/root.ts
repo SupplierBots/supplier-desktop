@@ -1,3 +1,4 @@
+import { webhookSlice } from './webhook/webhookSlice';
 import routes from 'constants/routes';
 import { connectRouter } from 'connected-react-router';
 import { createMemoryHistory } from 'history';
@@ -52,6 +53,7 @@ export const rootReducer = combineReducers({
   update: updateSlice.reducer,
   statistics: statisticsSlice.reducer,
   runner: runnerSlice.reducer,
+  webhook: webhookSlice.reducer,
   router: connectRouter(history),
 });
 

@@ -122,8 +122,8 @@ const Dashboard = () => {
         )}
 
         <ContactDescription>
-          <p>Did you notice any bugs?</p>
-          <p>Have some suggestions?</p>
+          <p>Did you notice some bugs?</p>
+          <p>Have any suggestions?</p>
           <p>Any business inquiries?</p>
           <ContactParagraph>
             Send us a message!<ContactEmail>{contactEmail}</ContactEmail>

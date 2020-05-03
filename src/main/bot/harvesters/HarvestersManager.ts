@@ -30,7 +30,7 @@ class HarvestersManager {
     }
 
     const token = await availableHarvester.getCaptchaToken(sitekey);
-    console.log('[HarvestersManager] Returned token: ' + token);
+    //console.log('[HarvestersManager] Returned token: ' + token);
     return token;
   }
 
@@ -65,8 +65,8 @@ class HarvestersManager {
   ) => {
     IPCMain.harvesterStateChange(id, true);
 
-    const width = 400;
-    const height = 550;
+    const width = 425;
+    const height = 575;
 
     const proxyData = proxy.value !== 'none' ? await IPCMain.getProxy(proxy.value) : null;
 

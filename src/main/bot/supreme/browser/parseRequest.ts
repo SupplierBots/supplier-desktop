@@ -3,17 +3,52 @@ import { TaskStatus } from '../../../types/TaskStatus';
 import { IPCMain } from '../../../IPC/IPCMain';
 import SupremeTask from './SupremeTask';
 
-export async function parseRequest(req: Request, task: SupremeTask) {
-  const data = req.postData();
-  task.logger.reportRequest(req);
+export async function parseRequest(request: Request, task: SupremeTask) {
+  const postData = request.postData();
+  const url = request.url();
+  task.logger.reportRequest(request);
 
-  if (req.url() !== 'http://127.0.0.1:2140/status.json' || !data) return;
+  // if (url === 'https://www.supremenewyork.com/checkout.json' && request.method() === 'POST') {
+  //   const headers = request.headers();
 
-  const status = JSON.parse(data) as TaskStatus;
+  //   if (!postData) {
+  //     request.continue();
+  //     return;
+  //   }
+
+  //   request.respond({
+  //     contentType: 'application/json; charset=utf-8',
+  //     body: JSON.stringify({
+  //       status: 'failed',
+  //       cart: [],
+  //       errors: {
+  //         order: {},
+  //         credit_card: {
+  //           year: ['expired'],
+  //           number: [],
+  //           brand: [],
+  //         },
+  //       },
+  //     }),
+  //   });
+  //   task.checkoutThroughRequest(headers, postData);
+  //   return;
+  // }
+
+  if (
+    request.method() !== 'POST' ||
+    request.url() !== 'http://127.0.0.1:2140/status.json' ||
+    !postData
+  ) {
+    return;
+  }
+
+  const status = JSON.parse(postData) as TaskStatus;
 
   if (status.message === 'ATC') {
-    task.items = Array.isArray(status.additionalInfo) ? status.additionalInfo : [];
-    return await task.checkout();
+    task.item = status.item ? status.item : null;
+    await task.checkout();
+    return;
   }
 
   IPCMain.updateTaskStatus(task.task.id, status);

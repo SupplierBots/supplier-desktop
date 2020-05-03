@@ -105,8 +105,9 @@ export namespace Supreme {
       | 'cardinal_queued';
     slug?: string;
     error?: string;
-    id?: number;
+    id?: string;
     acs_url?: string;
+    page?: string;
     info?: {
       billing_name: string;
       email: string;
