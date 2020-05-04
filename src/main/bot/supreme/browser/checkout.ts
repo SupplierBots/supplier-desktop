@@ -8,6 +8,7 @@ import { HarvestersManager } from '../../../bot/harvesters/HarvestersManager';
 
 export async function checkout(this: SupremeTask) {
   if (
+    !this.isActive ||
     !this.profile ||
     !this.profile.month?.value ||
     !this.profile.year?.value ||
@@ -49,7 +50,7 @@ export async function checkout(this: SupremeTask) {
 
   if (this.region === 'eu') {
     const cardinalID = uuid();
-    await this.page.evaluate(
+    await this.saveEvaluate(
       `$('#checkout-form').prepend($('<input type="hidden" name="cardinal_id" value="0_${cardinalID}" external="true">'));`,
     );
 
@@ -72,24 +73,25 @@ export async function checkout(this: SupremeTask) {
     await new Promise(resolve => setTimeout(resolve, requiredDelay));
   }
 
-  await this.page.evaluate(waitTicket());
+  await this.saveEvaluate(waitTicket());
 
-  const sitekey = (await this.page.evaluate(`$('#g-recaptcha').attr('data-sitekey');`)) as string;
+  const sitekey = await this.saveEvaluate<string>(`$('#g-recaptcha').attr('data-sitekey');`);
 
+  if (!this.isActive) return;
   this.updateTaskStatus({
     message: 'Waiting for captcha',
     type: TaskStatusType.Action,
   });
 
   const captchaToken = await HarvestersManager.getCaptchaToken(sitekey);
-  await this.page.evaluate(`$('[id*="g-recaptcha-response"]').html('${captchaToken}');`);
+  await this.saveEvaluate(`$('[id*="g-recaptcha-response"]').html('${captchaToken}');`);
 
   if (this.region === 'eu') {
-    await this.page.evaluate(`$('input[name*="cardinal"]:not([external="true"])').remove();`);
+    await this.saveEvaluate(`$('input[name*="cardinal"]:not([external="true"])').remove();`);
   }
 
-  await this.page.evaluate("$('[name*=\"terms\"]').attr('checked', true);");
-  await this.page.evaluate(`window.recaptchaCallback();`);
+  await this.saveEvaluate("$('[name*=\"terms\"]').attr('checked', true);");
+  await this.saveEvaluate(`window.recaptchaCallback();`);
   this.submitTime = moment();
 
   this.updateTaskStatus({

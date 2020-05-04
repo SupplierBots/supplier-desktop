@@ -44,9 +44,9 @@ export async function parseRequest(request: Request, task: SupremeTask) {
   }
 
   const status = JSON.parse(postData) as TaskStatus;
+  task.item = status.item ? status.item : null;
 
   if (status.message === 'ATC') {
-    task.item = status.item ? status.item : null;
     await task.checkout();
     return;
   }
@@ -54,6 +54,8 @@ export async function parseRequest(request: Request, task: SupremeTask) {
   IPCMain.updateTaskStatus(task.task.id, status);
 
   if (status.message !== 'Sold out') return;
+  task.sendWebhook({ status: 'outOfStock', id: 'Unknown' });
+  task.isActive = false;
   await task.page.close();
   await task.page.browser().close();
 }

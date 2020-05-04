@@ -141,7 +141,8 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
       const newTask = {
         ...task,
         isActive: false,
-        status: { message: 'Inactive', type: TaskStatusType.Inactive },
+        //status: { message: 'Inactive', type: TaskStatusType.Inactive },
+        status: { message: 'Success', type: TaskStatusType.Success },
         id: uuid(),
       };
       dispatch(addTask({ item: newTask }));

@@ -27,6 +27,7 @@ import { setTimerState } from 'store/controller/controllerSlice';
 import Select from 'components/Select/Select';
 import { proxyRegions } from 'pages/Proxies/FormDetails';
 import Radio from 'components/Radio/Radio';
+import { TaskStatusType } from 'main/types/TaskStatus';
 
 const ConfigBox = styled.div`
   height: 11rem;
@@ -36,14 +37,14 @@ const ConfigBox = styled.div`
   box-shadow: ${shadows.primary};
 `;
 const Scheduler = styled(ConfigBox)`
-  width: 22rem;
+  width: 23.5rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 `;
 
 const ProxySelector = styled(ConfigBox)`
-  width: 32rem;
+  width: 30.5rem;
   margin-left: 1.5rem;
 `;
 
@@ -183,7 +184,7 @@ const StyledInputsContainer = styled(InlineInputsContainer)`
 const Separator = styled.div`
   height: 1.5rem;
   width: 1px;
-  margin: 0 1rem;
+  margin: 0 0;
   background-color: ${colors.darkGrey};
 `;
 
@@ -216,21 +217,17 @@ const TaskRunner = () => {
 
   const startTasks = async () => {
     if (!runner.scheduled) {
-      IPCRenderer.startTasks(tasks, proxies, harvesters, runner, webhook);
+      IPCRenderer.startTasks(getAvailableTasks(), proxies, harvesters, runner, webhook);
       return;
     }
 
     dispatch(setTimerState({ active: true }));
 
-    const date = moment(runner.time, 'HH:mm:ss');
-
-    if (date.valueOf() < moment().valueOf()) {
-      date.add(1, 'day');
-    }
+    const date = moment(runner.time, 'DD/MM HH:mm:ss');
 
     setScheduledDate(date);
 
-    IPCRenderer.startTasks(tasks, proxies, harvesters, runner, webhook);
+    IPCRenderer.startTasks(getAvailableTasks(), proxies, harvesters, runner, webhook);
     setCurrentDate(moment());
     setIntervalID(
       setInterval(() => {
@@ -265,6 +262,8 @@ const TaskRunner = () => {
     return `Starts ${currentDate?.to(scheduledDate)}`;
   };
 
+  const getAvailableTasks = () => tasks.filter(t => t.status.type !== TaskStatusType.Success);
+
   return (
     <Wrapper>
       <Formik
@@ -296,17 +295,20 @@ const TaskRunner = () => {
                 </ScheduledState>
               ) : (
                 <Fieldset disabled={!props.values.scheduled}>
-                  <InlineInputsContainer>
+                  <StyledInputsContainer>
                     <StyledInput
                       type="text"
                       name="time"
-                      placeholder="HH:MM:SS (24h)"
-                      maskPlaceholder="HH:MM:SS"
+                      placeholder="DD/MM hh:mm:ss"
+                      maskPlaceholder="DD/MM hh:mm:ss"
                       masked
-                      mask="99:99:99"
+                      data-centered
+                      mask="99/99 99:99:99"
                       hideErrors
+                      width="80%"
                     />
-                  </InlineInputsContainer>
+                    <span>24h</span>
+                  </StyledInputsContainer>
                 </Fieldset>
               )}
             </Scheduler>
@@ -356,7 +358,7 @@ const TaskRunner = () => {
                     name="localIPTasks"
                     placeholder="10"
                     hideErrors
-                    width="19%"
+                    width="20%"
                     data-centered
                     maxLength={2}
                   />
@@ -395,9 +397,11 @@ const TaskRunner = () => {
               {!isAnyTaskActive() ? (
                 <ActionButton
                   onClick={startTasks}
-                  data-disabled={tasks.length === 0 || harvesters.length === 0}
+                  data-disabled={getAvailableTasks().length === 0 || harvesters.length === 0}
                 >
-                  <StyledStartIcon data-disabled={tasks.length === 0 || harvesters.length === 0} />
+                  <StyledStartIcon
+                    data-disabled={getAvailableTasks().length === 0 || harvesters.length === 0}
+                  />
                 </ActionButton>
               ) : (
                 <ActionButton onClick={stopTasks}>

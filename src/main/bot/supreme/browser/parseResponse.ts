@@ -74,6 +74,7 @@ export async function parseResponse(response: Response, task: SupremeTask) {
           type: TaskStatusType.Error,
         });
         task.sendWebhook(res);
+        task.isActive = false;
         await task.page.close();
         await task.browser.close();
         break;
@@ -89,7 +90,7 @@ export async function parseResponse(response: Response, task: SupremeTask) {
           additionalInfo: res.id,
         });
         task.sendWebhook(res);
-
+        task.isActive = false;
         await task.page.close();
         await task.browser.close();
         break;

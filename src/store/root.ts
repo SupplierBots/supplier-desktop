@@ -1,3 +1,4 @@
+import { authPersistSlice } from './authPersist/authPersistSlice';
 import { webhookSlice } from './webhook/webhookSlice';
 import routes from 'constants/routes';
 import { connectRouter } from 'connected-react-router';
@@ -42,6 +43,7 @@ export type StoreObservable = Observable<ReturnType<AppDispatch>>;
 
 export const rootReducer = combineReducers({
   auth: authSlice.reducer,
+  authPersist: authPersistSlice.reducer,
   lastVisited: lastVisitedSlice.reducer,
   controller: controllerSlice.reducer,
   profiles: profilesSlice.reducer,

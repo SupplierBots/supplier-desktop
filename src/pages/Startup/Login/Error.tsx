@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { fonts, colors } from 'theme/main';
 
 interface Props {
-  visible: boolean;
+  visible?: boolean;
 }
 const Error = styled.p<Props>`
   opacity: ${({ visible }) => (visible ? '1' : '0')};

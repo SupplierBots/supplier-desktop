@@ -42,7 +42,12 @@
   const selectedStyle = selectStyle(styles, colors, anyColor);
   if (!selectedStyle) {
     if (!restocks.enabled) {
-      notifyTask('Sold out', 'Error');
+      notifyTask('Sold out', 'Error', {
+        name: item.attributes.name,
+        image: selectedStyle.attributes.image_url.replace('//', 'https://'),
+        style: 'sold-out',
+        size: 'sold-out',
+      });
       return;
     }
     waitForRestock();
@@ -60,7 +65,12 @@
 
   if (!size) {
     if (!restocks.enabled) {
-      notifyTask('Sold out', 'Error');
+      notifyTask('Sold out', 'Error', {
+        name: item.attributes.name,
+        image: selectedStyle.attributes.image_url.replace('//', 'https://'),
+        style: 'sold-out',
+        size: 'sold-out',
+      });
       return;
     }
     waitForRestock();

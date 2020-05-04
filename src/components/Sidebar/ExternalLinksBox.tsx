@@ -8,6 +8,7 @@ import { colors } from 'theme/main';
 import { shell } from 'electron';
 import { useStateDispatch, useStateSelector } from 'hooks/typedReduxHooks';
 import { initiateLogout } from 'store/auth/authEpics';
+import { resetCredentials } from 'store/authPersist/authPersistSlice';
 
 const Wrapper = styled.div`
   display: flex;
@@ -38,7 +39,12 @@ const ExternalLinksBox = () => {
 
   return (
     <Wrapper>
-      <ExternalLink onClick={() => dispatch(initiateLogout({ uid }))}>
+      <ExternalLink
+        onClick={() => {
+          dispatch(resetCredentials());
+          dispatch(initiateLogout({ uid }));
+        }}
+      >
         <LogoutIcon />
       </ExternalLink>
 

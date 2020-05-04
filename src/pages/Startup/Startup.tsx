@@ -10,10 +10,11 @@ import Loader from './Loader/Loader';
 import { fadeIn } from 'theme/animations';
 
 import { IPCRenderer } from 'main/IPC/IPCRenderer';
-import { setActive } from 'store/harvesters/harvestersSlice';
+import { setActive, removeBrowser } from 'store/harvesters/harvestersSlice';
 import { setAppDetails, setTimerState } from 'store/controller/controllerSlice';
 import { useStateSelector, useStateDispatch } from 'hooks/typedReduxHooks';
 import { setTaskActivity } from 'store/tasks/tasksSlice';
+import { setScheduler } from 'store/runner/runnerSlice';
 
 export const StyledParticles = styled(Particles)`
   position: absolute;
@@ -31,19 +32,34 @@ type Props = RouteComponentProps;
 
 const Startup = ({ history }: Props) => {
   const [loading, setLoading] = useState(true);
-  const { harvesters, tasks } = useStateSelector(state => state);
+  const { harvesters, tasks, runner } = useStateSelector(state => state);
   const dispatch = useStateDispatch();
 
-  const resetBrowsers = () => {
+  const resetState = () => {
     dispatch(setTimerState({ active: false }));
     harvesters.forEach(h => {
       dispatch(setActive({ id: h.id, isActive: false }));
     });
 
+    const harvestersToDelete = harvesters.slice(3, 6);
+    harvestersToDelete.forEach(h => dispatch(removeBrowser({ id: h.id })));
+
+    if (runner.time.length > 0 && runner.time.length < 10) {
+      dispatch(
+        setScheduler({
+          data: {
+            ...runner,
+            scheduled: false,
+            time: '',
+          },
+        }),
+      );
+    }
+
     tasks.forEach(t => dispatch(setTaskActivity({ id: t.id, isActive: false })));
   };
 
-  useEffect(resetBrowsers, []);
+  useEffect(resetState, []);
 
   useEffect(() => {
     (async () => {

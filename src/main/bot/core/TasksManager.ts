@@ -1,3 +1,4 @@
+import { TaskStatusType } from './../../types/TaskStatus';
 import { WebhookConfig } from '../../types/WebhookConfig';
 import { Task } from '../../types/Task';
 import puppeteer from 'puppeteer-extra';
@@ -60,11 +61,9 @@ class TasksManager {
       return;
     }
 
-    const scheduled = moment(runner.time, 'HH:mm:ss');
-    if (scheduled.valueOf() < moment().valueOf()) {
-      scheduled.add(1, 'day');
-    }
-    this.scheduledDate = scheduled;
+    this.scheduledDate = moment(runner.time, 'DD/MM HH:mm:ss');
+    console.log(this.scheduledDate);
+
     this.timerID = setInterval(async () => {
       if (moment().valueOf() + 60000 >= this.scheduledDate.valueOf()) {
         clearInterval(this.timerID);
@@ -82,6 +81,12 @@ class TasksManager {
 
   private static async startHybridTask(task: Task, index = 0) {
     if (!task.profile) return;
+
+    IPCMain.updateTaskStatus(task.id, {
+      message: 'Preparing',
+      type: TaskStatusType.Action,
+    });
+
     const [page, proxy] = await this.createBrowser(task, index);
     const product = await IPCMain.getProduct(task.products[0]);
     const profile = await IPCMain.getProfile(task.profile?.value);
@@ -117,6 +122,7 @@ class TasksManager {
 
     this.hybridTasks.forEach(task => {
       if (!task.page || !task.page.browser().isConnected()) {
+        task.task.isActive = false;
         this.clearHybirdTask(task.task.id);
         return;
       }

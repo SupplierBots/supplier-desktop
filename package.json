@@ -2,7 +2,7 @@
   "name": "supplier",
   "productName": "Supplier",
   "description": "Supreme & Palace Bot",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "copyright": "Supplier",
   "main": "build/electron.js",
   "homepage": ".",

@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
 
 //Works, right?
-const timeRegex = /(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)/;
+const timeRegex = /(0[1-9]|[12]\d|3[01])\/(0[1-9]|1[0-2]) (?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)/;
 
 export const runnerValudationSchema = Yup.object().shape({
   scheduled: Yup.boolean(),

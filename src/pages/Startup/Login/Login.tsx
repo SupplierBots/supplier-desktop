@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import LoginCard from 'components/LoginCard/LoginCard';
 import InlineLogo from 'components/InlineLogo/InlineLogo';
@@ -14,6 +14,8 @@ import Spinner from 'components/Spinner/Spinner';
 import Fieldset from 'components/Fieldset/Fieldset';
 import { useStateDispatch, useStateSelector } from 'hooks/typedReduxHooks';
 import { setAuthError } from 'store/auth/authSlice';
+import Slider from 'components/Slider/Slider';
+import { saveCredentials } from 'store/authPersist/authPersistSlice';
 
 const Wrapper = styled.div`
   display: flex;
@@ -33,7 +35,7 @@ const StyledInlineLogo = styled.div`
 
 const Contact = styled.div`
   font-size: ${fonts.regular};
-  margin-bottom: 2rem;
+  margin: 2rem 0;
 `;
 
 const Email = styled.p`
@@ -54,7 +56,8 @@ const StyledButton = styled(Button)`
 `;
 
 const StyledError = styled(Error)`
-  margin-top: 0.7rem;
+  margin: 2.5rem 0 1rem 0;
+  opacity: 1;
 `;
 
 const SpinnerWrapper = styled.div`
@@ -64,14 +67,27 @@ const SpinnerWrapper = styled.div`
   transform: scale(0.8);
 `;
 
+const StyledSlider = styled(Slider)`
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+`;
+
 type Props = RouteComponentProps;
 
 const Login = ({ history }: Props) => {
   const [isSignUp, setSignUp] = useState(false);
+  const [attempt, setAttempt] = useState(0);
   const dispatch = useStateDispatch();
   const { verifying, error, authenticated } = useStateSelector(state => state.auth);
+  const { credentials: savedCredentials, remember } = useStateSelector(state => state.authPersist);
+
+  useEffect(() => {
+    if (!remember || attempt > 0) return;
+    dispatch(loginAttempt({ credentials: savedCredentials }));
+  }, [dispatch, remember, savedCredentials, attempt]);
 
   const submit = async (values: Values, actions: FormikHelpers<Values>) => {
+    setAttempt(attempt + 1);
     if (isSignUp) {
       const credentials = {
         email: values.email,
@@ -85,17 +101,29 @@ const Login = ({ history }: Props) => {
         password: values.password,
       };
       dispatch(loginAttempt({ credentials }));
+      if (!values.remember) return;
+      dispatch(saveCredentials({ credentials }));
     }
     actions.setSubmitting(false);
+  };
+
+  const getInitialValues = () => {
+    if (!remember) return initialValues;
+    return {
+      ...initialValues,
+      email: savedCredentials.email,
+      password: savedCredentials.password,
+      remember,
+    };
   };
   return (
     <Formik
       enableReinitialize
       onSubmit={submit}
-      initialValues={initialValues}
+      initialValues={getInitialValues()}
       validationSchema={isSignUp ? signUpSchema : signInSchema}
     >
-      {({ resetForm }) => (
+      {({ resetForm, values }) => (
         <Wrapper>
           <LoginCard>
             <StyledInlineLogo>
@@ -105,6 +133,11 @@ const Login = ({ history }: Props) => {
               <Fieldset disabled={verifying}>
                 <Input type="text" name="email" placeholder="Email" />
                 <Input type="password" name="password" placeholder="Password" />
+                {!isSignUp && (
+                  <StyledSlider name="remember" checked={values.remember}>
+                    Remember
+                  </StyledSlider>
+                )}
                 {isSignUp && (
                   <>
                     <Input type="password" name="passwordConfirm" placeholder="Confirm Password" />
@@ -119,7 +152,7 @@ const Login = ({ history }: Props) => {
                 </SpinnerWrapper>
               ) : (
                 <>
-                  <StyledError visible={error !== ''}>{error || 'No error'}</StyledError>
+                  {error && <StyledError>{error || 'No error'}</StyledError>}
                   <Contact>
                     <p>Do you have any questions?</p>
                     <Email>

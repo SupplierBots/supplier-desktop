@@ -6,7 +6,7 @@ import { Supreme } from '../../../types/Supreme';
 import { Profile } from '../../../types/Profile';
 import { IPCMain } from '../../../IPC/IPCMain';
 import { ProductsMonitor } from '../ProductsMonitor';
-import { TaskStatus } from '../../../types/TaskStatus';
+import { TaskStatus, TaskStatusType } from '../../../types/TaskStatus';
 import { Product } from '../../../types/Product';
 
 import { parseRequest } from './parseRequest';
@@ -19,6 +19,7 @@ import { checkout } from './checkout';
 import { loadMainPage } from './loadPage';
 import { sendWebhook } from './sendWebhook';
 import { reportCheckout } from './reportCheckout';
+import { saveEvaluate } from './saveEvaluate';
 import { checkoutThroughRequest } from '../../requests/checkoutThroughRequest';
 import { injectScript } from '../pageInject/injectScript';
 import { Logger } from '../Logger';
@@ -88,20 +89,25 @@ class SupremeTask {
 
   private onLoad = async () => {
     try {
+      if (!this.isActive) return;
       const fullUrl = (await this.page.evaluate('window.location.href')) as string;
       if (!fullUrl.includes('#checkout')) {
         if (this.isScheduled) {
           const timeDifference = this.scheduledDate.valueOf() - moment().valueOf();
+          if (timeDifference > 0) {
+            this.updateTaskStatus({ message: 'Waiting', type: TaskStatusType.Action });
+          }
           await new Promise(resolve => setTimeout(resolve, timeDifference));
         }
         const source = injectScript(this.product, this.externalStock, this.region, this.restocks);
         this.startTime = moment();
-        await this.page.evaluate(source);
+        await this.saveEvaluate(source);
       }
     } catch {}
   };
 
   public updateTaskStatus = ({ message, type, additionalInfo }: TaskStatus) => {
+    if (!this.isActive || this.page.isClosed()) return;
     IPCMain.updateTaskStatus(this.task.id, {
       message,
       type,
@@ -111,6 +117,7 @@ class SupremeTask {
 
   public retry = async () => {
     try {
+      if (!this.isActive) return;
       await new Promise(resolve => setTimeout(resolve, 1000));
       await this.prepareCookies();
       await this.loadMainPage();
@@ -135,6 +142,7 @@ class SupremeTask {
   public checkoutThroughRequest = checkoutThroughRequest;
   public sendRequest = sendRequest;
   public sendWebhook = sendWebhook;
+  public saveEvaluate = saveEvaluate;
 }
 
 export default SupremeTask;
