@@ -208,7 +208,8 @@ const TaskRunner = () => {
     return null;
   };
 
-  const isAnyTaskActive = () => tasks.some(t => t.isActive) || controller.isTimerActive;
+  const isAnyTaskActive = () =>
+    tasks.some(t => t.isActive) || controller.isTimerActive || harvesters.some(h => h.isActive);
 
   const createNewTask = () => {
     if (isAnyTaskActive()) return;
@@ -351,17 +352,21 @@ const TaskRunner = () => {
                       US
                     </Radio>
                   </RadioContainer>
-                  <Separator />
-                  <p>Local IP tasks</p>
-                  <StyledInput
-                    type="tel"
-                    name="localIPTasks"
-                    placeholder="10"
-                    hideErrors
-                    width="20%"
-                    data-centered
-                    maxLength={2}
-                  />
+                  {props.values.proxies && (
+                    <>
+                      <Separator />
+                      <p>Local IP tasks</p>
+                      <StyledInput
+                        type="tel"
+                        name="localIPTasks"
+                        placeholder="10"
+                        hideErrors
+                        width="20%"
+                        data-centered
+                        maxLength={2}
+                      />
+                    </>
+                  )}
                 </StyledInputsContainer>
               </Fieldset>
             </ProxySelector>

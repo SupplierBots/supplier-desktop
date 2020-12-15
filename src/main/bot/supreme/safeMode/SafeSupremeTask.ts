@@ -1,8 +1,7 @@
-import { Browser, Page, ElementHandle, SetCookie } from 'puppeteer';
+import { Browser, Page, ElementHandle, SetCookie } from 'puppeteer-core';
 import { Profile } from '../../../types/Profile';
-import { Logger } from '../Logger';
 import { Task } from '../../../types/Task';
-import { selectors } from '../browser/selectors';
+import { selectors } from '../hybrid/selectors';
 import moment, { Moment } from 'moment';
 import { isMatch } from '../../../bot/core/keywordsManager';
 import { Product } from '../../../types/Product';
@@ -32,11 +31,9 @@ class SafeSupremeTask {
   public browser: Browser;
   public checkoutDelay: number;
   public profile: Profile | null = null;
-  public logger: Logger;
   public atcTime: Moment;
 
   constructor(readonly page: Page, readonly task: Task, readonly product: Product) {
-    this.logger = new Logger(task.id, page);
     this.browser = this.page.browser();
     this.atcTime = moment();
     this.checkoutDelay =
@@ -49,10 +46,7 @@ class SafeSupremeTask {
     if (!this.task.profile) return;
     this.profile = (await IPCMain.getProfile(this.task.profile.value)) ?? null;
 
-    this.page.on('request', req => this.logger.reportRequest(req));
-
     this.page.on('response', async response => {
-      this.logger.reportResponse(response);
       const url = response.url();
       if (/.*(checkout|status).json$/.test(url)) {
         const res = (await response.json()) as any;
@@ -66,12 +60,9 @@ class SafeSupremeTask {
   };
 
   public start = async () => {
-    this.logger.writeString('Started safe task!');
     await this.prepareCookies();
-    this.logger.writeString('Prepared cookies!');
     await this.page.goto('https://www.supremenewyork.com/mobile#categories/new');
     this.page.reload();
-    this.logger.writeString('Loaded main page!');
     await this.searchAndOpenProduct();
     await this.addToCart();
     await this.checkout();

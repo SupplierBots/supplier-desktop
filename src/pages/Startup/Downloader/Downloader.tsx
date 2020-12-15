@@ -6,9 +6,14 @@ import ProgressBar from 'components/ProgressBar/ProgressBar';
 import { RouteComponentProps } from 'react-router';
 import { ipcRenderer as ipc, IpcRendererEvent, shell } from 'electron';
 import { IPCRenderer } from 'main/IPC/IPCRenderer';
-import { CHROMIUM_DOWNLOAD_PROGRESS } from '../../../main/IPC/IPCEvents';
 import { StyledSpinner } from 'pages/Update/Update';
 import { config } from 'config';
+import Button from 'components/Button/Button';
+import { ReactComponent as ChromeLogo } from 'assets/Chrome.svg';
+import ButtonsContainer from 'components/ButtonsContainer/ButtonsContainer';
+import routes from 'constants/routes';
+import { setAppDetails } from 'store/controller/controllerSlice';
+import { useStateDispatch } from 'hooks/typedReduxHooks';
 
 const Wrapper = styled.div`
   display: flex;
@@ -22,14 +27,23 @@ const Wrapper = styled.div`
 
 const ProgressMessage = styled.p`
   font-size: ${fonts.large};
-  margin-top: 23rem;
-  margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
 `;
 
+const StyledChromeLogo = styled(ChromeLogo)`
+  height: 6rem;
+  width: 6rem;
+  margin-bottom: 1.5rem;
+`;
+
+const StyledButtonsContainer = styled(ButtonsContainer)`
+  align-self: center;
+`;
+
 const TutorialMessage = styled.p`
-  margin-top: 4rem;
+  position: absolute;
+  bottom: 10rem;
   font-size: ${fonts.large};
   color: ${colors.darkGrey};
 `;
@@ -47,49 +61,60 @@ const TutLink = styled.span`
   }
 `;
 
+const MissingChromeInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 7.5rem;
+  margin-bottom: 2rem;
+  width: 70rem;
+  text-align: center;
+`;
+
 type Props = RouteComponentProps;
 
 const Downloader = ({ history }: Props) => {
-  const [progress, setProgress] = useState(0);
-  const [downloaded, setDownloaded] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+  const dispatch = useStateDispatch();
 
-  const handleDownloadProgress = (
-    e: IpcRendererEvent,
-    status: { done: boolean; progress: number },
-  ) => {
-    setProgress(status.progress);
-    if (!status.done) return;
-    ipc.removeListener(CHROMIUM_DOWNLOAD_PROGRESS, handleDownloadProgress);
-    setDownloaded(true);
-    verifyChromium();
-  };
+  const verifyChromium = async () => {
+    setVerifying(true);
+    const { success, executablePath, version } = await IPCRenderer.checkIfChromeInstalled();
+    await new Promise(r => setTimeout(r, 1000));
 
-  const verifyChromium = async (attempt = 0) => {
-    //* Wait to install
-    await new Promise(resolve => setTimeout(resolve, 10000));
-    const { success } = await IPCRenderer.verifyChromium();
-    if (!success && attempt < 25) {
-      await verifyChromium(++attempt);
-      return;
+    if (success) {
+      dispatch(setAppDetails({ path: executablePath, version }));
+      history.push(routes.login);
     }
-    IPCRenderer.relaunch();
-  };
 
-  const fetchChromium = () => {
-    IPCRenderer.downloadChromium();
-    ipc.on(CHROMIUM_DOWNLOAD_PROGRESS, handleDownloadProgress);
+    setVerifying(false);
   };
-
-  useEffect(fetchChromium, []);
 
   return (
     <Wrapper>
       <InlineLogo />
-      <ProgressMessage>
-        {downloaded ? 'Installing' : `Downloading remaining files (${progress}%)`}
-        {downloaded && <StyledSpinner />}
-      </ProgressMessage>
-      {!downloaded && <ProgressBar progressPercentage={progress} />}
+      <MissingChromeInfo>
+        <StyledChromeLogo />
+        <ProgressMessage>
+          {verifying ? 'Looking for Google Chrome' : `Couldn't find Google Chrome.`}
+          {verifying && <StyledSpinner />}
+        </ProgressMessage>
+        {!verifying && (
+          <ProgressMessage>It is required for the bot to work properly.</ProgressMessage>
+        )}
+      </MissingChromeInfo>
+      {!verifying && (
+        <StyledButtonsContainer>
+          <Button small onClick={() => shell.openExternal(config.chromeUrl)}>
+            Download
+          </Button>
+          <Button small onClick={verifyChromium}>
+            Try again
+          </Button>
+        </StyledButtonsContainer>
+      )}
+
       <TutorialMessage>
         In the meantime you can read our{' '}
         <TutLink onClick={() => shell.openExternal(config.tutorialUrl)}>detailed tutorial</TutLink>

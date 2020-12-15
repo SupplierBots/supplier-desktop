@@ -2,38 +2,24 @@ const fs = require('fs-extra');
 const path = require('path');
 const babel = require('@babel/core');
 
-const injectScriptDir = path.resolve(process.cwd(), 'src', 'main', 'bot', 'supreme', 'pageInject');
-const script = path.resolve(injectScriptDir, 'source.js');
-const ticketScript = path.resolve(injectScriptDir, 'ticket.js');
+const mobileInjectDir = path.resolve(process.cwd(), 'src', 'main', 'bot', 'supreme', 'pageInject');
 
 (async () => {
+  await createMobileInject();
+  await createMobileEnviromentCode();
+  await createHarvesterCode();
+  await minifyHarvesterPreload();
+})();
+
+async function createMobileInject() {
+  const script = path.resolve(mobileInjectDir, 'injectScript.js');
   const source = await fs.readFileSync(script, { encoding: 'UTF-8' });
-  const ticketSource = await fs.readFileSync(ticketScript, { encoding: 'UTF-8' });
 
   const { code } = babel.transform(source, {
     comments: false,
     minified: true,
     plugins: ['minify-mangle-names'],
   });
-
-  const ticket = babel.transform(ticketSource, {
-    comments: false,
-    minified: true,
-    plugins: ['minify-mangle-names'],
-  });
-
-  const encryptedTicket = JSON.stringify([...ticket.code].map(s => s.charCodeAt()));
-  const finalTicketContent = `export const waitTicket = () => String.fromCharCode(...${encryptedTicket});`;
-
-  // const regex = /(.*)"\$PRODUCT\$"(.*)/s;
-  // const match = regex.exec(code);
-  // const content = `/* eslint-disable no-template-curly-in-string */ export const injectScript = (payload: any, externalStock: any, region: any) => '${match[1]}' + JSON.stringify(payload) + '${match[2]}`;
-
-  // const externalStockRegex = /(.*)"\$STOCK\$"(.*)/s;
-  // const exernalStockMatch = externalStockRegex.exec(content);
-
-  // const encryptedString = JSON.stringify([...exernalStockMatch[2]].map(s => s.charCodeAt()));
-  // const finalContent = `${exernalStockMatch[1]}' + JSON.stringify(externalStock) + 'const region = ' + region + ';' + String.fromCharCode(...${encryptedString})`;
 
   const regex = /(.*)"\$PRODUCT\$"(.*)(.*)"\$STOCK\$"(.*)(.*)"\$RESTOCKS\$"(.*)(.*)\$REGION\$(.*)/s;
   const match = regex.exec(code);
@@ -50,11 +36,8 @@ const ticketScript = path.resolve(injectScriptDir, 'ticket.js');
     s.charCodeAt(),
   )})`;
 
-  await fs.writeFileSync(path.resolve(injectScriptDir, 'injectScript.ts'), finalContent);
-  await fs.writeFileSync(path.resolve(injectScriptDir, 'waitTicket.ts'), finalTicketContent);
-  await createHarvesterCode();
-  await minifyHarvesterPreload();
-})();
+  await fs.writeFileSync(path.resolve(mobileInjectDir, 'injectScript.ts'), finalContent);
+}
 
 async function createHarvesterCode() {
   const sourcePath = path.resolve(process.cwd(), 'src', 'main', 'bot', 'harvesters');
@@ -70,6 +53,15 @@ async function createHarvesterCode() {
             String.fromCharCode(...${encryptedFirstPart}) + sitekey + String.fromCharCode(...${encryptedSecondPart});`;
 
   await fs.promises.writeFile(path.resolve(sourcePath, 'pageContent.ts'), content);
+}
+
+async function createMobileEnviromentCode() {
+  const script = path.resolve(mobileInjectDir, 'mockEnviroment.js');
+  const source = await fs.readFileSync(script, { encoding: 'UTF-8' });
+  const encrypted = `/* eslint-disable no-template-curly-in-string */ export const mockEnviroment = () => String.fromCharCode(...${JSON.stringify(
+    [...source].map(s => s.charCodeAt()),
+  )})`;
+  await fs.promises.writeFile(path.resolve(mobileInjectDir, 'mockEnviroment.ts'), encrypted);
 }
 
 async function minifyHarvesterPreload() {

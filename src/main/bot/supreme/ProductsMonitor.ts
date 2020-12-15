@@ -11,7 +11,7 @@ import {
 } from 'rxjs/operators';
 
 import { Supreme } from '../../types/Supreme';
-import { getRandomString } from './browser/getRandomString';
+import { getRandomString } from './hybrid/getRandomString';
 import ProxiesManager from '../core/ProxiesManager';
 
 abstract class ProductsMonitor {

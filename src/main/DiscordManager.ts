@@ -1,11 +1,12 @@
 import { WebhookConfig, webhookRegex } from './types/WebhookConfig';
-import { CheckoutWebhook, CheckoutStatus } from './types/Checkout';
+import { CheckoutWebhook } from './types/Checkout';
 import { Client } from 'discord-rpc';
 import { app } from 'electron';
 import { isDev } from './main';
 import { WebhookClient, MessageEmbed } from 'discord.js';
 import moment from 'moment';
 import _ from 'lodash';
+import { Supreme } from './types/Supreme';
 
 class DiscordManager {
   private static webhookClient: WebhookClient | null = null;
@@ -16,7 +17,7 @@ class DiscordManager {
 
   public static async setupWebhook(config: WebhookConfig) {
     if (!webhookRegex.test(config.url)) return;
-    const [id, token] = config.url.replace('https://discordapp.com/api/webhooks/', '').split('/');
+    const [id, token] = config.url.split('/webhooks/')[1].split('/');
     if (!id || !token) return;
     this.webhookClient = new WebhookClient(id, token);
     this.config = config;
@@ -32,14 +33,15 @@ class DiscordManager {
         .addField(
           'Message',
           config.onlySuccess
-            ? 'If you want to receive all checkouts messages, please disable ` Success Only ` option in the bot'
-            : 'If you want to receive notifications about successful checkouts only, please enable ` Success Only ` option in the bot',
+            ? 'If you want to receive all checkout messages, please disable ` Success Only ` option in the bot'
+            : 'If you only want to receive notifications about successful checkouts, please enable ` Success Only ` option in the bot',
         )
         .addField('Date', moment().format('Do MMM YYYY | HH:mm:ss')),
     );
   }
 
   public static async sendCheckoutWebhook({ status, item, id, profile, mode }: CheckoutWebhook) {
+    //status = 'paid';
     if (!item || !this.config) return;
     if (status !== 'paid' && this.config.onlySuccess) return;
 
@@ -59,10 +61,10 @@ class DiscordManager {
         .addField('Order number', `|| #${id} ||`, true);
     }
 
-    this.sendWebhook(message);
+    await this.sendWebhook(message);
   }
 
-  public static formatStatus(status: CheckoutStatus): string {
+  public static formatStatus(status: Supreme.CheckoutStatus): string {
     switch (status) {
       case 'paid': {
         return 'Successful checkout!';
@@ -89,7 +91,7 @@ class DiscordManager {
   public static async sendWebhook(message: MessageEmbed) {
     if (!this.webhookClient) return;
 
-    this.webhookClient.send('', {
+    await this.webhookClient.send('', {
       username: 'Supplier',
       avatarURL: this.logoUrl,
       embeds: [
@@ -108,7 +110,7 @@ class DiscordManager {
       return;
     }
 
-    discordRPC.setActivity({
+    await discordRPC.setActivity({
       details: `Version: ${isDev ? 'dev' : app.getVersion()}`,
       startTimestamp: Date.now(),
       largeImageKey: 'logo',

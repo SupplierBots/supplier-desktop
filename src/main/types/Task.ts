@@ -10,5 +10,6 @@ export interface Task extends SelectableUserData {
   status: TaskStatus;
   refreshRate: number | string;
   checkoutDelay: number | string;
+  bypassCardinal?: boolean;
   stopIfSoldOut: boolean;
 }

@@ -44,7 +44,7 @@
     if (!restocks.enabled) {
       notifyTask('Sold out', 'Error', {
         name: item.attributes.name,
-        image: selectedStyle.attributes.image_url.replace('//', 'https://'),
+        image: item.attributes.image_url.replace('//', 'https://'),
         style: 'sold-out',
         size: 'sold-out',
       });
@@ -81,8 +81,8 @@
     Backbone.history.fragment = `products/${item.attributes.id}/${selectedStyle.attributes.id}`;
     setLastVisitedFragment();
   } catch {}
-
   await addToCart(size);
+  await sleep(500);
   notifyTask('ATC', 'Action', {
     name: item.attributes.name,
     image: selectedStyle.attributes.image_url.replace('//', 'https://'),
@@ -213,7 +213,7 @@
   }
 
   function notifyTask(message, type, item) {
-    fetch('http://127.0.0.1:2140/status.json', {
+    fetch('http://127.0.0.1:2140/supplier.json', {
       method: 'POST',
       headers: {
         Accept: 'application/json',

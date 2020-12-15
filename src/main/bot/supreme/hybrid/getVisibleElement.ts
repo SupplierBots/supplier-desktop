@@ -1,11 +1,13 @@
-import { ElementHandle } from 'puppeteer';
-import SupremeTask from './SupremeTask';
+import { ElementHandle } from 'puppeteer-core';
+import SupremeHybridTask from './SupremeHybridTask';
 
 export async function getVisibleElement(
-  this: SupremeTask,
+  this: SupremeHybridTask,
   xpath: string,
   inViewport = true,
-): Promise<ElementHandle> {
+): Promise<ElementHandle | null> {
+  if (!this.page) return null;
+
   await this.page.waitForXPath(xpath, { visible: true });
   const elements = await this.page.$x(xpath);
 

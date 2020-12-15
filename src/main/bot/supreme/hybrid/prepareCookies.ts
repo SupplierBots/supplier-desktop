@@ -1,6 +1,6 @@
 import { Profile } from '../../../types/Profile';
-import { SetCookie } from 'puppeteer';
-import SupremeTask from './SupremeTask';
+import { SetCookie } from 'puppeteer-core';
+import SupremeHybridTask from './SupremeHybridTask';
 
 function generateJSAddressCookie(
   {
@@ -15,7 +15,7 @@ function generateJSAddressCookie(
     country,
     region,
   }: Profile,
-  task: SupremeTask,
+  task: SupremeHybridTask,
 ): SetCookie {
   if (task.region === 'us') {
     telephone = telephone.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
@@ -30,18 +30,18 @@ function generateJSAddressCookie(
   return {
     name: 'js-address',
     value: value,
-    domain: '.supremenewyork.com',
+    domain: 'www.supremenewyork.com',
   };
 }
 
-export async function prepareCookies(this: SupremeTask) {
-  if (!this.profile) return;
+export async function prepareCookies(this: SupremeHybridTask) {
+  if (!this.profile || !this.page) return;
   const cookies = await this.page.cookies('https://www.supremenewyork.com/');
   await this.page.deleteCookie(...cookies);
   this.setAddressCookie();
-  this.logger.writeObject({ message: 'Prepared cookies!' });
 }
 
-export async function setAddressCookie(this: SupremeTask) {
+export async function setAddressCookie(this: SupremeHybridTask) {
+  if (!this.profile || !this.page) return;
   await this.page.setCookie(generateJSAddressCookie(this.profile, this));
 }

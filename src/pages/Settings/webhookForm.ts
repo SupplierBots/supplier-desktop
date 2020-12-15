@@ -6,6 +6,7 @@ export const webhookValidationSchema = Yup.object().shape({
   url: Yup.string().when('onlySuccess', {
     is: true,
     then: Yup.string()
+      .trim()
       .required('Required')
       .matches(webhookRegex, 'Incorrect Format'),
     otherwise: Yup.lazy((value: string) =>

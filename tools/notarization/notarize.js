@@ -19,5 +19,6 @@ exports.default = async function afterSign(context) {
     appPath: appPath,
     appleId: process.env.APPLEID,
     appleIdPassword: process.env.APPLEIDPASS,
+    ascProvider: process.env.ASCPROVIDER,
   });
 };

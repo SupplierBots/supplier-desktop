@@ -112,6 +112,13 @@ const Status = styled(Text)<{ type: TaskStatusType }>`
     `};
 `;
 
+const CardinalBypass = styled.span`
+  color: ${colors.darkGrey};
+  text-decoration: line-through;
+  margin-left: auto;
+  margin-right: 2rem;
+`;
+
 interface Props {
   details: TaskType;
 }
@@ -140,7 +147,10 @@ const Task = ({ details }: Props) => {
       </WebsiteIconWrapper>
       <Text>{details.name}</Text>
       <Text>{details.profile && details.profile.label}</Text>
-      <Status type={details.status.type}>{details.status.message}</Status>
+      <Status type={details.status.type}>
+        {details.status.message}
+        {details.bypassCardinal && <CardinalBypass>3DS</CardinalBypass>}
+      </Status>
       <ActionsContainer>
         <Action disabled={isBrowserActive()}>
           <EditIcon onClick={editTask} />

@@ -1,5 +1,5 @@
 import { Serializable } from 'child_process';
-import { Page } from 'puppeteer';
+import { Page } from 'puppeteer-core';
 
 const postRequest = async <T>(page: Page, url: string, payload: Serializable) => {
   console.log(payload);

@@ -63,7 +63,7 @@ const Startup = ({ history }: Props) => {
 
   useEffect(() => {
     (async () => {
-      const { success, executablePath, version } = await IPCRenderer.verifyChromium();
+      const { success, executablePath, version } = await IPCRenderer.checkIfChromeInstalled();
 
       setLoading(false);
 

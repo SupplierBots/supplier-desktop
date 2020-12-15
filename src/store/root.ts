@@ -87,7 +87,7 @@ const persistConfig: PersistConfig<RootState> = {
   blacklist: ['auth', 'router', 'controller'],
   transforms: [encryptTransform],
   storage,
-  throttle: 1000,
+  throttle: 50,
 };
 
 export const persistedReducer = persistReducer(persistConfig, rootReducer);

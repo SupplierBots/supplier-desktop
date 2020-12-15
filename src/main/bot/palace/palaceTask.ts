@@ -1,4 +1,4 @@
-import { Browser } from 'puppeteer';
+import { Browser } from 'puppeteer-core';
 import { Task } from 'main/types/Task';
 import * as R from 'ramda';
 import { Product } from 'main/types/Product';

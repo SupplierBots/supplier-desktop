@@ -5,8 +5,7 @@ import {
   SET_HARVESTER_EMAIL,
   GET_SAME_EMAILS,
   SETUP_HARVESTER,
-  VERIFY_CHROME,
-  ChromiumVerifiedPayload,
+  CHECK_CHROME,
   WINDOW_MINIMIZE,
   WINDOW_CLOSE,
   START_TASKS,
@@ -24,8 +23,8 @@ import {
   RESET_TIMER_STATE,
   GET_PROXY,
   SET_TASK_ACTIVITY,
-  DOWNLOAD_CHROMIUM,
   TEST_WEBHOOK,
+  ChromeVerifiedPayload,
 } from './IPCEvents';
 
 import store from 'store/configureStore';
@@ -134,13 +133,9 @@ export abstract class IPCRenderer {
     ipc.send(SETUP_HARVESTER, data);
   };
 
-  public static verifyChromium = async () => {
-    const result = await ipc.callMain<null, ChromiumVerifiedPayload>(VERIFY_CHROME);
+  public static checkIfChromeInstalled = async () => {
+    const result = await ipc.callMain<null, ChromeVerifiedPayload>(CHECK_CHROME);
     return result;
-  };
-
-  public static downloadChromium = () => {
-    ipc.send(DOWNLOAD_CHROMIUM);
   };
 
   public static minimize = () => {

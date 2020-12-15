@@ -141,8 +141,8 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
       const newTask = {
         ...task,
         isActive: false,
-        //status: { message: 'Inactive', type: TaskStatusType.Inactive },
-        status: { message: 'Success', type: TaskStatusType.Success },
+        status: { message: 'Inactive', type: TaskStatusType.Inactive },
+        // status: { message: 'Success', type: TaskStatusType.Success },
         id: uuid(),
       };
       dispatch(addTask({ item: newTask }));
@@ -222,6 +222,9 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
                       />
                     )}
                   </InlineInputsContainer>
+                  <Slider name="bypassCardinal" checked={!!props.values.bypassCardinal}>
+                    3D Secure Bypass
+                  </Slider>
                   <StyledSlider name="stopIfSoldOut" checked={props.values.stopIfSoldOut}>
                     Stop if any product sold out
                   </StyledSlider>

@@ -90,24 +90,32 @@ export namespace Supreme {
     russia_blocked: boolean;
   }
 
-  export type AddToCartResponse = { size_id: string; in_stock: boolean }[];
-
+  export type AddToCartResponse = { size_id: string; in_stock: boolean }[] | { cart: object[] };
+  export type CheckoutStatus =
+    | 'paid'
+    | 'failed'
+    | 'dup'
+    | 'outOfStock'
+    | 'queued'
+    | '404'
+    | '500'
+    | 'cca'
+    | 'cardinal_queued'
+    | 'blocked_country'
+    | 'canada'
+    | 'blacklisted';
   export interface CheckoutResponse {
-    status:
-      | 'paid'
-      | 'failed'
-      | 'dup'
-      | 'outOfStock'
-      | 'queued'
-      | '404'
-      | '500'
-      | 'cca'
-      | 'cardinal_queued';
+    status: CheckoutStatus;
+
     slug?: string;
-    error?: string;
+    errors?: string;
     id?: string;
     acs_url?: string;
+    consumer?: object;
+    payload?: string;
+    transaction_id?: string;
     page?: string;
+    b?: boolean;
     info?: {
       billing_name: string;
       email: string;

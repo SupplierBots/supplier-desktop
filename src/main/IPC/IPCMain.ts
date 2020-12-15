@@ -1,15 +1,14 @@
 import { WebhookConfig } from './../types/WebhookConfig';
 import { ipcMain as ipc } from 'electron-better-ipc';
-import { verifyChromium } from '../chromium/verifyChromium';
-import { downloadChromium } from '../chromium/downloadChromium';
 import { mainWindow } from '../main';
 import { autoUpdater, UpdateInfo } from 'electron-updater';
+import * as chrome from 'chrome-launcher';
 
 import {
   WINDOW_CLOSE,
   WINDOW_MINIMIZE,
   SETUP_HARVESTER,
-  VERIFY_CHROME,
+  CHECK_CHROME,
   START_TASKS,
   STOP_TASKS,
   GET_PROFILE,
@@ -28,8 +27,8 @@ import {
   RESET_TIMER_STATE,
   GET_PROXY,
   SET_TASK_ACTIVITY,
-  DOWNLOAD_CHROMIUM,
   TEST_WEBHOOK,
+  ChromeVerifiedPayload,
 } from './IPCEvents';
 import { Profile } from '../types/Profile';
 import { TaskStatus } from '../types/TaskStatus';
@@ -45,8 +44,7 @@ import { DiscordManager } from '../DiscordManager';
 export abstract class IPCMain {
   private constructor() {}
   public static registerListeners = () => {
-    ipc.answerRenderer(VERIFY_CHROME, verifyChromium);
-    ipc.on(DOWNLOAD_CHROMIUM, downloadChromium);
+    ipc.answerRenderer(CHECK_CHROME, IPCMain.checkChrome);
     ipc.on(SETUP_HARVESTER, (e, data: HarvesterData) => HarvestersManager.setupHarvester(data));
     ipc.on(START_TASKS, (e, tasks, proxies, harvesters, runner, webhook) =>
       TasksManager.start(tasks, proxies, harvesters, runner, webhook),
@@ -106,6 +104,15 @@ export abstract class IPCMain {
     if (!mainWindow) return;
     const product = await ipc.callRenderer<string, Product>(mainWindow, GET_PRODUCT, id);
     return product;
+  };
+
+  private static checkChrome = (): ChromeVerifiedPayload => {
+    var path = chrome.Launcher.getFirstInstallation();
+    return {
+      success: !!path,
+      executablePath: path ?? 'not-installed',
+      version: app.getVersion(),
+    };
   };
 
   public static updateTaskStatus = (id: string, status: TaskStatus) => {

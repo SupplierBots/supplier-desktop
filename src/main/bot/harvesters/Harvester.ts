@@ -18,7 +18,7 @@ class Harvester {
 
     this.browser.webContents.session.protocol.uninterceptProtocol('http');
     this.browser.webContents.session.protocol.interceptStringProtocol('http', (req, handler) => {
-      if (req.url === 'http://www.supremenewyork.com/') {
+      if (req.url === 'http://www.supremenewyork.com/mobile/#checkout') {
         handler({
           mimeType: 'text/html',
           charset: 'UTF-8',
@@ -27,7 +27,7 @@ class Harvester {
       }
     });
 
-    this.browser.loadURL('http://www.supremenewyork.com/');
+    this.browser.loadURL('http://www.supremenewyork.com/mobile/#checkout');
 
     this.browser.once('ready-to-show', () => {
       this.browser.webContents.send('set-email', this.data.accountEmail);
