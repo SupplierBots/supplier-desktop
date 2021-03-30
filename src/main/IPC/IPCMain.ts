@@ -2,6 +2,9 @@ import { WebhookConfig } from './../types/WebhookConfig';
 import { ipcMain as ipc } from 'electron-better-ipc';
 import { mainWindow } from '../main';
 import { autoUpdater, UpdateInfo } from 'electron-updater';
+import { EngineFetcher } from '@secret-agent/puppet/lib/EngineFetcher';
+import { validateHostRequirements } from '@secret-agent/puppet/lib/validateHostDependencies';
+
 import * as chrome from 'chrome-launcher';
 
 import {
@@ -28,7 +31,10 @@ import {
   GET_PROXY,
   SET_TASK_ACTIVITY,
   TEST_WEBHOOK,
+  CHECK_BROWSER_ENGINE,
   ChromeVerifiedPayload,
+  DOWNLOAD_BROWSER_ENGINE,
+  BROWSER_ENGINE_DOWNLOAD_PROGRESS,
 } from './IPCEvents';
 import { Profile } from '../types/Profile';
 import { TaskStatus } from '../types/TaskStatus';
@@ -40,11 +46,14 @@ import { Proxy } from '../types/Proxy';
 import { TasksManager } from '../bot/core/TasksManager';
 import { HarvestersManager } from '../bot/harvesters/HarvestersManager';
 import { DiscordManager } from '../DiscordManager';
+import { config } from '../../config';
 
 export abstract class IPCMain {
   private constructor() {}
   public static registerListeners = () => {
     ipc.answerRenderer(CHECK_CHROME, IPCMain.checkChrome);
+    ipc.answerRenderer(CHECK_BROWSER_ENGINE, IPCMain.checkBrowserEngine);
+    ipc.on(DOWNLOAD_BROWSER_ENGINE, () => IPCMain.downloadBrowserEngine());
     ipc.on(SETUP_HARVESTER, (e, data: HarvesterData) => HarvestersManager.setupHarvester(data));
     ipc.on(START_TASKS, (e, tasks, proxies, harvesters, runner, webhook) =>
       TasksManager.start(tasks, proxies, harvesters, runner, webhook),
@@ -113,6 +122,32 @@ export abstract class IPCMain {
       executablePath: path ?? 'not-installed',
       version: app.getVersion(),
     };
+  };
+
+  private static getEngineFetcher = () => {
+    const { fullVersion, name, executablePathEnvVar } = config.browserEngine;
+    return new EngineFetcher(name, fullVersion, executablePathEnvVar);
+  };
+
+  private static checkBrowserEngine = () => IPCMain.getEngineFetcher().isInstalled;
+
+  private static downloadBrowserEngine = () => {
+    const engineFetcher = IPCMain.getEngineFetcher();
+    let prevPercentage = 0;
+    engineFetcher.download(async (downloadedBytes: number, totalBytes: number) => {
+      const status = {
+        progress: Math.round((downloadedBytes / totalBytes) * 100),
+        done: downloadedBytes === totalBytes,
+      };
+
+      if (status.progress > prevPercentage || status.done) {
+        prevPercentage = status.progress;
+        if (status.done) {
+          await validateHostRequirements(engineFetcher.toJSON());
+        }
+        mainWindow?.webContents.send(BROWSER_ENGINE_DOWNLOAD_PROGRESS, status);
+      }
+    });
   };
 
   public static updateTaskStatus = (id: string, status: TaskStatus) => {

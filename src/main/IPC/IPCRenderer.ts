@@ -25,6 +25,8 @@ import {
   SET_TASK_ACTIVITY,
   TEST_WEBHOOK,
   ChromeVerifiedPayload,
+  CHECK_BROWSER_ENGINE,
+  DOWNLOAD_BROWSER_ENGINE,
 } from './IPCEvents';
 
 import store from 'store/configureStore';
@@ -136,6 +138,14 @@ export abstract class IPCRenderer {
   public static checkIfChromeInstalled = async () => {
     const result = await ipc.callMain<null, ChromeVerifiedPayload>(CHECK_CHROME);
     return result;
+  };
+
+  public static checkIfBrowserEngineInstalled = async () => {
+    return ipc.callMain<null, boolean>(CHECK_BROWSER_ENGINE);
+  };
+
+  public static downloadBrowserEngine = () => {
+    ipc.send(DOWNLOAD_BROWSER_ENGINE);
   };
 
   public static minimize = () => {

@@ -10,9 +10,8 @@ import {
   shareReplay,
 } from 'rxjs/operators';
 
-import { Supreme } from '../../types/Supreme';
-import { getRandomString } from './hybrid/getRandomString';
-import ProxiesManager from '../core/ProxiesManager';
+import { Supreme } from '../types/Supreme';
+import ProxiesManager from './core/ProxiesManager';
 
 abstract class ProductsMonitor {
   private static observable: Observable<any>;
@@ -27,7 +26,7 @@ abstract class ProductsMonitor {
     const desktopStockMonitor = timer(0, refreshRate).pipe(
       switchMap(() =>
         axios.get<string>(
-          `https://www.supremenewyork.com/shop.json?${getRandomString()}=${getRandomString()}`,
+          `https://www.supremenewyork.com/shop.json?`, //${getRandomString()}=${getRandomString()}`,
           {
             transformResponse: res => res,
             proxy: ProxiesManager.getRandomAxios(),
@@ -41,7 +40,7 @@ abstract class ProductsMonitor {
     const mobileStockMonitor = timer(refreshRate / 2, refreshRate).pipe(
       switchMap(() =>
         axios.get<string>(
-          `https://www.supremenewyork.com/mobile_stock.json?${getRandomString()}=${getRandomString()}`,
+          `https://www.supremenewyork.com/mobile_stock.json?`, //${getRandomString()}=${getRandomString()}`,
           {
             transformResponse: res => res,
             proxy: ProxiesManager.getRandomAxios(),

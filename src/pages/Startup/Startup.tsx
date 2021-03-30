@@ -63,11 +63,15 @@ const Startup = ({ history }: Props) => {
 
   useEffect(() => {
     (async () => {
-      const { success, executablePath, version } = await IPCRenderer.checkIfChromeInstalled();
-
+      const {
+        success: isChromeInstalled,
+        executablePath,
+        version,
+      } = await IPCRenderer.checkIfChromeInstalled();
+      const isBrowserEngineInstalled = await IPCRenderer.checkIfBrowserEngineInstalled();
       setLoading(false);
 
-      if (success) {
+      if (isChromeInstalled && isBrowserEngineInstalled) {
         dispatch(setAppDetails({ path: executablePath, version }));
         history.push(routes.login);
       } else {

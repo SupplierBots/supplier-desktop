@@ -14,6 +14,7 @@ import ButtonsContainer from 'components/ButtonsContainer/ButtonsContainer';
 import routes from 'constants/routes';
 import { setAppDetails } from 'store/controller/controllerSlice';
 import { useStateDispatch } from 'hooks/typedReduxHooks';
+import { BROWSER_ENGINE_DOWNLOAD_PROGRESS } from 'main/IPC/IPCEvents';
 
 const Wrapper = styled.div`
   display: flex;
@@ -41,7 +42,7 @@ const StyledButtonsContainer = styled(ButtonsContainer)`
   align-self: center;
 `;
 
-const TutorialMessage = styled.p`
+const TutorialMessage = styled.span`
   position: absolute;
   bottom: 10rem;
   font-size: ${fonts.large};
@@ -72,47 +73,100 @@ const MissingChromeInfo = styled.div`
   text-align: center;
 `;
 
+const DownloadProgressInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 25rem;
+`;
+
+const DownloadMessage = styled(ProgressMessage)`
+  margin-bottom: 1rem;
+`;
+
+const InstallingSpinner = styled(StyledSpinner)`
+  margin-top: 15rem;
+`;
+
 type Props = RouteComponentProps;
 
 const Downloader = ({ history }: Props) => {
-  const [verifying, setVerifying] = useState(false);
+  const [isInstalling, setIsInstalling] = useState(true);
+  const [isDownloadingEngine, setIsDownloadingEngine] = useState(false);
+  const [isChromeInstalled, setIsChromeInstalled] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState(0);
+
   const dispatch = useStateDispatch();
 
-  const verifyChromium = async () => {
-    setVerifying(true);
+  const verifyDependencies = async () => {
+    setIsInstalling(true);
     const { success, executablePath, version } = await IPCRenderer.checkIfChromeInstalled();
     await new Promise(r => setTimeout(r, 1000));
 
-    if (success) {
-      dispatch(setAppDetails({ path: executablePath, version }));
-      history.push(routes.login);
+    setIsChromeInstalled(success);
+
+    if (!success) {
+      setIsInstalling(false);
+      return;
     }
 
-    setVerifying(false);
+    const isEngineInstalled = await IPCRenderer.checkIfBrowserEngineInstalled();
+
+    if (!isEngineInstalled) {
+      downloadBrowserEngine();
+      return;
+    }
+    dispatch(setAppDetails({ path: executablePath, version }));
+    history.push(routes.login);
   };
+
+  const downloadBrowserEngine = () => {
+    setIsInstalling(true);
+    setIsDownloadingEngine(true);
+    IPCRenderer.downloadBrowserEngine();
+    ipc.on(BROWSER_ENGINE_DOWNLOAD_PROGRESS, handleDownloadProgress);
+  };
+
+  const handleDownloadProgress = (
+    e: IpcRendererEvent,
+    status: { done: boolean; progress: number },
+  ) => {
+    setDownloadProgress(status.progress);
+    if (!status.done) return;
+    ipc.removeListener(BROWSER_ENGINE_DOWNLOAD_PROGRESS, handleDownloadProgress);
+    setIsDownloadingEngine(false);
+    verifyDependencies();
+  };
+
+  useEffect(downloadBrowserEngine, []);
 
   return (
     <Wrapper>
       <InlineLogo />
-      <MissingChromeInfo>
-        <StyledChromeLogo />
-        <ProgressMessage>
-          {verifying ? 'Looking for Google Chrome' : `Couldn't find Google Chrome.`}
-          {verifying && <StyledSpinner />}
-        </ProgressMessage>
-        {!verifying && (
-          <ProgressMessage>It is required for the bot to work properly.</ProgressMessage>
-        )}
-      </MissingChromeInfo>
-      {!verifying && (
-        <StyledButtonsContainer>
-          <Button small onClick={() => shell.openExternal(config.chromeUrl)}>
-            Download
-          </Button>
-          <Button small onClick={verifyChromium}>
-            Try again
-          </Button>
-        </StyledButtonsContainer>
+      {!isInstalling && !isChromeInstalled && (
+        <>
+          <MissingChromeInfo>
+            <StyledChromeLogo />
+            <ProgressMessage>Cound't find Chrome</ProgressMessage>
+            <ProgressMessage>It is required for the bot to work properly.</ProgressMessage>
+          </MissingChromeInfo>
+          <StyledButtonsContainer>
+            <Button small onClick={() => shell.openExternal(config.chromeUrl)}>
+              Download
+            </Button>
+            <Button small onClick={verifyDependencies}>
+              Try again
+            </Button>
+          </StyledButtonsContainer>
+        </>
+      )}
+      {isInstalling && !isDownloadingEngine && <InstallingSpinner />}
+      {isDownloadingEngine && (
+        <DownloadProgressInfo>
+          <DownloadMessage>Downloading remaining files ({downloadProgress}%)</DownloadMessage>
+          <ProgressBar progressPercentage={downloadProgress} />
+        </DownloadProgressInfo>
       )}
 
       <TutorialMessage>
