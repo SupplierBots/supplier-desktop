@@ -18,12 +18,13 @@ export const isDev = process.env.NODE_ENV === 'development';
 let mainWindow: electron.BrowserWindow | null = null;
 
 const installExtensions = async () => {
-  const installer = require('electron-devtools-installer');
-  const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];
+  const { REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
+  const installExtension = require('electron-devtools-installer');
+  const extensions = [REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS];
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
   for (const name of extensions) {
     try {
-      await installer.default(installer[name], forceDownload);
+      await installExtension(name, forceDownload);
     } catch (e) {
       console.log(`Error installing ${name} extension: ${e.message}`);
     }
@@ -52,7 +53,9 @@ const createWindow = () => {
     fullscreenable: false,
     titleBarStyle: 'hiddenInset',
     webPreferences: {
-      nodeIntegration: isDev,
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true,
       preload: isDev ? undefined : path.join(__dirname, 'preload.js'),
       backgroundThrottling: false,
     },
