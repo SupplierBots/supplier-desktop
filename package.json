@@ -2,7 +2,7 @@
   "name": "supplier",
   "productName": "Supplier",
   "description": "Supreme & Palace Bot",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "copyright": "Supplier",
   "main": "build/electron.js",
   "homepage": ".",
@@ -46,11 +46,10 @@
     "appId": "com.supplier.bot.io",
     "productName": "Supplier",
     "copyright": "Copyright © 2020 ${author}",
+    "afterSign": "tools/notarization/notarize.js",
     "npmRebuild": true,
     "buildDependenciesFromSource": true,
-    "asarUnpack": [
-      "**/*.node"
-    ],
+    "asar": false,
     "mac": {
       "hardenedRuntime": true,
       "gatekeeperAssess": false,
