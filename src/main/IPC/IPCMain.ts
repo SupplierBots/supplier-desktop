@@ -58,7 +58,7 @@ export abstract class IPCMain {
     ipc.on(START_TASKS, (e, tasks, proxies, harvesters, runner, webhook) =>
       TasksManager.start(tasks, proxies, harvesters, runner, webhook),
     );
-    ipc.on(STOP_TASKS, e => TasksManager.stopAllHybirdTasks());
+    ipc.on(STOP_TASKS, e => TasksManager.stopAllTasks());
     ipc.on(WINDOW_MINIMIZE, () => mainWindow?.minimize());
     ipc.on(WINDOW_CLOSE, () => mainWindow?.close());
     ipc.on(DOWNLOAD_UPDATE, () => {

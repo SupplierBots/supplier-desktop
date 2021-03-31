@@ -192,7 +192,7 @@ const TaskRunner = () => {
   const { tasks, harvesters, runner, controller, proxies, webhook } = useStateSelector(
     state => state,
   );
-  const [intervalID, setIntervalID] = useState<number>();
+  const [intervalID, setIntervalID] = useState<NodeJS.Timeout>();
   const [currentDate, setCurrentDate] = useState<Moment>(moment());
   const [scheduledDate, setScheduledDate] = useState<Moment>(moment());
 
@@ -240,7 +240,9 @@ const TaskRunner = () => {
   const stopTasks = async () => {
     dispatch(setTimerState({ active: false }));
     IPCRenderer.stopTasks();
-    clearInterval(intervalID);
+    if (intervalID) {
+      clearInterval(intervalID);
+    }
   };
 
   const handleSubmit = (state: RunnerState, actions: FormikHelpers<RunnerState>) => {
@@ -252,7 +254,9 @@ const TaskRunner = () => {
 
     const timeDifference = Math.abs(currentDate.valueOf() - scheduledDate.valueOf());
     if (currentDate >= scheduledDate || timeDifference <= 1000) {
-      clearInterval(intervalID);
+      if (intervalID) {
+        clearInterval(intervalID);
+      }
       return 'Started!';
     }
 

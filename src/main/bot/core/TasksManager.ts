@@ -10,13 +10,16 @@ import { ProductsMonitor } from '../ProductsMonitor';
 import { HarvesterData } from '../../types/HarvesterData';
 import { HarvestersManager } from '../harvesters/HarvestersManager';
 import { DiscordManager } from '../../DiscordManager';
-import { config } from '../../../config';
+import { Handler } from 'secret-agent';
+import { SupremeTask } from '../SupremeTask';
 
 class TasksManager {
   public static runner: RunnerState;
   public static scheduledDate: Moment = moment();
   public static isScheduled: boolean = false;
-  private static timerID: number;
+  private static handler: Handler;
+  private static timerID: NodeJS.Timeout;
+  private static tasks: Task[];
 
   public static async start(
     tasks: Task[],
@@ -26,6 +29,7 @@ class TasksManager {
     webhook: WebhookConfig,
   ) {
     this.runner = runner;
+    this.tasks = tasks;
 
     DiscordManager.setupWebhook(webhook);
     HarvestersManager.initialize(harvesters);
@@ -42,12 +46,12 @@ class TasksManager {
 
     ProxiesManager.setProxies(runner.proxies, proxies, runner.proxiesRegion);
 
-    await this.stopAllHybirdTasks();
+    await this.stopAllTasks();
     ProductsMonitor.init(2000);
     this.isScheduled = runner.scheduled;
 
     if (!runner.scheduled) {
-      this.startHybridTasks(tasks);
+      this.startTasks(tasks);
       return;
     }
 
@@ -56,20 +60,20 @@ class TasksManager {
     this.timerID = setInterval(async () => {
       if (moment().valueOf() + 60000 >= this.scheduledDate.valueOf()) {
         clearInterval(this.timerID);
-        this.startHybridTasks(tasks);
+        this.startTasks(tasks);
         IPCMain.resetTimerState();
       }
     }, 1000);
   }
 
-  private static async startHybridTasks(tasks: Task[]) {
-    // this.browser = await this.createBrowser();
+  private static async startTasks(tasks: Task[]) {
+    this.handler = new Handler();
     for (let i = 0; i < tasks.length; i++) {
-      this.startHybridTask(tasks[i], i);
+      this.startTask(tasks[i], i);
     }
   }
 
-  private static async startHybridTask(task: Task, index = 0) {
+  private static async startTask(task: Task, index = 0) {
     if (!task.profile) return;
 
     IPCMain.updateTaskStatus(task.id, {
@@ -79,88 +83,26 @@ class TasksManager {
     const product = await IPCMain.getProduct(task.products[0]);
     const profile = await IPCMain.getProfile(task.profile?.value);
 
-    // if (!product || !profile || !this.browser) {
-    //   return;
-    // }
+    if (!product || !profile) {
+      return;
+    }
     try {
-      // const supremeTask = new SupremeHybridTask(
-      //   this.browser,
-      //   index,
-      //   task,
-      //   product,
-      //   profile,
-      //   this.runner,
-      // );
-      // this.hybridTasks.push(supremeTask);
-      // await supremeTask.init();
+      const supremeTask = new SupremeTask(this.handler, task, product, profile, this.runner);
+      await supremeTask.init();
     } catch (ex) {
       console.log('Couldnt initiate task: ' + ex);
     }
   }
 
-  public static async stopAllHybirdTasks() {
+  public static async stopAllTasks() {
     HarvestersManager.closeAll();
     ProductsMonitor.unsubscribeAll();
     clearInterval(this.timerID);
-
-    const cleanUps: Promise<void>[] = [];
-
-    // this.hybridTasks.forEach(hybrid => {
-    //   if (!hybrid.browser || !hybrid.browser.isConnected()) {
-    //     hybrid.isActive = false;
-    //     this.clearHybirdTask(hybrid.details.id);
-    //     return;
-    //   }
-    //   cleanUps.push(this.stopHybridTask(hybrid));
-    // });
-    await Promise.all(cleanUps);
+    this.tasks.forEach(task => {
+      IPCMain.setTaskActivity(task.id, false);
+    });
+    await this.handler?.close();
   }
-
-  // private static async stopHybridTask(task: SupremeHybridTask) {
-  //   await task.stop();
-  // }
-
-  // public static clearHybirdTask(id: string) {
-  //   this.hybridTasks = this.hybridTasks.filter(t => t.details.id !== id);
-  //   if (this.hybridTasks.length !== 0) return;
-  //   HarvestersManager.closeAll();
-  //   ProductsMonitor.unsubscribeAll();
-  //   clearInterval(this.timerID);
-  // }
-
-  // public static async createBrowser() {
-  //   const args = [
-  //     `--no-sandbox`,
-  //     `--disable-setuid-sandbox`,
-  //     `--no-first-run`,
-  //     `--disable-sync`,
-  //     `--ignore-certificate-errors`,
-  //     '--no-default-browser-check',
-  //     '--enable-widevine-cdm',
-  //     '--disable-backgrounding-occluded-windows',
-  //     '--disable-background-timer-throttling',
-  //     '--force-fieldtrials=*BackgroundTracing/default/',
-  //     '--disable-blink-features=AutomationControlled',
-  //     '--disable-web-security',
-  //   ];
-
-  //   // var executablePath = chrome.Launcher.getFirstInstallation() ?? 'not-found';
-
-  //   // const browser = await puppeteer.launch({
-  //   //   headless: !config.tasksDebug,
-  //   //   ignoreHTTPSErrors: true,
-  //   //   executablePath,
-  //   //   args,
-  //   // });
-
-  //   // browser.on('targetcreated', (target: Target) => {
-  //   //   if (target.url().includes('devtools') && !config.tasksDebug) {
-  //   //     browser.close();
-  //   //   }
-  //   // });
-
-  //   return browser;
-  // }
 }
 
 export { TasksManager };

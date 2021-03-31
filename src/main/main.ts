@@ -10,6 +10,7 @@ import path from 'path';
 import { IPCMain } from './IPC/IPCMain';
 import { menu } from './menu';
 import { DiscordManager } from './DiscordManager';
+import { config } from '../config';
 
 export const isDev = process.env.NODE_ENV === 'development';
 
@@ -31,6 +32,11 @@ const installExtensions = async () => {
 const createWindow = () => {
   if (isDev) {
     installExtensions();
+  }
+
+  if (config.tasksDebug) {
+    process.env.SHOW_BROWSER = 'true';
+    process.env.SA_DISABLE_DEVTOOLS = 'true';
   }
 
   const launchOptions: BrowserWindowConstructorOptions = {

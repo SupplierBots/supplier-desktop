@@ -96,7 +96,8 @@ const KeywordsManager = ({
     if (values.multi) setMulti(values.multi);
   }, [values]);
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+  //TODO: temp fix
+  const handleChange = (event: { target: any }) => {
     setValue(event.target.value);
     if (fieldError) setFieldError('');
   };
