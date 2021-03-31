@@ -19,7 +19,7 @@ class TasksManager {
   public static isScheduled: boolean = false;
   private static handler: Handler;
   private static timerID: NodeJS.Timeout;
-  private static tasks: Task[];
+  private static tasks: SupremeTask[] = [];
 
   public static async start(
     tasks: Task[],
@@ -29,7 +29,6 @@ class TasksManager {
     webhook: WebhookConfig,
   ) {
     this.runner = runner;
-    this.tasks = tasks;
 
     DiscordManager.setupWebhook(webhook);
     HarvestersManager.initialize(harvesters);
@@ -88,6 +87,7 @@ class TasksManager {
     }
     try {
       const supremeTask = new SupremeTask(this.handler, task, product, profile, this.runner);
+      this.tasks.push(supremeTask);
       await supremeTask.init();
     } catch (ex) {
       console.log('Couldnt initiate task: ' + ex);
@@ -98,10 +98,8 @@ class TasksManager {
     HarvestersManager.closeAll();
     ProductsMonitor.unsubscribeAll();
     clearInterval(this.timerID);
-    this.tasks.forEach(task => {
-      IPCMain.setTaskActivity(task.id, false);
-    });
-    await this.handler?.close();
+    await Promise.all(this.tasks.map(task => task.stop()));
+    this.tasks = [];
   }
 }
 
