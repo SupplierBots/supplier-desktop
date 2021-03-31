@@ -1,4 +1,4 @@
-import { Agent, Handler, LocationStatus } from '@secret-agent/client';
+import { Agent, Handler, LocationStatus } from 'secret-agent';
 import { IPCMain } from '../IPC/IPCMain';
 import { Product } from '../types/Product';
 import { Profile } from '../types/Profile';
@@ -15,15 +15,18 @@ export class SupremeTask {
     readonly runner: RunnerState,
   ) {}
 
-  private browser: Agent | null = null;
+  private agent: Agent | null = null;
 
   public async init() {
     IPCMain.setTaskActivity(this.details.id, true);
-    this.browser = (await this.handler.createAgent({ showReplay: false })) as Agent;
-    await this.browser.goto('https://abrahamjuliot.github.io/creepjs/');
-    await this.browser.activeTab.waitForLoad(LocationStatus.DomContentLoaded);
-    await this.browser.waitForMillis(5000);
-    const res = await this.browser.document.querySelector('#headless-detection-results').innerText;
+    this.agent = (await this.handler.createAgent({ showReplay: false })) as Agent;
+    this.agent.on('close', () => {
+      IPCMain.setTaskActivity(this.details.id, false);
+    });
+    await this.agent.goto('https://abrahamjuliot.github.io/creepjs/');
+    await this.agent.activeTab.waitForLoad(LocationStatus.DomContentLoaded);
+    await this.agent.waitForMillis(5000);
+    const res = await this.agent.document.querySelector('#headless-detection-results').innerText;
     console.log(res);
   }
 
@@ -36,7 +39,6 @@ export class SupremeTask {
   };
 
   public async stop() {
-    await this.browser?.close();
-    IPCMain.setTaskActivity(this.details.id, false);
+    await this.agent?.close();
   }
 }

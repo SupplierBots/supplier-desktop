@@ -17,9 +17,17 @@ class TasksManager {
   public static runner: RunnerState;
   public static scheduledDate: Moment = moment();
   public static isScheduled: boolean = false;
-  private static handler: Handler;
   private static timerID: NodeJS.Timeout;
   private static tasks: SupremeTask[] = [];
+  private static handler: Handler;
+
+  public static init() {
+    this.handler = new Handler();
+  }
+
+  public static async dispose() {
+    await this.handler.close();
+  }
 
   public static async start(
     tasks: Task[],
@@ -66,7 +74,6 @@ class TasksManager {
   }
 
   private static async startTasks(tasks: Task[]) {
-    this.handler = new Handler();
     for (let i = 0; i < tasks.length; i++) {
       this.startTask(tasks[i], i);
     }
@@ -90,6 +97,7 @@ class TasksManager {
       this.tasks.push(supremeTask);
       await supremeTask.init();
     } catch (ex) {
+      IPCMain.setTaskActivity(task.id, false);
       console.log('Couldnt initiate task: ' + ex);
     }
   }

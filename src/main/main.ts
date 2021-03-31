@@ -11,6 +11,7 @@ import { IPCMain } from './IPC/IPCMain';
 import { menu } from './menu';
 import { DiscordManager } from './DiscordManager';
 import { config } from '../config';
+import { TasksManager } from './bot/core/TasksManager';
 
 export const isDev = process.env.NODE_ENV === 'development';
 
@@ -38,6 +39,8 @@ const createWindow = () => {
     process.env.SHOW_BROWSER = 'true';
     process.env.SA_DISABLE_DEVTOOLS = 'true';
   }
+
+  TasksManager.init();
 
   const launchOptions: BrowserWindowConstructorOptions = {
     width: 1200,
@@ -93,8 +96,9 @@ app.whenReady().then(createWindow);
 if (!isDev) Menu.setApplicationMenu(menu);
 powerSaveBlocker.start('prevent-display-sleep');
 
-app.on('window-all-closed', () => {
+app.on('window-all-closed', async () => {
   if (process.platform !== 'darwin') {
+    await TasksManager.dispose();
     app.quit();
   }
 });
