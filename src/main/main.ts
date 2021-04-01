@@ -101,7 +101,6 @@ powerSaveBlocker.start('prevent-display-sleep');
 
 app.on('window-all-closed', async () => {
   if (process.platform !== 'darwin') {
-    await TasksManager.dispose();
     app.quit();
   }
 });
@@ -114,6 +113,10 @@ app.on('activate', () => {
 
 app.on('login', (event, webContents, request, authInfo, callback) => {
   event.preventDefault();
+});
+
+app.on('before-quit', async () => {
+  await TasksManager.dispose();
 });
 
 IPCMain.registerListeners();

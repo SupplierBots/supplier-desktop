@@ -10,8 +10,8 @@ import {
   shareReplay,
 } from 'rxjs/operators';
 
-import { Supreme } from '../types/Supreme';
-import ProxiesManager from './core/ProxiesManager';
+import { Supreme } from '../../types/Supreme';
+import ProxiesManager from '../core/ProxiesManager';
 
 abstract class ProductsMonitor {
   private static observable: Observable<any>;

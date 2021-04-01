@@ -6,12 +6,12 @@ import ProxiesManager from './ProxiesManager';
 import { IPCMain } from '../../IPC/IPCMain';
 import moment, { Moment } from 'moment';
 import { Proxy } from '../../types/Proxy';
-import { ProductsMonitor } from '../ProductsMonitor';
+import { ProductsMonitor } from '../supreme/ProductsMonitor';
 import { HarvesterData } from '../../types/HarvesterData';
 import { HarvestersManager } from '../harvesters/HarvestersManager';
 import { DiscordManager } from '../../DiscordManager';
 import { Handler } from 'secret-agent';
-import { SupremeTask } from '../SupremeTask';
+import { SupremeTask } from '../supreme/SupremeTask';
 
 class TasksManager {
   public static runner: RunnerState;
@@ -98,7 +98,7 @@ class TasksManager {
       await supremeTask.init();
     } catch (ex) {
       IPCMain.setTaskActivity(task.id, false);
-      console.log('Couldnt initiate task: ' + ex);
+      console.log('Task exception: ' + ex);
     }
   }
 

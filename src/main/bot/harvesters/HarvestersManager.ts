@@ -95,7 +95,9 @@ class HarvestersManager {
       titleBarStyle: showFrame ? 'default' : 'hiddenInset',
       backgroundColor: showFrame ? '#fff' : '#1b191c',
       webPreferences: {
-        nodeIntegration: false,
+        nodeIntegration: true,
+        contextIsolation: false,
+        enableRemoteModule: true,
         preload: path.join(__dirname, 'harvesterPreload.js'),
         backgroundThrottling: false,
         session: ses,
