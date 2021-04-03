@@ -1,5 +1,5 @@
 import { SupremeTask } from './SupremeTask';
-import { ISuperNode, ISuperDocument, ISuperElement } from 'awaited-dom/base/interfaces/super';
+import { ISuperNode, ISuperElement } from 'awaited-dom/base/interfaces/super';
 import { KeyboardKeys } from '@secret-agent/client';
 import { IKeyboardKey } from '@secret-agent/core-interfaces/IKeyboardLayoutUS';
 
@@ -18,7 +18,7 @@ export async function disableAnimations(this: SupremeTask) {
 }
 
 export async function waitForTicket(this: SupremeTask, lastCommandId?: number) {
-  const script = saveQuerySelector(this.document, "script[src*='ticket']");
+  const script = await this.document.querySelector("script[src*='ticket']");
   if (!script) return;
   await this.agent.waitForResource({ url: /ticket.js/ }, { sinceCommandId: lastCommandId });
   console.log('Ticket loaded: ' + Date.now());
@@ -44,7 +44,27 @@ export async function fillInput(this: SupremeTask, node: ISuperNode, value: stri
   }
 }
 
-export async function selectOption(this: SupremeTask, node: ISuperNode, value: string) {
+export const getDataset = async (element: ISuperElement) => {
+  const html = await element.outerHTML;
+  const dataset: { [key: string]: string } = {};
+  const matches = html.match(/data-.+?(?==)/g);
+  if (!matches) return dataset;
+  await Promise.all(
+    matches.map(async attribute => {
+      const value = await element.getAttribute(attribute);
+      const [, ...name] = attribute.split('-');
+      const key = name.join().replace(/,./g, x => x[1].toUpperCase());
+      dataset[key] = value ?? '';
+    }),
+  );
+  return dataset;
+};
+
+export async function selectOption(
+  this: SupremeTask,
+  node: ISuperNode | ISuperElement,
+  value: string,
+) {
   await this.agent.interact({
     click: node,
   });
@@ -59,14 +79,4 @@ export async function selectOption(this: SupremeTask, node: ISuperNode, value: s
   await this.agent.interact({
     keyPress: KeyboardKeys.Enter,
   });
-}
-
-export async function saveQuerySelector(
-  node: ISuperDocument | ISuperNode | ISuperElement,
-  selector: string,
-) {
-  const elements = node.querySelectorAll(selector);
-  const length = await elements.length;
-  if (length === 0) return null;
-  return elements[0];
 }

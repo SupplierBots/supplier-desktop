@@ -1,9 +1,7 @@
 import { ProductStyle } from './ProductStyle';
 import { SupremeTask } from './SupremeTask';
-import { ISuperNode } from 'awaited-dom/base/interfaces/super';
 import { isMatch } from './isMatch';
 import { LocationStatus } from '@secret-agent/client';
-import { saveQuerySelector } from './agentUtils';
 
 export async function getProduct(this: SupremeTask, refreshCounter = 0): Promise<ProductStyle> {
   const styles: ProductStyle[] = [];
@@ -13,20 +11,17 @@ export async function getProduct(this: SupremeTask, refreshCounter = 0): Promise
     waitForVisible: true,
   });
 
-  const articlesCollection = this.document.querySelectorAll('article div, .inner-article');
-  const articles: ISuperNode[] = [];
-  await articlesCollection.forEach(a => articles.push(a));
-
+  const articles = [...(await this.document.querySelectorAll('article div, .inner-article'))];
   await Promise.all(
     articles.map(async article => {
-      const header = await saveQuerySelector(article, 'h1, h2, h3, h4, h5, h6');
+      const header = await article.querySelector('h1, h2, h3, h4, h5, h6');
       if (!header) return;
 
       const productName = await header.innerText;
       if (matchingProductName && productName !== matchingProductName) return;
       else if (!isMatch(productName, this.product.keywords)) return;
 
-      const paragraph = await saveQuerySelector(article, 'p');
+      const paragraph = await article.querySelector('p');
       if (!paragraph) return;
 
       matchingProductName = productName;
@@ -37,14 +32,14 @@ export async function getProduct(this: SupremeTask, refreshCounter = 0): Promise
       styles.push({
         name: styleName,
         url: url,
-        isSoldOut: articleHTML.includes('sold out'),
         element: header,
+        isSoldOut: articleHTML.includes('sold out'),
       });
     }),
   );
-  const style = this.selectStyle(styles);
-  if (style) {
-    return style;
+  if (styles.length > 0) {
+    const primaryStyle = this.selectStyle(styles);
+    return primaryStyle ?? styles[0];
   }
   await this.agent.waitForMillis(1000);
   if (refreshCounter >= 5) {

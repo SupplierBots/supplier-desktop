@@ -1935,151 +1935,151 @@
     redux-thunk "^2.3.0"
     reselect "^4.0.0"
 
-"@secret-agent/client@1.4.1-alpha.1":
-  version "1.4.1-alpha.1"
-  resolved "https://registry.yarnpkg.com/@secret-agent/client/-/client-1.4.1-alpha.1.tgz#ab385f8f6d20efa7accc97300d789c441394f23d"
-  integrity sha512-uQkW0aYE9yVteqAB39P9y01YNskNaD/9hoCiy9YT50pw+oeJFh9wEgfiL7CetmssFgzcvEg2NiqW9QXRsWgalg==
+"@secret-agent/client@1.4.1-alpha.2":
+  version "1.4.1-alpha.2"
+  resolved "https://registry.yarnpkg.com/@secret-agent/client/-/client-1.4.1-alpha.2.tgz#ffd1f320158392984266814c6428a0101328007b"
+  integrity sha512-jWvF2Htb5zcAIvjTc1CuhnWQc1TvHpGrLQnfAj9Hncpnb2L/XK7hDJCNlVv2peJSGY0QHPzDUvaOoToEcAskDA==
   dependencies:
-    "@secret-agent/commons" "1.4.1-alpha.1"
-    "@secret-agent/core-interfaces" "1.4.1-alpha.1"
-    "@secret-agent/replay" "1.4.1-alpha.1"
-    awaited-dom "^1.1.10"
+    "@secret-agent/commons" "1.4.1-alpha.2"
+    "@secret-agent/core-interfaces" "1.4.1-alpha.2"
+    "@secret-agent/replay" "1.4.1-alpha.2"
+    awaited-dom "^1.1.11"
     uuid "^8.3.2"
     ws "^7.4.2"
 
-"@secret-agent/commons@1.4.1-alpha.1":
-  version "1.4.1-alpha.1"
-  resolved "https://registry.yarnpkg.com/@secret-agent/commons/-/commons-1.4.1-alpha.1.tgz#cdb41961f9dc538f80c655347ec106d464e3e3ba"
-  integrity sha512-cyPF0Jwp3qTVLYExXuAt24GUVXbZdfog3rrXJgBQ1Qcist1zg8LKZU5LeeSIzBH58Ycojq9Q1P59CGEp4Hdy7w==
+"@secret-agent/commons@1.4.1-alpha.2":
+  version "1.4.1-alpha.2"
+  resolved "https://registry.yarnpkg.com/@secret-agent/commons/-/commons-1.4.1-alpha.2.tgz#1bf9c9cb2c9fc1d1bd9880f7b7c35d4b59aba184"
+  integrity sha512-L4EzwVwWMOGHPYuBGnuuGCY4eTDTjlW8WnDFNegM/c1UfxlmI4DjRIveYpedL/JoCYhPaldT22HBTVP5T5B1ZQ==
   dependencies:
-    "@secret-agent/core-interfaces" "1.4.1-alpha.1"
+    "@secret-agent/core-interfaces" "1.4.1-alpha.2"
     https-proxy-agent "^5.0.0"
     source-map-support "^0.5.19"
 
-"@secret-agent/core-interfaces@1.4.1-alpha.1":
-  version "1.4.1-alpha.1"
-  resolved "https://registry.yarnpkg.com/@secret-agent/core-interfaces/-/core-interfaces-1.4.1-alpha.1.tgz#8a9d389381c0eb38127cfe62e51c3fdca5c68dae"
-  integrity sha512-wWKX+qPmXwIJ885/MF52hGmPqkpOdYSgdn5J7QuQIiZjYLNA7UrbvthG5OYz30Eq//3/qOpUnff3Kj+j4HU7OQ==
+"@secret-agent/core-interfaces@1.4.1-alpha.2":
+  version "1.4.1-alpha.2"
+  resolved "https://registry.yarnpkg.com/@secret-agent/core-interfaces/-/core-interfaces-1.4.1-alpha.2.tgz#01a72193c6b64d41168900d831b7284b9b502640"
+  integrity sha512-AkwUbZ7IzPeOAiQMGy5k/z8k7rU7QBBRTsZiLJDaAxwzoHWYCRnNfjw9Hwjgxc8Ql9P5FyaNnHMKgz1dkQ7jig==
   dependencies:
-    "@secret-agent/puppet-interfaces" "1.4.1-alpha.1"
-    awaited-dom "^1.1.10"
+    "@secret-agent/puppet-interfaces" "1.4.1-alpha.2"
+    awaited-dom "^1.1.11"
 
-"@secret-agent/core@1.4.1-alpha.1":
-  version "1.4.1-alpha.1"
-  resolved "https://registry.yarnpkg.com/@secret-agent/core/-/core-1.4.1-alpha.1.tgz#0de3ffe54fb4e3b9fe7765c58d7d59e1e86c98ae"
-  integrity sha512-St/K+gUrsD6BiYhoo7FV0InemcIqNv+KY9qDNASBR78o8K5K/Pa7heP5e5MXzJVQ7n41Bazj53VY+IBOciDhXw==
+"@secret-agent/core@1.4.1-alpha.2":
+  version "1.4.1-alpha.2"
+  resolved "https://registry.yarnpkg.com/@secret-agent/core/-/core-1.4.1-alpha.2.tgz#3dedc32af198d96f7821833efe445f0a605ab476"
+  integrity sha512-oA4TW0cRHGBsvjSBt2Aq9esiW6o7hbvpRMz/Dm8qDvMaAzcvpLJVDKpba85PV/t95I19TpcBV0bbh5NK+MYEDw==
   dependencies:
-    "@secret-agent/commons" "1.4.1-alpha.1"
-    "@secret-agent/core-interfaces" "1.4.1-alpha.1"
-    "@secret-agent/emulate-browsers-base" "1.4.1-alpha.1"
-    "@secret-agent/emulate-chrome-83" "1.4.1-alpha.1"
-    "@secret-agent/emulate-humans-basic" "1.4.1-alpha.1"
-    "@secret-agent/emulate-humans-ghost" "1.4.1-alpha.1"
-    "@secret-agent/emulate-humans-skipper" "1.4.1-alpha.1"
-    "@secret-agent/mitm" "1.4.1-alpha.1"
-    "@secret-agent/puppet" "1.4.1-alpha.1"
-    "@secret-agent/puppet-interfaces" "1.4.1-alpha.1"
-    awaited-dom "^1.1.10"
+    "@secret-agent/commons" "1.4.1-alpha.2"
+    "@secret-agent/core-interfaces" "1.4.1-alpha.2"
+    "@secret-agent/emulate-browsers-base" "1.4.1-alpha.2"
+    "@secret-agent/emulate-chrome-83" "1.4.1-alpha.2"
+    "@secret-agent/emulate-humans-basic" "1.4.1-alpha.2"
+    "@secret-agent/emulate-humans-ghost" "1.4.1-alpha.2"
+    "@secret-agent/emulate-humans-skipper" "1.4.1-alpha.2"
+    "@secret-agent/mitm" "1.4.1-alpha.2"
+    "@secret-agent/puppet" "1.4.1-alpha.2"
+    "@secret-agent/puppet-interfaces" "1.4.1-alpha.2"
+    awaited-dom "^1.1.11"
     better-sqlite3 "^7.1.4"
     moment "^2.24.1"
     uuid "^8.3.2"
     ws "^7.4.2"
 
-"@secret-agent/emulate-browsers-base@1.4.1-alpha.1":
-  version "1.4.1-alpha.1"
-  resolved "https://registry.yarnpkg.com/@secret-agent/emulate-browsers-base/-/emulate-browsers-base-1.4.1-alpha.1.tgz#c605e0de3753274096ebe2b529525d341c811e4b"
-  integrity sha512-vQxmVOBRWvpubDFt47eXug7maLvIkRD9Iop8XPXAknXWArbV0QN2Bdy2JkajTDAEjfkNNs7DKLdrxQLPBlGp0w==
+"@secret-agent/emulate-browsers-base@1.4.1-alpha.2":
+  version "1.4.1-alpha.2"
+  resolved "https://registry.yarnpkg.com/@secret-agent/emulate-browsers-base/-/emulate-browsers-base-1.4.1-alpha.2.tgz#152df2ac81f1db0a6690f062a8a16d7f7b912b46"
+  integrity sha512-pIwAIwodFO1lJOFRIjpbFzXjuOG63m8qYjLEu8QFPLucKEI7AxAzsfwFhBg8JfG4xbaduLrAm2+8eUePpsdwrA==
   dependencies:
-    "@secret-agent/commons" "1.4.1-alpha.1"
-    "@secret-agent/core-interfaces" "1.4.1-alpha.1"
-    "@secret-agent/puppet" "1.4.1-alpha.1"
+    "@secret-agent/commons" "1.4.1-alpha.2"
+    "@secret-agent/core-interfaces" "1.4.1-alpha.2"
+    "@secret-agent/puppet" "1.4.1-alpha.2"
 
-"@secret-agent/emulate-chrome-83@1.4.1-alpha.1":
-  version "1.4.1-alpha.1"
-  resolved "https://registry.yarnpkg.com/@secret-agent/emulate-chrome-83/-/emulate-chrome-83-1.4.1-alpha.1.tgz#8dad256d3c9eaee944535d44171230114d6d4516"
-  integrity sha512-/YuSBCi//MRoe+YH9adlGMXA7nf8Ty4skRR77qppTNZ6rz2n2JWmaNzRUvTjPQSTRcE0H3rMc0hmtRWVhNBV1g==
+"@secret-agent/emulate-chrome-83@1.4.1-alpha.2":
+  version "1.4.1-alpha.2"
+  resolved "https://registry.yarnpkg.com/@secret-agent/emulate-chrome-83/-/emulate-chrome-83-1.4.1-alpha.2.tgz#0e36ff0599d119bb4f8b2159c76c74779bfcc1ca"
+  integrity sha512-2OzwLqk9QfqWhw7ylLWGILvN9dOj+myPGMEpHDATGgunBdWSxdvD80KRARqo6xcv1Vm5Nw+b+xw7uJqCNT8M5A==
   dependencies:
-    "@secret-agent/commons" "1.4.1-alpha.1"
-    "@secret-agent/core-interfaces" "1.4.1-alpha.1"
-    "@secret-agent/emulate-browsers-base" "1.4.1-alpha.1"
+    "@secret-agent/commons" "1.4.1-alpha.2"
+    "@secret-agent/core-interfaces" "1.4.1-alpha.2"
+    "@secret-agent/emulate-browsers-base" "1.4.1-alpha.2"
 
-"@secret-agent/emulate-humans-basic@1.4.1-alpha.1":
-  version "1.4.1-alpha.1"
-  resolved "https://registry.yarnpkg.com/@secret-agent/emulate-humans-basic/-/emulate-humans-basic-1.4.1-alpha.1.tgz#7de6149c1fccac3dea7405d908ef10471be3154d"
-  integrity sha512-3X2IpexbjDKDuRbqAlP3RUg5spx9e5t9qGoZccSvj4xtN825ItrMcpqsYyXU77z43MiW4Oq7naRoj5FuHi7KtQ==
+"@secret-agent/emulate-humans-basic@1.4.1-alpha.2":
+  version "1.4.1-alpha.2"
+  resolved "https://registry.yarnpkg.com/@secret-agent/emulate-humans-basic/-/emulate-humans-basic-1.4.1-alpha.2.tgz#5e89dd96f2f1ea42a934814d93897ed09c841dd2"
+  integrity sha512-/R5bid9Cw+gmouHMWtiMFk99NGMM3WsW8jzvoAdCS1p0meqXqUc66IMARQTPVdBkGS1KbrNdmDldz7VWVvq+8g==
   dependencies:
-    "@secret-agent/core-interfaces" "1.4.1-alpha.1"
+    "@secret-agent/core-interfaces" "1.4.1-alpha.2"
 
-"@secret-agent/emulate-humans-ghost@1.4.1-alpha.1":
-  version "1.4.1-alpha.1"
-  resolved "https://registry.yarnpkg.com/@secret-agent/emulate-humans-ghost/-/emulate-humans-ghost-1.4.1-alpha.1.tgz#2f5d61d0f6fe1316a9bfe5e2a97d6d7f7d9c1d40"
-  integrity sha512-ugHRLB8Ge44oz7xo65KBkNZj96TD8CVnzoYATc030EJeUsBs0SNhO3iARnqIKzBlVIkNMkDsQMQwVyzgcEfKUA==
+"@secret-agent/emulate-humans-ghost@1.4.1-alpha.2":
+  version "1.4.1-alpha.2"
+  resolved "https://registry.yarnpkg.com/@secret-agent/emulate-humans-ghost/-/emulate-humans-ghost-1.4.1-alpha.2.tgz#85bb4ea63bf31473310c197618b3eecd75e87943"
+  integrity sha512-CKXY64SB7E497cH3NYlcCNwHG9mE+uwW6gOdyvGFI46QDMNGQcuF26YKaSjDhUKC4X112wQKrFVFH61jbKsxsA==
   dependencies:
-    "@secret-agent/core-interfaces" "1.4.1-alpha.1"
+    "@secret-agent/core-interfaces" "1.4.1-alpha.2"
 
-"@secret-agent/emulate-humans-skipper@1.4.1-alpha.1":
-  version "1.4.1-alpha.1"
-  resolved "https://registry.yarnpkg.com/@secret-agent/emulate-humans-skipper/-/emulate-humans-skipper-1.4.1-alpha.1.tgz#b5a0edb7b616ff8d28f18b7878f4bb7e627a2eae"
-  integrity sha512-v1FEVP1xbFNjGhixcPtfJ46VUMuQlbA9KCOk3PB2YXvI6OUWF//7CQYYLpc+OFtsIqNKLZQ/QBenJfO+ux3HIw==
+"@secret-agent/emulate-humans-skipper@1.4.1-alpha.2":
+  version "1.4.1-alpha.2"
+  resolved "https://registry.yarnpkg.com/@secret-agent/emulate-humans-skipper/-/emulate-humans-skipper-1.4.1-alpha.2.tgz#9f19773b9288782e471c2580eaf66abe41f0cd97"
+  integrity sha512-nAsgQq2R300kMXkCYT31BmXWEBIQ4MspUHIIXXG+qBJ2KoFjQrvk3WL3jmRHWfM6b3ZeZSwjpsVSypxcX9AEXQ==
   dependencies:
-    "@secret-agent/core-interfaces" "1.4.1-alpha.1"
+    "@secret-agent/core-interfaces" "1.4.1-alpha.2"
 
-"@secret-agent/mitm-socket@1.4.1-alpha.1":
-  version "1.4.1-alpha.1"
-  resolved "https://registry.yarnpkg.com/@secret-agent/mitm-socket/-/mitm-socket-1.4.1-alpha.1.tgz#bcb14dfe2abd7c3fdd92f87bc9cdf7af8ab9a567"
-  integrity sha512-2YupH1GadyoLIaCX7ERzaVl/iKXVL3wuF3Rk6eoMMZK++SJGdPmv7BxRtZVJUQtGaAlyOruVv88x9y4JLXtk6w==
+"@secret-agent/mitm-socket@1.4.1-alpha.2":
+  version "1.4.1-alpha.2"
+  resolved "https://registry.yarnpkg.com/@secret-agent/mitm-socket/-/mitm-socket-1.4.1-alpha.2.tgz#2f53cb45460f972fc092b56c12b4ba734e9d7c4a"
+  integrity sha512-KIHL/PVikX3TR05H+Ok2oVPJfL0T4jK/OZYLLQu0vF3m6mGTYd1czLJsWuZKWpI/PnwdgCO6ug7t4oLgfGm4xQ==
   dependencies:
-    "@secret-agent/commons" "1.4.1-alpha.1"
-    "@secret-agent/core-interfaces" "1.4.1-alpha.1"
+    "@secret-agent/commons" "1.4.1-alpha.2"
+    "@secret-agent/core-interfaces" "1.4.1-alpha.2"
     uuid "^8.3.2"
 
-"@secret-agent/mitm@1.4.1-alpha.1":
-  version "1.4.1-alpha.1"
-  resolved "https://registry.yarnpkg.com/@secret-agent/mitm/-/mitm-1.4.1-alpha.1.tgz#0aba7ae5073f81daf9a5fb23a6ffc644bfb59af2"
-  integrity sha512-FYF/Bssou3TuCFne5FWAae0tl17DEHkuWlprvKsSSTfdUNJGdplb14oAy67IGgxwQjs7PYVUKYWvei13kwb2YA==
+"@secret-agent/mitm@1.4.1-alpha.2":
+  version "1.4.1-alpha.2"
+  resolved "https://registry.yarnpkg.com/@secret-agent/mitm/-/mitm-1.4.1-alpha.2.tgz#95ab1b81d439703ce4edf12cbf6ba44059fc0b0a"
+  integrity sha512-6sKr/a+OIOCOTvKevny7r53VI/qlcTqbf8OKM+/+xJbFrYgFHQYBpce+7b2x8IORSIzwE49KjocoUInd+aawGw==
   dependencies:
-    "@secret-agent/commons" "1.4.1-alpha.1"
-    "@secret-agent/core-interfaces" "1.4.1-alpha.1"
-    "@secret-agent/mitm-socket" "1.4.1-alpha.1"
+    "@secret-agent/commons" "1.4.1-alpha.2"
+    "@secret-agent/core-interfaces" "1.4.1-alpha.2"
+    "@secret-agent/mitm-socket" "1.4.1-alpha.2"
     better-sqlite3 "^7.1.4"
     devtools-protocol "^0.0.799653"
     dns-packet "^5.2.1"
     moment "^2.24.1"
     node-forge "^0.10.0"
 
-"@secret-agent/puppet-chrome@1.4.1-alpha.1":
-  version "1.4.1-alpha.1"
-  resolved "https://registry.yarnpkg.com/@secret-agent/puppet-chrome/-/puppet-chrome-1.4.1-alpha.1.tgz#8990171015345174922dcc03c072e7466eba1216"
-  integrity sha512-+JMzR1dxQW+D4AqC9YI8Po4E8zzrZ6TrTaZWQLP0NWbJRsaNNxte5DuuKkuBeMogzlGSOmMv64WQTdKQnQdA3A==
+"@secret-agent/puppet-chrome@1.4.1-alpha.2":
+  version "1.4.1-alpha.2"
+  resolved "https://registry.yarnpkg.com/@secret-agent/puppet-chrome/-/puppet-chrome-1.4.1-alpha.2.tgz#b5bf6e6fdaac45b512efd075894ebcb94ea696b4"
+  integrity sha512-yVdD4PYIhdMjVpUnEfBKo4rykRE7q8AEwDXx97Wto+KMDcSs/uji2oZEu4ym3O8/JEWMu9inQX4Vqw+oYrsiWQ==
   dependencies:
-    "@secret-agent/commons" "1.4.1-alpha.1"
-    "@secret-agent/core-interfaces" "1.4.1-alpha.1"
-    "@secret-agent/puppet-interfaces" "1.4.1-alpha.1"
+    "@secret-agent/commons" "1.4.1-alpha.2"
+    "@secret-agent/core-interfaces" "1.4.1-alpha.2"
+    "@secret-agent/puppet-interfaces" "1.4.1-alpha.2"
     devtools-protocol "^0.0.799653"
 
-"@secret-agent/puppet-interfaces@1.4.1-alpha.1":
-  version "1.4.1-alpha.1"
-  resolved "https://registry.yarnpkg.com/@secret-agent/puppet-interfaces/-/puppet-interfaces-1.4.1-alpha.1.tgz#fec329d3509ba168a8d829bb9822669328a4b2d5"
-  integrity sha512-cEV1SO/HRyEQ62xiFyJyhFH2mOebw+Txu1y7kv3Zsek6Ms1uUxWgyDMjQ9DGAs9CnPaCTwzwDIXauUP4YW33xA==
+"@secret-agent/puppet-interfaces@1.4.1-alpha.2":
+  version "1.4.1-alpha.2"
+  resolved "https://registry.yarnpkg.com/@secret-agent/puppet-interfaces/-/puppet-interfaces-1.4.1-alpha.2.tgz#7323e217683006376ceaab2e79f546d286da9c4e"
+  integrity sha512-TcTMhXqXP8NPUHqrSYiBs5bGl7/4ubW40I5uH5e66quJeqTJGJ+usZXtcCt/JMmgGunDxoO2jGi7DDE2cls9fw==
   dependencies:
-    "@secret-agent/core-interfaces" "1.4.1-alpha.1"
+    "@secret-agent/core-interfaces" "1.4.1-alpha.2"
 
-"@secret-agent/puppet@1.4.1-alpha.1":
-  version "1.4.1-alpha.1"
-  resolved "https://registry.yarnpkg.com/@secret-agent/puppet/-/puppet-1.4.1-alpha.1.tgz#8c8fb8355d454a9eebe6f82f59e3c64bca78509f"
-  integrity sha512-y6Ui8p/ZD6IVmKY6oB3RQtdPyVTStfBS5vwdyNTliT0PBUajE/vBtwFATP4gWxdEiVQLN/7zlLyNj14FD8lJDQ==
+"@secret-agent/puppet@1.4.1-alpha.2":
+  version "1.4.1-alpha.2"
+  resolved "https://registry.yarnpkg.com/@secret-agent/puppet/-/puppet-1.4.1-alpha.2.tgz#332f4eccaf3e73a5057e1bf09752713de6b01969"
+  integrity sha512-jyciRHYxb+vbWruykxuDnRqPqeFFdkUGGN7GSj+4j+OZ0GsEjLKWigqf8pfqBUINXa+l09WwO5t+Zwl3OuVOAg==
   dependencies:
-    "@secret-agent/commons" "1.4.1-alpha.1"
-    "@secret-agent/core-interfaces" "1.4.1-alpha.1"
-    "@secret-agent/puppet-chrome" "1.4.1-alpha.1"
-    "@secret-agent/puppet-interfaces" "1.4.1-alpha.1"
+    "@secret-agent/commons" "1.4.1-alpha.2"
+    "@secret-agent/core-interfaces" "1.4.1-alpha.2"
+    "@secret-agent/puppet-chrome" "1.4.1-alpha.2"
+    "@secret-agent/puppet-interfaces" "1.4.1-alpha.2"
     progress "^2.0.3"
     tar "^6.1.0"
 
-"@secret-agent/replay@1.4.1-alpha.1":
-  version "1.4.1-alpha.1"
-  resolved "https://registry.yarnpkg.com/@secret-agent/replay/-/replay-1.4.1-alpha.1.tgz#8803d222ae7119e381fa2c207470d4a153156e48"
-  integrity sha512-iS42/sff9eaDVRyuAsn3jrJPaA6gHo/kCTEO7mls7dhOY+oFD4RwViYqEeW0ZfP+/002Oc0EruED9ZRakDgNIw==
+"@secret-agent/replay@1.4.1-alpha.2":
+  version "1.4.1-alpha.2"
+  resolved "https://registry.yarnpkg.com/@secret-agent/replay/-/replay-1.4.1-alpha.2.tgz#6c6b42dfd29feb57066319fd26cf6b98971b8f2f"
+  integrity sha512-4h/yw2NHytSy7SCR/ZVxtMEfZP/PybXKUhW2lqbKU7uwFCJ3EgUBgURs1o10GV5Nt4zfcog9NeP9Gtuv/Dm+HA==
   dependencies:
     compare-versions "^3.6.0"
     progress "^2.0.3"
@@ -3350,10 +3350,10 @@ autoprefixer@^9.6.1, autoprefixer@^9.8.6:
     postcss "^7.0.32"
     postcss-value-parser "^4.1.0"
 
-awaited-dom@^1.1.10:
-  version "1.1.10"
-  resolved "https://registry.yarnpkg.com/awaited-dom/-/awaited-dom-1.1.10.tgz#2895769c7b50a832780c7dda26a5674167c35665"
-  integrity sha512-GmrTDjCj1YPONNRbiboMuXZ9ms5jLv80rhqz4IakMytkQhbG54VK0zCl6hwTp8WwhP+aZgCiYdn1DJsbkutZ6w==
+awaited-dom@^1.1.11:
+  version "1.1.11"
+  resolved "https://registry.yarnpkg.com/awaited-dom/-/awaited-dom-1.1.11.tgz#b551319dc20c4e0723d432d5fbb1996b46dd643c"
+  integrity sha512-BA7NGrICmqhYXfLN5/D9SsoWgDhrSB2bvdsP6efHiHNDG67zmWr019Xjt6cB43i1b6RzdlkQ7BRIfyeGWzd9wg==
 
 aws-sign2@~0.7.0:
   version "0.7.0"
@@ -14335,15 +14335,15 @@ seamless-immutable@^7.1.3:
   resolved "https://registry.yarnpkg.com/seamless-immutable/-/seamless-immutable-7.1.4.tgz#6e9536def083ddc4dea0207d722e0e80d0f372f8"
   integrity sha512-XiUO1QP4ki4E2PHegiGAlu6r82o5A+6tRh7IkGGTVg/h+UoeX4nFBeCGPOhb4CYjvkqsfm/TUtvOMYC1xmV30A==
 
-secret-agent@^1.4.1-alpha.1:
-  version "1.4.1-alpha.1"
-  resolved "https://registry.yarnpkg.com/secret-agent/-/secret-agent-1.4.1-alpha.1.tgz#3dee0a47ace34fd0502c5a5db90455104e914a70"
-  integrity sha512-WE7V8v8i+nvKHT79U95mclQVo0ggsi1+3jgqNvGrL4ReNQGjn9FKljfvxLiAYLvTwwtjv5O2pBJCti0UX82vhw==
+secret-agent@^1.4.1-alpha.2:
+  version "1.4.1-alpha.2"
+  resolved "https://registry.yarnpkg.com/secret-agent/-/secret-agent-1.4.1-alpha.2.tgz#3572c81193b50531a99f8fa2c36e3234bacb11bb"
+  integrity sha512-cmFYQYyHkH+Dvl9/aReBPOa+H9Alh1G08Cq9Bn35AQ5VWYm3jGBVS71sjA+x2O5hkpCwImYXHbq2b/MaVOuGNQ==
   dependencies:
-    "@secret-agent/client" "1.4.1-alpha.1"
-    "@secret-agent/commons" "1.4.1-alpha.1"
-    "@secret-agent/core" "1.4.1-alpha.1"
-    "@secret-agent/core-interfaces" "1.4.1-alpha.1"
+    "@secret-agent/client" "1.4.1-alpha.2"
+    "@secret-agent/commons" "1.4.1-alpha.2"
+    "@secret-agent/core" "1.4.1-alpha.2"
+    "@secret-agent/core-interfaces" "1.4.1-alpha.2"
 
 select-hose@^2.0.0:
   version "2.0.0"

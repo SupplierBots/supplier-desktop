@@ -16,14 +16,15 @@ import {
 } from './agentUtils';
 import { checkout } from './checkout';
 import { getProduct } from './getProduct';
+import { getRemainingStyles } from './getRemainingStyles';
 import { injectAddressCookie } from './injectAddressCookie';
-import { loadProductPage } from './loadProductPage';
+import { loadStylePage } from './loadStylePage';
 import { lookForModifiedButtons } from './lookForModifiedButtons';
 import { parseResponse } from './parseResponse';
 import { parseStatus } from './parseStatus';
+import { ProductStyle } from './ProductStyle';
+import { selectSize } from './selectSize';
 import { selectStyle } from './selectStyle';
-import WebsocketResource from '@secret-agent/client/lib/WebsocketResource';
-import Resource from '@secret-agent/client/lib/Resource';
 
 export class SupremeTask {
   public constructor(
@@ -39,6 +40,8 @@ export class SupremeTask {
 
   public agent!: Agent;
   public region: 'us' | 'eu';
+  public soldOutStyles: string[] = [];
+  public selectedStyle: string = '';
   public cardinalURL = '';
   public slug = '';
   public queued = false;
@@ -67,24 +70,50 @@ export class SupremeTask {
     await this.agent.activeTab.on('resource', resource => this.parseResponse(resource));
 
     const loadCommandId = await this.agent.lastCommandId;
-    await this.agent.goto('https://www.supremenewyork.com/shop/all/hats');
+    await this.agent.goto('https://www.supremenewyork.com/shop/all/accessories');
     await this.injectAddressCookie();
     await this.agent.activeTab.waitForLoad(LocationStatus.DomContentLoaded);
     console.log('Page loaded: ' + Date.now());
     await this.disableAnimations();
     this.updateTaskStatus({ message: 'Page loaded', type: TaskStatusType.Action });
 
+    this.updateTaskMessage('Waiting for product');
     const product = await this.getProduct();
     await this.waitForTicket(loadCommandId);
-    const start = Date.now();
-    await this.loadProductPage(product);
-    const added = await this.addToCart();
-    if (!added) {
-      return this.retry();
+    this.updateTaskMessage('Loading product details');
+    await this.loadStylePage(product);
+    this.selectedStyle = product.name;
+
+    let atcSuccess = false;
+    while (!atcSuccess) {
+      atcSuccess = await this.addToCart();
+      console.log(atcSuccess);
+      if (atcSuccess) continue;
+      this.soldOutStyles.push(this.selectedStyle);
+      const remainingStyles = await this.getRemainingStyles();
+      const nextAvailableStyle = this.selectStyle(remainingStyles);
+      if (nextAvailableStyle) {
+        this.selectedStyle = nextAvailableStyle.name;
+        await this.loadStylePage(nextAvailableStyle);
+        continue;
+      }
+      this.updateTaskMessage('Waiting for restock');
+      await this.agent.waitForMillis(1000);
+      this.soldOutStyles = [];
+      const reloadCommand = await this.agent.lastCommandId;
+      await this.agent.reload();
+      await this.waitForTicket(reloadCommand);
     }
+    this.updateTaskMessage('Loading checkout');
     await this.checkout();
-    console.log(Date.now() - start);
   }
+
+  public updateTaskMessage = (message: string) => {
+    IPCMain.updateTaskStatus(this.details.id, {
+      message,
+      type: TaskStatusType.Action,
+    });
+  };
 
   public updateTaskStatus = ({ message, type, additionalInfo }: TaskStatus) => {
     IPCMain.updateTaskStatus(this.details.id, {
@@ -102,6 +131,7 @@ export class SupremeTask {
     this.cardinalURL = '';
     this.slug = '';
     this.billingErrors = 'None';
+    this.soldOutStyles = [];
     await this.stop();
     await this.init();
   }
@@ -111,7 +141,9 @@ export class SupremeTask {
     await this.agent?.close();
   }
 
+  public selectSize = selectSize;
   public parseResponse = parseResponse;
+  public getRemainingStyles = getRemainingStyles;
   public parseStatus = parseStatus;
   public injectAddressCookie = injectAddressCookie;
   public evaluate = evaluate;
@@ -122,7 +154,7 @@ export class SupremeTask {
   public waitForTicket = waitForTicket;
   public getProduct = getProduct;
   public selectStyle = selectStyle;
-  public loadProductPage = loadProductPage;
+  public loadStylePage = loadStylePage;
   public addToCart = addToCart;
   public lookForModifiedButtons = lookForModifiedButtons;
   public checkout = checkout;

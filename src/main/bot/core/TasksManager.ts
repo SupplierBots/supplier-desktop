@@ -95,7 +95,7 @@ class TasksManager {
     try {
       const supremeTask = new SupremeTask(this.handler, task, product, profile, this.runner);
       this.tasks.push(supremeTask);
-      await supremeTask.init();
+      supremeTask.init();
     } catch (ex) {
       IPCMain.setTaskActivity(task.id, false);
       console.log('Task exception: ' + ex);
