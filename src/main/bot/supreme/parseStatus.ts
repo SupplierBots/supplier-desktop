@@ -33,6 +33,8 @@ export async function parseStatus(this: SupremeTask, checkoutResponse: Supreme.C
         type: TaskStatusType.Success,
         additionalInfo: checkoutResponse.id,
       });
+      this.sendWebhook(checkoutResponse);
+      this.reportCheckout(checkoutResponse);
       await this.stop();
       break;
     }
@@ -41,7 +43,8 @@ export async function parseStatus(this: SupremeTask, checkoutResponse: Supreme.C
         message: 'Duplicate order',
         type: TaskStatusType.Error,
       });
-
+      this.sendWebhook(checkoutResponse);
+      this.reportCheckout(checkoutResponse);
       await this.stop();
       break;
     }
@@ -51,6 +54,8 @@ export async function parseStatus(this: SupremeTask, checkoutResponse: Supreme.C
         message: 'Blacklisted',
         type: TaskStatusType.Error,
       });
+      this.sendWebhook(checkoutResponse);
+      this.reportCheckout(checkoutResponse);
       await this.stop();
       break;
     }
@@ -60,6 +65,8 @@ export async function parseStatus(this: SupremeTask, checkoutResponse: Supreme.C
         message: 'Country blocked',
         type: TaskStatusType.Error,
       });
+      this.sendWebhook(checkoutResponse);
+      this.reportCheckout(checkoutResponse);
       await this.stop();
       break;
     }
@@ -76,7 +83,7 @@ export async function parseStatus(this: SupremeTask, checkoutResponse: Supreme.C
       const message =
         checkoutResponse.status === 'outOfStock' ? 'Size sold out' : 'Failed. Retrying';
 
-      this.ticketDecline = !!checkoutResponse.page;
+      this.highTraffic = checkoutResponse.page?.includes('high traffic') ?? false;
       this.bParameter = !!checkoutResponse.b;
 
       if (checkoutResponse.errors) {
@@ -86,6 +93,8 @@ export async function parseStatus(this: SupremeTask, checkoutResponse: Supreme.C
       }
 
       this.updateTaskStatus({ message, type: TaskStatusType.Error });
+      this.sendWebhook(checkoutResponse);
+      this.reportCheckout(checkoutResponse);
       await this.retry();
       break;
     }

@@ -1,3 +1,5 @@
+import { Proxy } from '../../types/Proxy';
+import moment, { Moment } from 'moment';
 import { Agent, Handler, LocationStatus } from 'secret-agent';
 import { IPCMain } from '../../IPC/IPCMain';
 import { Product } from '../../types/Product';
@@ -22,9 +24,12 @@ import { loadStylePage } from './loadStylePage';
 import { lookForModifiedButtons } from './lookForModifiedButtons';
 import { parseResponse } from './parseResponse';
 import { parseStatus } from './parseStatus';
-import { ProductStyle } from './ProductStyle';
 import { selectSize } from './selectSize';
 import { selectStyle } from './selectStyle';
+import ProxiesManager from '../core/ProxiesManager';
+import { ItemDetails } from '../../types/ItemDetails';
+import { sendWebhook } from './sendWebhook';
+import { reportCheckout } from './reportCheckout';
 
 export class SupremeTask {
   public constructor(
@@ -40,15 +45,23 @@ export class SupremeTask {
 
   public agent!: Agent;
   public region: 'us' | 'eu';
+  public taskAttempt = 0;
+
+  //Resetable
+  public proxy: Proxy | null = null;
+  public item: ItemDetails = {};
   public soldOutStyles: string[] = [];
-  public selectedStyle: string = '';
   public cardinalURL = '';
   public slug = '';
   public queued = false;
-  public ticketDecline = false;
+  public highTraffic = false;
   public bParameter = false;
   public billingErrors = 'None';
+  public sitekey = '';
   public processingAttempt = 0;
+  public startTimestamp = moment();
+  public submitTimestamp = moment();
+  public atcTimestamp = moment();
 
   public get document() {
     return this.agent.document;
@@ -58,7 +71,12 @@ export class SupremeTask {
     // const org = this.product.keywords.positive;
     // this.product.keywords.positive = ['SRASAAS'];
     // setTimeout(() => (this.product.keywords.positive = org), 15000);
+
+    this.taskAttempt++;
     IPCMain.setTaskActivity(this.details.id, true);
+
+    this.proxy = this.runner.proxies ? ProxiesManager.getRandom() : null;
+
     this.agent = (await this.handler.createAgent({
       showReplay: false,
       humanEmulatorId: 'basic',
@@ -80,20 +98,20 @@ export class SupremeTask {
     this.updateTaskMessage('Waiting for product');
     const product = await this.getProduct();
     await this.waitForTicket(loadCommandId);
+    this.startTimestamp = moment();
     this.updateTaskMessage('Loading product details');
     await this.loadStylePage(product);
-    this.selectedStyle = product.name;
+    this.item.style = product.name;
 
     let atcSuccess = false;
     while (!atcSuccess) {
       atcSuccess = await this.addToCart();
-      console.log(atcSuccess);
       if (atcSuccess) continue;
-      this.soldOutStyles.push(this.selectedStyle);
+      this.soldOutStyles.push(this.item.style);
       const remainingStyles = await this.getRemainingStyles();
       const nextAvailableStyle = this.selectStyle(remainingStyles);
       if (nextAvailableStyle) {
-        this.selectedStyle = nextAvailableStyle.name;
+        this.item.style = nextAvailableStyle.name;
         await this.loadStylePage(nextAvailableStyle);
         continue;
       }
@@ -104,8 +122,10 @@ export class SupremeTask {
       await this.agent.reload();
       await this.waitForTicket(reloadCommand);
     }
+    this.atcTimestamp = moment();
     this.updateTaskMessage('Loading checkout');
     await this.checkout();
+    this.submitTimestamp = moment();
   }
 
   public updateTaskMessage = (message: string) => {
@@ -124,16 +144,20 @@ export class SupremeTask {
   };
 
   public async retry() {
+    this.item = {};
     this.processingAttempt = 0;
     this.queued = false;
-    this.ticketDecline = false;
+    this.highTraffic = false;
     this.bParameter = false;
     this.cardinalURL = '';
     this.slug = '';
     this.billingErrors = 'None';
     this.soldOutStyles = [];
-    await this.stop();
-    await this.init();
+    this.startTimestamp = moment();
+    this.submitTimestamp = moment();
+    this.atcTimestamp = moment();
+    // await this.stop();
+    // await this.init();
   }
 
   public async stop() {
@@ -158,4 +182,6 @@ export class SupremeTask {
   public addToCart = addToCart;
   public lookForModifiedButtons = lookForModifiedButtons;
   public checkout = checkout;
+  public sendWebhook = sendWebhook;
+  public reportCheckout = reportCheckout;
 }

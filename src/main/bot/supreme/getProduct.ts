@@ -25,6 +25,7 @@ export async function getProduct(this: SupremeTask, refreshCounter = 0): Promise
       if (!paragraph) return;
 
       matchingProductName = productName;
+      this.item.name = matchingProductName;
       const articleHTML = await article.innerHTML;
       const styleName = await paragraph.innerText;
       const url = await paragraph.querySelector('a').href;

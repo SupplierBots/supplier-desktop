@@ -3,6 +3,7 @@ import { LocationStatus } from 'secret-agent';
 import { HarvestersManager } from '../harvesters/HarvestersManager';
 import { selectors } from './selectors';
 import { SupremeTask } from './SupremeTask';
+import { getDataset } from './agentUtils';
 
 export async function checkout(this: SupremeTask) {
   const checkoutButton = this.document.querySelector(".checkout, [href*='checkout']");
@@ -33,17 +34,13 @@ export async function checkout(this: SupremeTask) {
   await this.fillInput(cvvInput, this.profile.cvv);
 
   const checkoutTime = Date.now() - addToCartTime.valueOf();
-  const delay =
-    typeof this.details.checkoutDelay === 'string'
-      ? parseInt(this.details.checkoutDelay)
-      : this.details.checkoutDelay;
 
-  if (checkoutTime < delay) {
+  if (checkoutTime < this.details.checkoutDelay) {
     this.updateTaskStatus({
       message: 'Checkout delay',
       type: TaskStatusType.Action,
     });
-    const requiredDelay = delay - checkoutTime;
+    const requiredDelay = this.details.checkoutDelay - checkoutTime;
     await new Promise(resolve => setTimeout(resolve, requiredDelay));
   }
 
@@ -52,12 +49,28 @@ export async function checkout(this: SupremeTask) {
     type: TaskStatusType.Action,
   });
 
-  const captchaToken = await HarvestersManager.getCaptchaToken(
-    '6LeWwRkUAAAAAOBsau7KpuC9AV-6J8mhw4AjC3Xz',
-  );
+  const captcha = await this.document.querySelector('.g-recaptcha, #g-recaptcha');
+  let sitekey = '6LeWwRkUAAAAAOBsau7KpuC9AV-6J8mhw4AjC3Xz';
+  let callback = 'checkoutAfterCaptcha';
+
+  if (captcha) {
+    const captchaDataset = await getDataset(captcha);
+
+    console.log(captchaDataset);
+
+    if (captchaDataset.callback) {
+      callback = captchaDataset.callback;
+    }
+
+    if (captchaDataset.sitekey) {
+      sitekey = captchaDataset.sitekey;
+    }
+  }
+
+  const captchaToken = await HarvestersManager.getCaptchaToken(sitekey);
 
   await this.evaluate(`$('[id*="g-recaptcha-response"]').html('${captchaToken}');`);
-  await this.evaluate(`checkoutAfterCaptcha();`);
+  await this.evaluate(`${callback}();`);
   this.updateTaskStatus({
     message: 'Waiting for response',
     type: TaskStatusType.Action,

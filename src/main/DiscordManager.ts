@@ -41,22 +41,23 @@ class DiscordManager {
   }
 
   public static async sendCheckoutWebhook({ status, item, id, profile, mode }: CheckoutWebhook) {
-    //status = 'paid';
     if (!item || !this.config) return;
     if (status !== 'paid' && this.config.onlySuccess) return;
 
     const message = new MessageEmbed()
       .setTitle(this.formatStatus(status))
       .setColor(status === 'paid' ? this.successColor : this.failColor)
-      .setThumbnail(item.image)
       .addField('Date', moment().format('Do MMM YYYY | HH:mm:ss'))
       .addField('Product', item.name, true);
+
+    if (item.image) {
+      message.setThumbnail(item.image);
+    }
 
     if (item.style !== 'sold-out') {
       message
         .addField('Style', item.style, true)
         .addField('Size', item.size, true)
-        .addField('Mode', mode, true)
         .addField('Profile', `|| ${profile.name} ||`, true)
         .addField('Order number', `|| #${id} ||`, true);
     }

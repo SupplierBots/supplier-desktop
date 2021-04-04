@@ -6,21 +6,19 @@ export interface CheckoutData {
   status: Supreme.CheckoutStatus;
   checkoutTime: number;
   item: ItemDetails;
-  ticketDecline: boolean;
+  highTraffic: boolean;
   bParameter: boolean;
   queued: boolean;
   processingAttempt: number;
   checkoutDelay: number;
   taskAttempt: number;
-  startTime: string;
-  atcTime: string;
-  submitTime: string;
+  startTimestamp: string;
+  atcTimestamp: string;
+  submitTimestamp: string;
   usedProxy: boolean;
-  cardinalBypass: boolean;
-  userAgent: string;
   sitekey: string;
   billingErrors: string;
-  site: 'supreme' | 'palace';
+  site: 'desktop' | 'mobile';
   region: 'eu' | 'us';
 }
 

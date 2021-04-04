@@ -8,8 +8,8 @@ export interface Task extends SelectableUserData {
   profile: Option | null;
   products: string[];
   status: TaskStatus;
-  refreshRate: number | string;
-  checkoutDelay: number | string;
+  refreshRate: number;
+  checkoutDelay: number;
   bypassCardinal?: boolean;
   stopIfSoldOut: boolean;
 }
