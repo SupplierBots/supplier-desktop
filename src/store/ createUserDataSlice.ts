@@ -7,7 +7,10 @@ import {
 
 import { UserData } from 'main/types/UserData';
 
-export const createUserDataSlice = <T extends UserData, Reducers extends SliceCaseReducers<T[]>>({
+export const createUserDataSlice = <
+  T extends Pick<UserData, 'id'>,
+  Reducers extends SliceCaseReducers<T[]>
+>({
   name,
   reducers = {} as ValidateSliceCaseReducers<T[], Reducers>,
 }: {

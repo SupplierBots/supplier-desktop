@@ -14,26 +14,28 @@ export async function getProduct(this: SupremeTask, refreshCounter = 0): Promise
   const articles = [...(await this.document.querySelectorAll('article div, .inner-article'))];
   await Promise.all(
     articles.map(async article => {
-      const header = await article.querySelector('h1, h2, h3, h4, h5, h6');
-      if (!header) return;
+      const nameElement = await article.querySelector(
+        'h1, h2, h3, h4, h5, h6, div:nth-of-type(1) > a:not([style])',
+      );
+      if (!nameElement) return;
 
-      const productName = await header.innerText;
+      const productName = await nameElement.innerText;
       if (matchingProductName && productName !== matchingProductName) return;
       else if (!isMatch(productName, this.product.keywords)) return;
 
-      const paragraph = await article.querySelector('p');
-      if (!paragraph) return;
+      const colorElement = await article.querySelector('p, div:nth-of-type(2) > a:not([style])');
+      if (!colorElement) return;
 
       matchingProductName = productName;
       this.item.name = matchingProductName;
       const articleHTML = await article.innerHTML;
-      const styleName = await paragraph.innerText;
-      const url = await paragraph.querySelector('a').href;
+      const styleName = await colorElement.innerText;
+      const url = await article.querySelector('a').href;
 
       styles.push({
         name: styleName,
         url: url,
-        element: header,
+        element: nameElement,
         isSoldOut: articleHTML.includes('sold out'),
       });
     }),
@@ -44,8 +46,11 @@ export async function getProduct(this: SupremeTask, refreshCounter = 0): Promise
   }
   await this.agent.waitForMillis(1000);
   if (refreshCounter >= 5) {
+    const commandId = await this.agent.lastCommandId;
     await this.agent.reload();
-    await this.agent.activeTab.waitForLoad(LocationStatus.PaintingStable);
+    await this.agent.activeTab.waitForLoad(LocationStatus.PaintingStable, {
+      sinceCommandId: commandId,
+    });
     await this.disableAnimations();
     refreshCounter = 0;
   } else {

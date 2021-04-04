@@ -11,7 +11,7 @@ export function reportCheckout(this: SupremeTask, { status, page }: Supreme.Chec
     bParameter: this.bParameter,
     queued: this.queued,
     processingAttempt: this.processingAttempt,
-    checkoutDelay: this.details.checkoutDelay,
+    checkoutDelay: this.checkoutDelay,
     taskAttempt: this.taskAttempt,
     startTimestamp: this.startTimestamp.toString(),
     atcTimestamp: this.atcTimestamp.toString(),

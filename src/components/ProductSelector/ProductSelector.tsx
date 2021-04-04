@@ -50,19 +50,16 @@ const Wrapper = styled.div<{ error: boolean }>`
 `;
 
 interface Props {
-  site: string | null;
   value: string[];
   error: boolean;
   onChange: (name: string, products: string[]) => void;
   setTouched: (name: string, value: boolean) => void;
   placeholder: string;
 }
-const ProductSelector = ({ site, value, onChange, setTouched, error }: Props) => {
+const ProductSelector = ({ value, onChange, setTouched, error }: Props) => {
   const isInitialMount = useRef(true);
 
-  const products = useStateSelector(state =>
-    state.products.filter(prod => prod.site && prod.site.value === site),
-  );
+  const products = useStateSelector(state => state.products);
 
   const [selectedProducts, setSelectedProducts] = useState<string[]>(value);
 
@@ -76,14 +73,13 @@ const ProductSelector = ({ site, value, onChange, setTouched, error }: Props) =>
     } else {
       setSelectedProducts([]);
     }
-  }, [site]);
+  }, []);
 
   const handleClick = (productID: string) => {
     setTouched('products', true);
     if (selectedProducts.includes(productID)) {
       setSelectedProducts(selectedProducts.filter(selectedID => selectedID !== productID));
     } else {
-      //setSelectedProducts([...selectedProducts, productID]);
       setSelectedProducts([productID]);
     }
   };

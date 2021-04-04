@@ -4,11 +4,6 @@ import { RunnerState } from 'main/types/RunnerState';
 const initialState: RunnerState = {
   scheduled: false,
   time: '',
-  proxies: false,
-  proxiesRegion: 'eu',
-  localIPTasks: 0,
-  restocks: false,
-  monitorDelay: 1000,
 };
 
 export const runnerSlice = createSlice({

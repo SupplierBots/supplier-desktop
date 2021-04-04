@@ -2,6 +2,7 @@ import { SupremeTask } from './SupremeTask';
 import { ISuperNode, ISuperElement } from 'awaited-dom/base/interfaces/super';
 import { KeyboardKeys } from '@secret-agent/client';
 import { IKeyboardKey } from '@secret-agent/core-interfaces/IKeyboardLayoutUS';
+import _ from 'lodash';
 
 export async function evaluate(this: SupremeTask, source: string) {
   await this.agent.getJsValue(`
@@ -28,10 +29,6 @@ export async function queryXPath(this: SupremeTask, selector: string) {
   return this.document.evaluate(selector, this.document).iterateNext();
 }
 
-export function getRandomRange(min: number, max: number) {
-  return Math.random() * (max - min) + min;
-}
-
 export async function fillInput(this: SupremeTask, node: ISuperNode, value: string) {
   await this.agent.interact({
     click: node,
@@ -40,7 +37,7 @@ export async function fillInput(this: SupremeTask, node: ISuperNode, value: stri
     await this.agent.interact({
       type: character,
     });
-    await this.agent.waitForMillis(getRandomRange(35, 65));
+    await this.agent.waitForMillis(_.random(35, 65));
   }
 }
 

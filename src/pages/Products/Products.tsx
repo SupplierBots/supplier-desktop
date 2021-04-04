@@ -23,7 +23,6 @@ import {
   productValidationSchema,
   sizeOptions,
   anySizeOptions,
-  productSiteOptions,
 } from './FormDetails';
 
 import { addProduct, updateProduct } from 'store/products/productsSlice';
@@ -180,15 +179,6 @@ const Products = ({ history, match }: RouteComponentProps<{ id: string }>) => {
                 )}
                 <StyledHeading>Other</StyledHeading>
                 <Input type="text" name="name" placeholder="Product Name" />
-                <Select
-                  name="site"
-                  placeholder="Site"
-                  value={props.values.site}
-                  options={productSiteOptions}
-                  onBlur={props.setFieldTouched}
-                  onChange={props.setFieldValue}
-                  error={!!props.errors.site && !!props.touched.site}
-                />
               </Card>
               <ButtonsContainer>
                 {products.length > 0 && (

@@ -1,6 +1,6 @@
 import { Proxy } from '../../types/Proxy';
-import moment, { Moment } from 'moment';
-import { Agent, Handler, LocationStatus } from 'secret-agent';
+import moment from 'moment';
+import { Agent, Handler, IAgentCreateOptions, LocationStatus } from 'secret-agent';
 import { IPCMain } from '../../IPC/IPCMain';
 import { Product } from '../../types/Product';
 import { Profile } from '../../types/Profile';
@@ -26,10 +26,10 @@ import { parseResponse } from './parseResponse';
 import { parseStatus } from './parseStatus';
 import { selectSize } from './selectSize';
 import { selectStyle } from './selectStyle';
-import ProxiesManager from '../core/ProxiesManager';
 import { ItemDetails } from '../../types/ItemDetails';
 import { sendWebhook } from './sendWebhook';
 import { reportCheckout } from './reportCheckout';
+import _ from 'lodash';
 
 export class SupremeTask {
   public constructor(
@@ -37,6 +37,7 @@ export class SupremeTask {
     readonly details: Task,
     readonly product: Product,
     readonly profile: Profile,
+    readonly proxy: Proxy | null,
     readonly runner: RunnerState,
   ) {
     const country = this.profile?.country?.label;
@@ -48,7 +49,6 @@ export class SupremeTask {
   public taskAttempt = 0;
 
   //Resetable
-  public proxy: Proxy | null = null;
   public item: ItemDetails = {};
   public soldOutStyles: string[] = [];
   public cardinalURL = '';
@@ -59,6 +59,7 @@ export class SupremeTask {
   public billingErrors = 'None';
   public sitekey = '';
   public processingAttempt = 0;
+  public checkoutDelay = 3000;
   public startTimestamp = moment();
   public submitTimestamp = moment();
   public atcTimestamp = moment();
@@ -75,12 +76,19 @@ export class SupremeTask {
     this.taskAttempt++;
     IPCMain.setTaskActivity(this.details.id, true);
 
-    this.proxy = this.runner.proxies ? ProxiesManager.getRandom() : null;
-
-    this.agent = (await this.handler.createAgent({
+    const launchArgs: IAgentCreateOptions = {
       showReplay: false,
       humanEmulatorId: 'basic',
-    })) as Agent;
+    };
+
+    console.log(this.getProxyString());
+
+    if (this.proxy) {
+      launchArgs.upstreamProxyUrl = this.getProxyString();
+    }
+
+    this.checkoutDelay = _.random(3000, 5000);
+    this.agent = (await this.handler.createAgent(launchArgs)) as Agent;
     this.agent.on('close', () => {
       IPCMain.setTaskActivity(this.details.id, false);
     });
@@ -116,6 +124,7 @@ export class SupremeTask {
         continue;
       }
       this.updateTaskMessage('Waiting for restock');
+      this.checkoutDelay = 2500;
       await this.agent.waitForMillis(1000);
       this.soldOutStyles = [];
       const reloadCommand = await this.agent.lastCommandId;
@@ -126,6 +135,12 @@ export class SupremeTask {
     this.updateTaskMessage('Loading checkout');
     await this.checkout();
     this.submitTimestamp = moment();
+  }
+
+  public getProxyString() {
+    if (!this.proxy) return '';
+    const auth = this.proxy.userPassAuth ? `${this.proxy.username}:${this.proxy.password}@` : '';
+    return `http://${auth}${this.proxy.ipPort}`;
   }
 
   public updateTaskMessage = (message: string) => {

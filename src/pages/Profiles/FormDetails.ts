@@ -27,7 +27,6 @@ export const profileValidationSchema = Yup.object().shape({
   year: Yup.object().required('Required'),
   cvv: Yup.string().required('Required'),
   name: Yup.string().required('Required'),
-  site: Yup.object().required('Required'),
 });
 
 export const initialValues: Profile = {
@@ -48,7 +47,6 @@ export const initialValues: Profile = {
   year: null,
   cvv: '',
   name: '',
-  site: null,
 };
 
 export const countryOptions: Option[] = [
@@ -203,10 +201,4 @@ export const yearOptions: Option[] = [
   { value: '2026', label: '2026' },
   { value: '2027', label: '2027' },
   { value: '2028', label: '2028' },
-];
-
-export const siteOptions: Option[] = [
-  { value: 'supreme', label: 'Supreme' },
-  { value: 'palace', label: 'Palace' },
-  { value: 'both', label: 'Both' },
 ];

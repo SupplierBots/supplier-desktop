@@ -1,4 +1,3 @@
-import { Option } from 'main/types/Option';
 import * as Yup from 'yup';
 import { Proxy } from 'main/types/Proxy';
 
@@ -17,7 +16,6 @@ export const proxyValidationSchema = Yup.object().shape({
     then: Yup.string().required('Required'),
     otherwise: Yup.string(),
   }),
-  region: Yup.object().required(),
   name: Yup.string(),
 });
 
@@ -27,17 +25,5 @@ export const initialProxyValues: Proxy = {
   userPassAuth: false,
   username: '',
   password: '',
-  region: null,
   name: '',
 };
-
-export const siteOptions: Option[] = [
-  { value: 'supreme', label: 'Supreme' },
-  { value: 'palace', label: 'Palace' },
-  { value: 'both', label: 'Both' },
-];
-
-export const proxyRegions: Option[] = [
-  { value: 'eu', label: 'Europe' },
-  { value: 'us', label: 'USA' },
-];

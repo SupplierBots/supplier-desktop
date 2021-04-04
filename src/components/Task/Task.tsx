@@ -125,6 +125,7 @@ interface Props {
 const Task = ({ details }: Props) => {
   const dispatch = useStateDispatch();
   const { isTimerActive } = useStateSelector(state => state.controller);
+  const products = useStateSelector(state => state.products);
 
   const isBrowserActive = () => {
     return isTimerActive || details.isActive;
@@ -143,14 +144,11 @@ const Task = ({ details }: Props) => {
   return (
     <Wrapper>
       <WebsiteIconWrapper>
-        {details.site && details.site.label === 'Palace' ? <PalaceIcon /> : <SupremeIcon />}
+        <SupremeIcon />
       </WebsiteIconWrapper>
-      <Text>{details.name}</Text>
+      <Text>{products.find(p => p.id === details.products[0])?.name}</Text>
       <Text>{details.profile && details.profile.label}</Text>
-      <Status type={details.status.type}>
-        {details.status.message}
-        {details.bypassCardinal && <CardinalBypass>3DS</CardinalBypass>}
-      </Status>
+      <Status type={details.status.type}>{details.status.message}</Status>
       <ActionsContainer>
         <Action disabled={isBrowserActive()}>
           <EditIcon onClick={editTask} />

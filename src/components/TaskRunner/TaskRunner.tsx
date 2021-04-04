@@ -5,8 +5,6 @@ import Slider from 'components/Slider/Slider';
 import { Formik, FormikProps, FormikHelpers, useFormikContext } from 'formik';
 import { GradientParagraph } from 'components/GradientParagraph/GradientParagraph';
 import { ReactComponent as TimerIcon } from 'assets/Timer.svg';
-import { ReactComponent as ProxiesIcon } from 'assets/Proxies.svg';
-import { ReactComponent as RestocksIcon } from 'assets/Restocks.svg';
 import { ReactComponent as StartIcon } from 'assets/Start.svg';
 import { ReactComponent as StopIcon } from 'assets/Stop.svg';
 import { ReactComponent as AddIcon } from 'assets/Plus.svg';
@@ -15,8 +13,6 @@ import Input from 'components/Input/Input';
 import { useStateDispatch, useStateSelector } from 'hooks/typedReduxHooks';
 import { IPCRenderer } from 'main/IPC/IPCRenderer';
 import routes from 'constants/routes';
-import Button from 'components/Button/Button';
-import { removeAllTasks } from 'store/tasks/tasksSlice';
 import { push } from 'connected-react-router';
 import { setScheduler } from 'store/runner/runnerSlice';
 import { runnerValudationSchema } from './FormData';
@@ -24,9 +20,6 @@ import Fieldset from 'components/Fieldset/Fieldset';
 import moment, { Moment } from 'moment';
 import { RunnerState } from 'main/types/RunnerState';
 import { setTimerState } from 'store/controller/controllerSlice';
-import Select from 'components/Select/Select';
-import { proxyRegions } from 'pages/Proxies/FormDetails';
-import Radio from 'components/Radio/Radio';
 import { TaskStatusType } from 'main/types/TaskStatus';
 
 const ConfigBox = styled.div`
@@ -41,11 +34,6 @@ const Scheduler = styled(ConfigBox)`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-`;
-
-const ProxySelector = styled(ConfigBox)`
-  width: 30.5rem;
-  margin-left: 1.5rem;
 `;
 
 const ActionButton = styled.div<{ 'data-disabled'?: boolean }>`
@@ -77,10 +65,6 @@ const ActionButton = styled.div<{ 'data-disabled'?: boolean }>`
     `};
 `;
 
-const Restocks = styled(ConfigBox)`
-  width: 22rem;
-  margin-left: 1.5rem;
-`;
 const StyledGradientParagraph = styled(GradientParagraph)`
   font-size: ${fonts.big};
   margin-top: 0.15rem;
@@ -99,25 +83,10 @@ const StyledInput = styled(Input)`
 const Wrapper = styled.div`
   align-self: end;
   display: flex;
+  justify-content: flex-end;
 `;
 
 const StyledTimerIcon = styled(TimerIcon)<{ 'data-enabled': boolean }>`
-  path {
-    transition: all 0.3s;
-    fill: ${({ 'data-enabled': enabled }) => (enabled ? 'url(#iconGradient)' : colors.darkGrey)};
-  }
-`;
-
-const StyledProxiesIcon = styled(ProxiesIcon)<{ 'data-enabled': boolean }>`
-  margin-top: 0.2rem;
-  path {
-    transition: all 0.3s;
-    fill: ${({ 'data-enabled': enabled }) => (enabled ? 'url(#iconGradient)' : colors.darkGrey)};
-  }
-`;
-
-const StyledRestocksIcon = styled(RestocksIcon)<{ 'data-enabled': boolean }>`
-  margin-top: 0.2rem;
   path {
     transition: all 0.3s;
     fill: ${({ 'data-enabled': enabled }) => (enabled ? 'url(#iconGradient)' : colors.darkGrey)};
@@ -171,21 +140,10 @@ const ScheduledState = styled.div`
   font-size: ${fonts.regular};
 `;
 
-const RadioContainer = styled.div`
-  display: flex;
-`;
-
 const StyledInputsContainer = styled(InlineInputsContainer)`
   margin-top: 0.4rem;
   align-items: center;
   font-size: ${fonts.regular};
-`;
-
-const Separator = styled.div`
-  height: 1.5rem;
-  width: 1px;
-  margin: 0 0;
-  background-color: ${colors.darkGrey};
 `;
 
 const TaskRunner = () => {
@@ -317,91 +275,6 @@ const TaskRunner = () => {
                 </Fieldset>
               )}
             </Scheduler>
-            <ProxySelector>
-              <Fieldset disabled={isAnyTaskActive()}>
-                <InlineInputsContainer>
-                  <Slider
-                    name="proxies"
-                    checked={props.values.proxies}
-                    onClick={() => {
-                      props.setFieldValue('proxiesRegion', !props.values.proxies ? 'eu' : '');
-                    }}
-                  >
-                    {props.values.proxies ? (
-                      <StyledGradientParagraph>Auto rotating proxies</StyledGradientParagraph>
-                    ) : (
-                      <DisabledParagraph>Auto rotating proxies</DisabledParagraph>
-                    )}
-                  </Slider>
-                  <StyledProxiesIcon data-enabled={props.values.proxies} />
-                </InlineInputsContainer>
-              </Fieldset>
-              <Fieldset disabled={!props.values.proxies}>
-                <StyledInputsContainer>
-                  <RadioContainer>
-                    <Radio
-                      name="proxiesRegion"
-                      value="eu"
-                      currentValue={props.values.proxiesRegion}
-                      onChange={props.setFieldValue}
-                    >
-                      EU
-                    </Radio>
-                    <Radio
-                      name="proxiesRegion"
-                      value="us"
-                      currentValue={props.values.proxiesRegion}
-                      onChange={props.setFieldValue}
-                    >
-                      US
-                    </Radio>
-                  </RadioContainer>
-                  {props.values.proxies && (
-                    <>
-                      <Separator />
-                      <p>Local IP tasks</p>
-                      <StyledInput
-                        type="tel"
-                        name="localIPTasks"
-                        placeholder="10"
-                        hideErrors
-                        width="20%"
-                        data-centered
-                        maxLength={2}
-                      />
-                    </>
-                  )}
-                </StyledInputsContainer>
-              </Fieldset>
-            </ProxySelector>
-            <Restocks>
-              <Fieldset disabled={isAnyTaskActive()}>
-                <InlineInputsContainer>
-                  <Slider name="restocks" checked={props.values.restocks}>
-                    {props.values.restocks ? (
-                      <StyledGradientParagraph>Restocks</StyledGradientParagraph>
-                    ) : (
-                      <DisabledParagraph>Restocks</DisabledParagraph>
-                    )}
-                  </Slider>
-                  <StyledRestocksIcon data-enabled={props.values.restocks} />
-                </InlineInputsContainer>
-              </Fieldset>
-              <Fieldset disabled={!props.values.restocks}>
-                <StyledInputsContainer>
-                  <p>Monitor delay</p>
-                  <StyledInput
-                    type="tel"
-                    name="monitorDelay"
-                    placeholder="500"
-                    hideErrors
-                    width="40%"
-                    data-centered
-                    maxLength={4}
-                  />
-                </StyledInputsContainer>
-              </Fieldset>
-            </Restocks>
             <ButtonsContainer>
               {!isAnyTaskActive() ? (
                 <ActionButton
@@ -418,7 +291,7 @@ const TaskRunner = () => {
                 </ActionButton>
               )}
               <ActionButton
-                data-disabled={isAnyTaskActive() || tasks.length >= 8}
+                data-disabled={isAnyTaskActive() || tasks.length >= 6}
                 onClick={createNewTask}
               >
                 <StyledAddIcon data-disabled={isAnyTaskActive() || tasks.length >= 6} />

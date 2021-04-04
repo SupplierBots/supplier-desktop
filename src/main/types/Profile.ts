@@ -1,7 +1,7 @@
-import { SelectableUserData } from './SelectableUserData';
+import { UserData } from './UserData';
 import { Option } from './Option';
 
-export interface Profile extends SelectableUserData {
+export interface Profile extends UserData {
   firstName: string;
   lastName: string;
   email: string;
@@ -17,5 +17,4 @@ export interface Profile extends SelectableUserData {
   month: Option | null;
   year: Option | null;
   cvv: string;
-  site: Option | null;
 }

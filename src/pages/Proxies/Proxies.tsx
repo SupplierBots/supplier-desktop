@@ -9,11 +9,10 @@ import ButtonsContainer from 'components/ButtonsContainer/ButtonsContainer';
 import Button from 'components/Button/Button';
 import Heading from 'components/Heading/Heading';
 import Card from 'components/Card/Card';
-import Select from 'components/Select/Select';
 import Input from 'components/Input/Input';
 
 import routes from 'constants/routes';
-import { proxyValidationSchema, initialProxyValues, proxyRegions } from './FormDetails';
+import { proxyValidationSchema, initialProxyValues } from './FormDetails';
 import Slider from 'components/Slider/Slider';
 import { Proxy } from 'main/types/Proxy';
 import Item from 'components/ChangeItemModal/SelectableItem';
@@ -129,15 +128,6 @@ const Proxies = ({ match, history }: RouteComponentProps<{ id: string }>) => {
               )}
               <StyledHeading>Other</StyledHeading>
               <Input type="text" name="name" placeholder="Proxy Name (optional)" />
-              <Select
-                name="region"
-                placeholder="Region"
-                value={props.values.region}
-                options={proxyRegions}
-                onBlur={props.setFieldTouched}
-                onChange={props.setFieldValue}
-                error={!!props.errors.region && !!props.touched.region}
-              />
             </Card>
             <Card>
               <Heading>Select proxy</Heading>

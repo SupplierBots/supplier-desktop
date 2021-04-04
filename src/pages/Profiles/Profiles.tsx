@@ -23,7 +23,6 @@ import {
   creditCardTypeOptions,
   monthOptions,
   yearOptions,
-  siteOptions,
   getRegions,
   isCountryWithRegions,
 } from './FormDetails';
@@ -197,15 +196,6 @@ const Profiles = ({ match, history }: RouteComponentProps<{ id: string }>) => {
                 <Input type="text" name="cvv" placeholder="CVV" />
                 <StyledHeading>Other</StyledHeading>
                 <Input type="text" name="name" placeholder="Profile Name" />
-                <Select
-                  name="site"
-                  placeholder="Site"
-                  value={props.values.site}
-                  options={siteOptions}
-                  onBlur={props.setFieldTouched}
-                  onChange={props.setFieldValue}
-                  error={!!props.errors.site && !!props.touched.site}
-                />
               </Card>
               <ButtonsContainer>
                 {profiles.length > 0 && (

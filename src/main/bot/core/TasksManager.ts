@@ -2,11 +2,9 @@ import { TaskStatusType } from './../../types/TaskStatus';
 import { WebhookConfig } from '../../types/WebhookConfig';
 import { Task } from '../../types/Task';
 import { RunnerState } from '../../types/RunnerState';
-import ProxiesManager from './ProxiesManager';
 import { IPCMain } from '../../IPC/IPCMain';
 import moment, { Moment } from 'moment';
 import { Proxy } from '../../types/Proxy';
-import { ProductsMonitor } from '../supreme/ProductsMonitor';
 import { HarvesterData } from '../../types/HarvesterData';
 import { HarvestersManager } from '../harvesters/HarvestersManager';
 import { DiscordManager } from '../../DiscordManager';
@@ -20,6 +18,7 @@ class TasksManager {
   private static timerID: NodeJS.Timeout;
   private static tasks: SupremeTask[] = [];
   private static handler: Handler;
+  private static proxies: Proxy[];
 
   public static init() {
     this.handler = new Handler();
@@ -37,6 +36,7 @@ class TasksManager {
     webhook: WebhookConfig,
   ) {
     this.runner = runner;
+    this.proxies = proxies;
 
     DiscordManager.setupWebhook(webhook);
     HarvestersManager.initialize(harvesters);
@@ -54,10 +54,7 @@ class TasksManager {
     // console.log('tokens:');
     // console.log(tokens);
 
-    ProxiesManager.setProxies(runner.proxies, proxies, runner.proxiesRegion);
-
     await this.stopAllTasks();
-    ProductsMonitor.init(2000);
     this.isScheduled = runner.scheduled;
 
     if (!runner.scheduled) {
@@ -91,12 +88,13 @@ class TasksManager {
     });
     const product = await IPCMain.getProduct(task.products[0]);
     const profile = await IPCMain.getProfile(task.profile?.value);
+    const proxy = task.proxy?.value ? (await IPCMain.getProxy(task.proxy.value)) ?? null : null;
 
     if (!product || !profile) {
       return;
     }
     try {
-      const supremeTask = new SupremeTask(this.handler, task, product, profile, this.runner);
+      const supremeTask = new SupremeTask(this.handler, task, product, profile, proxy, this.runner);
       this.tasks.push(supremeTask);
       supremeTask.init();
     } catch (ex) {
@@ -107,7 +105,6 @@ class TasksManager {
 
   public static async stopAllTasks() {
     HarvestersManager.closeAll();
-    ProductsMonitor.unsubscribeAll();
     clearInterval(this.timerID);
     await Promise.all(this.tasks.map(task => task.stop()));
     this.tasks = [];

@@ -14,16 +14,16 @@ import Button from 'components/Button/Button';
 import { slideInFromRight } from 'theme/animations';
 import ProductSelector from 'components/ProductSelector/ProductSelector';
 import { Option } from 'main/types/Option';
-import { taskSiteOptions, initialTaskValues, taskValidationSchema } from './FormDetails';
+import { initialTaskValues, taskValidationSchema } from './FormDetails';
 import { Task } from 'main/types/Task';
 import { RouteComponentProps } from 'react-router';
 import routes from 'constants/routes';
 import uuid from 'uuid/v4';
 import { push } from 'connected-react-router';
-import { SelectableUserData } from 'main/types/SelectableUserData';
 import { TaskStatusType } from 'main/types/TaskStatus';
 import { updateTask, addTask } from 'store/tasks/tasksSlice';
 import { useStateSelector, useStateDispatch } from 'hooks/typedReduxHooks';
+import { UserData } from 'main/types/UserData';
 
 const StyledHeading = styled(Heading)`
   color: ${colors.lightPurple};
@@ -111,18 +111,12 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
   const state = useStateSelector(state => state);
   const [isNew, setIsNew] = useState(match.params.id && match.params.id === 'new');
 
-  const getOptions = (type: 'profiles' | 'products', site: Option | null): Option[] => {
-    const dataArr = state[type] as SelectableUserData[];
+  const getOptions = (type: 'profiles' | 'products' | 'proxies'): Option[] => {
+    const dataArr = state[type] as UserData[];
 
-    const options = dataArr
-      .filter(
-        data =>
-          (site && data.site && data.site.value === site.value) ||
-          (data.site && data.site.label === 'Both'),
-      )
-      .map(data => {
-        return { label: data.name, value: data.id };
-      });
+    const options = dataArr.map(data => {
+      return { label: data.name, value: data.id };
+    });
     return options;
   };
 
@@ -142,7 +136,6 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
         ...task,
         isActive: false,
         status: { message: 'Inactive', type: TaskStatusType.Inactive },
-        // status: { message: 'Success', type: TaskStatusType.Success },
         id: uuid(),
       };
       dispatch(addTask({ item: newTask }));
@@ -173,66 +166,36 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
             <StyledHeading>Create new task</StyledHeading>
             <StyledForm>
               <ProductSelector
-                site={props.values.site && props.values.site.value}
-                placeholder="+Another color"
+                placeholder="Products"
                 onChange={props.setFieldValue}
                 setTouched={props.setFieldTouched}
                 error={!!props.errors.products && !!props.touched.products}
                 value={props.values.products}
               />
               <Fieldset>
-                <Select
-                  specialPlaceholder
-                  name="site"
-                  placeholder="Site"
-                  value={props.values.site}
-                  options={taskSiteOptions}
-                  onBlur={props.setFieldTouched}
-                  onChange={(name, value) => {
-                    props.setFieldValue(name, value);
-                    props.setFieldValue('profile', null);
-                    props.setFieldValue('proxy', null);
-                  }}
-                  error={!!props.errors.site && !!props.touched.site}
-                />
-                <Fieldset disabled={!props.values.site}>
+                <Fieldset>
                   <Select
                     name="profile"
                     placeholder="Profile"
                     value={props.values.profile}
-                    options={getOptions('profiles', props.values.site)}
+                    options={getOptions('profiles')}
                     onBlur={props.setFieldTouched}
                     onChange={props.setFieldValue}
                     error={!!props.errors.profile && !!props.touched.profile}
                   />
-                  <Input type="text" name="name" placeholder="Task name" />
-                  <InlineInputsContainer>
-                    <Input
-                      type="number"
-                      name="refreshRate"
-                      placeholder="Refresh rate (ms)"
-                      width="48.5%"
-                    />
-                    {props.values.site && props.values.site.value === 'supreme' && (
-                      <Input
-                        type="number"
-                        name="checkoutDelay"
-                        placeholder="Checkout delay (ms)"
-                        width="48.5%"
-                      />
-                    )}
-                  </InlineInputsContainer>
-                  <Slider name="bypassCardinal" checked={!!props.values.bypassCardinal}>
-                    3D Secure Bypass
-                  </Slider>
-                  <StyledSlider name="stopIfSoldOut" checked={props.values.stopIfSoldOut}>
-                    Stop if any product sold out
-                  </StyledSlider>
+                  <Select
+                    name="proxy"
+                    placeholder="Proxy"
+                    value={props.values.proxy}
+                    options={[{ value: 'none', label: 'None' }, ...getOptions('proxies')]}
+                    onBlur={props.setFieldTouched}
+                    onChange={props.setFieldValue}
+                    error={!!props.errors.proxy && !!props.touched.proxy}
+                  />
                 </Fieldset>
               </Fieldset>
               <ItemsCounter>
-                {!props.values.site && <GradientText>Firstly, select the site</GradientText>}
-                {props.values.site && props.values.products.length > 0 && (
+                {props.values.products.length > 0 && (
                   <span>
                     You've selected{' '}
                     <GradientText>
@@ -241,7 +204,7 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
                     </GradientText>
                   </span>
                 )}
-                {props.values.site && props.values.products.length === 0 && (
+                {props.values.products.length === 0 && (
                   <span>You haven't selected any products</span>
                 )}
               </ItemsCounter>

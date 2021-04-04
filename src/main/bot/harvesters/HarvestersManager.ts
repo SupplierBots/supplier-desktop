@@ -38,7 +38,6 @@ class HarvestersManager {
 
   private static getRandomAvailable() {
     const availableHarvesters = this.harvesters.filter(h => h.ready && !h.solving);
-    console.log(availableHarvesters.length);
     return availableHarvesters[Math.floor(Math.random() * availableHarvesters.length)];
   }
 

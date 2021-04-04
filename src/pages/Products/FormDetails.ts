@@ -25,7 +25,6 @@ export const productValidationSchema = Yup.object().shape({
     otherwise: Yup.object().nullable(),
   }),
   name: Yup.string().required('Required'),
-  site: Yup.object().required(),
 });
 
 export const initialProductsValues: Product = {
@@ -37,7 +36,6 @@ export const initialProductsValues: Product = {
   anyColor: false,
   anySizeOption: null,
   name: '',
-  site: null,
 };
 
 export const sizeOptions: Option[] = [
@@ -110,9 +108,4 @@ export const anySizeOptions: Option[] = [
   { value: 'smallest', label: 'The Smallest' },
   { value: 'largest', label: 'The Largest' },
   { value: 'random', label: 'Random' },
-];
-
-export const productSiteOptions: Option[] = [
-  { value: 'supreme', label: 'Supreme' },
-  { value: 'palace', label: 'Palace' },
 ];

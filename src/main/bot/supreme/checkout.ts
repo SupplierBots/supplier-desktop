@@ -16,6 +16,9 @@ export async function checkout(this: SupremeTask) {
   await this.waitForTicket(lastCommandId);
   const addToCartTime = Date.now();
 
+  await this.agent.waitForElement(this.document.querySelector("input[type='text']"), {
+    waitForVisible: true,
+  });
   const termsLabel = await this.queryXPath(selectors.termsLabel);
   const bounds = await termsLabel.getBoundingClientRect();
   const x = await bounds.x;
@@ -35,12 +38,12 @@ export async function checkout(this: SupremeTask) {
 
   const checkoutTime = Date.now() - addToCartTime.valueOf();
 
-  if (checkoutTime < this.details.checkoutDelay) {
+  if (checkoutTime < this.checkoutDelay) {
     this.updateTaskStatus({
       message: 'Checkout delay',
       type: TaskStatusType.Action,
     });
-    const requiredDelay = this.details.checkoutDelay - checkoutTime;
+    const requiredDelay = this.checkoutDelay - checkoutTime;
     await new Promise(resolve => setTimeout(resolve, requiredDelay));
   }
 
@@ -55,8 +58,6 @@ export async function checkout(this: SupremeTask) {
 
   if (captcha) {
     const captchaDataset = await getDataset(captcha);
-
-    console.log(captchaDataset);
 
     if (captchaDataset.callback) {
       callback = captchaDataset.callback;
