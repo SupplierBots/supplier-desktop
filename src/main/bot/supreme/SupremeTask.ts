@@ -101,6 +101,16 @@ export class SupremeTask {
     await this.agent.activeTab.waitForLoad(LocationStatus.DomContentLoaded);
     console.log('Page loaded: ' + Date.now());
     await this.disableAnimations();
+
+    if (this.runner.scheduled) {
+      const scheduledDate = moment(this.runner.time, 'DD/MM HH:mm:ss');
+      const timeDifference = scheduledDate.valueOf() - moment().valueOf();
+      if (timeDifference > 0) {
+        this.updateTaskStatus({ message: 'Waiting', type: TaskStatusType.Action });
+        await new Promise(resolve => setTimeout(resolve, timeDifference));
+      }
+    }
+
     this.updateTaskStatus({ message: 'Page loaded', type: TaskStatusType.Action });
 
     this.updateTaskMessage('Waiting for product');
@@ -171,8 +181,8 @@ export class SupremeTask {
     this.startTimestamp = moment();
     this.submitTimestamp = moment();
     this.atcTimestamp = moment();
-    // await this.stop();
-    // await this.init();
+    await this.stop();
+    await this.init();
   }
 
   public async stop() {
