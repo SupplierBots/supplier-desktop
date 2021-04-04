@@ -90,7 +90,7 @@
       }
 
       .status {
-        margin-top: 22rem;
+        margin-top: 16rem;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -205,46 +205,51 @@
     </div>
 
     <script>
+      window.token = '';
+
       let sitekey = '$SITE_KEY$';
       const currentStatus = document.querySelector('.current-status');
       const currentEmail = document.querySelector('.harvester-email');
       const closeButton = document.querySelector('.window-close');
 
-      window.token = '';
-
-      function sendToken() {
+      function setToken() {
         window.token = grecaptcha.getResponse();
+      }
+
+      function isTokenReady() {
+        return window.token !== '';
+      }
+
+      function getToken() {
+        const token = window.token;
+        window.token = '';
         setStatus('Waiting');
         grecaptcha.reset();
+        return token;
       }
 
       function initializeCaptcha() {
         grecaptcha.render('g-recaptcha', {
           size: 'invisible',
-          callback: sendToken,
+          callback: setToken,
           sitekey,
         });
+      }
+
+      window.sleep = m => new Promise(r => setTimeout(r, m));
+
+      function executeCaptcha() {
+        setStatus('Solving');
+        grecaptcha.execute();
+      }
+
+      function setEmail(email) {
+        currentEmail.textContent = email;
       }
 
       function setStatus(status) {
         currentStatus.textContent = status;
       }
-
-      window.sleep = m => new Promise(r => setTimeout(r, m));
-
-      window.solveCaptcha = async () => {
-        setStatus('Solving');
-        window.token = '';
-        grecaptcha.execute();
-        while (!window.token) {
-          await window.sleep(75);
-        }
-        return window.token;
-      };
-
-      window.setEmail = email => {
-        currentEmail.textContent = email;
-      };
 
       setTimeout(() => {
         setStatus('Waiting');

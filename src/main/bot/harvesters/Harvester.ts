@@ -1,62 +1,59 @@
+import { Page, Request } from 'puppeteer';
 import { getPageContent } from './pageContent';
 import { HarvesterData } from '../../types/HarvesterData';
-import { BrowserWindow } from 'electron';
-import { ipcMain } from 'electron-better-ipc';
 
 class Harvester {
   private sitekey: string;
   public solving = false;
   public ready = false;
 
-  constructor(readonly browser: BrowserWindow, readonly data: HarvesterData, sitekey: string) {
+  constructor(readonly page: Page, readonly data: HarvesterData, sitekey: string) {
     this.sitekey = sitekey;
   }
 
   public init = async () => {
-    this.ready = false;
-    this.solving = false;
+    await this.page.setRequestInterception(true);
+    this.page.on('request', this.parseRequest);
 
-    this.browser.webContents.session.protocol.uninterceptProtocol('http');
-    this.browser.webContents.session.protocol.interceptStringProtocol('http', (req, handler) => {
-      if (req.url === 'http://www.supremenewyork.com/mobile/#checkout') {
-        handler({
-          mimeType: 'text/html',
-          charset: 'UTF-8',
-          data: getPageContent(this.sitekey),
-        });
-      }
+    this.page.on('domcontentloaded', () => {
+      this.page.evaluate(`setEmail('${this.data.accountEmail}');`);
     });
-
-    this.browser.loadURL('http://www.supremenewyork.com/mobile/#checkout');
-
-    this.browser.once('ready-to-show', () => {
-      this.browser.webContents.send('set-email', this.data.accountEmail);
-    });
-
-    this.browser.webContents.once('did-finish-load', async () => {
-      this.browser.show();
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      this.ready = true;
-    });
+    await this.load();
   };
 
-  public reload = async () => {
+  public load = async () => {
     this.ready = false;
-    this.browser.reload();
+    this.page.goto('https://www.supremenewyork.com/checkout');
     await new Promise(resolve => setTimeout(resolve, 2500));
-    this.browser.webContents.send('set-email', this.data.accountEmail);
     this.ready = true;
   };
 
-  public getCaptchaToken = async (sitekey = this.sitekey) => {
-    this.solving = true;
+  public parseRequest = (request: Request) => {
+    if (request.url().includes('supremenewyork')) {
+      request.respond({
+        status: 200,
+        contentType: 'text/html',
+        body: getPageContent(this.sitekey),
+      });
+    } else {
+      request.continue();
+    }
+  };
 
+  public getCaptchaToken = async (sitekey = this.sitekey) => {
     if (sitekey !== this.sitekey) {
       this.sitekey = sitekey;
-      await this.reload();
+      await this.load();
     }
 
-    const token = await ipcMain.callRenderer<null, string>(this.browser, 'solve-captcha');
+    this.solving = true;
+    await this.page.evaluate('executeCaptcha();');
+    await this.page.waitForFunction(`isTokenReady()`, {
+      timeout: 0,
+    });
+
+    const token = (await this.page.evaluate('getToken()')) as string;
+
     this.solving = false;
     return token;
   };

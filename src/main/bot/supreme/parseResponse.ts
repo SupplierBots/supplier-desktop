@@ -26,6 +26,7 @@ export async function parseResponse(this: SupremeTask, resource: Resource | Webs
   }
 
   if (/.*(checkout|status).json$/.test(url)) {
+    console.log(await resource.request.postData);
     const checkoutResponse = (await resource.json()) as Supreme.CheckoutResponse;
     if (!checkoutResponse.status) return;
 

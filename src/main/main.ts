@@ -12,6 +12,7 @@ import { menu } from './menu';
 import { DiscordManager } from './DiscordManager';
 import { config } from '../config';
 import { TasksManager } from './bot/core/TasksManager';
+import { HarvestersManager } from './bot/harvesters/HarvestersManager';
 
 export const isDev = process.env.NODE_ENV === 'development';
 
@@ -117,6 +118,7 @@ app.on('login', (event, webContents, request, authInfo, callback) => {
 
 app.on('before-quit', async () => {
   await TasksManager.dispose();
+  await HarvestersManager.closeAll();
 });
 
 IPCMain.registerListeners();

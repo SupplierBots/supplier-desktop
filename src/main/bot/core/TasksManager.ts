@@ -41,15 +41,18 @@ class TasksManager {
     DiscordManager.setupWebhook(webhook);
     HarvestersManager.initialize(harvesters);
 
-    // await Promise.all([
+    // const tokens = await Promise.all([
+    //   HarvestersManager.getCaptchaToken(),
+    //   HarvestersManager.getCaptchaToken(),
+    //   HarvestersManager.getCaptchaToken(),
     //   HarvestersManager.getCaptchaToken(),
     //   HarvestersManager.getCaptchaToken(),
     //   HarvestersManager.getCaptchaToken(),
     //   HarvestersManager.getCaptchaToken(),
     //   HarvestersManager.getCaptchaToken(),
     // ]);
-    // await new Promise(resolve => setTimeout(resolve, 5000));
-    // await HarvestersManager.getCaptchaToken();
+    // console.log('tokens:');
+    // console.log(tokens);
 
     ProxiesManager.setProxies(runner.proxies, proxies, runner.proxiesRegion);
 

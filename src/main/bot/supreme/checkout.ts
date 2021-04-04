@@ -58,7 +58,6 @@ export async function checkout(this: SupremeTask) {
 
   await this.evaluate(`$('[id*="g-recaptcha-response"]').html('${captchaToken}');`);
   await this.evaluate(`checkoutAfterCaptcha();`);
-
   this.updateTaskStatus({
     message: 'Waiting for response',
     type: TaskStatusType.Action,
