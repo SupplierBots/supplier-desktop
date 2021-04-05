@@ -64,6 +64,7 @@ export class SecretAgentPageElement implements PageElement {
       await this.agent.waitForMillis(_.random(35, 65));
     }
   }
+
   async selectOption(value: string): Promise<void> {
     await this.agent.interact({
       click: this.element,
@@ -90,10 +91,12 @@ export class SecretAgentPageElement implements PageElement {
     if (!queryResult) return null;
     return new SecretAgentPageElement(queryResult, this.agent);
   }
+
   async querySelectorAll(selector: string): Promise<PageElement[]> {
     const queryResult = [...(await this.element.querySelectorAll(selector))];
     return queryResult.map(e => new SecretAgentPageElement(e, this.agent));
   }
+
   async queryXPath(selector: string): Promise<PageElement | null> {
     const queryResult = await this.agent.document.evaluate(selector, this.element).iterateNext();
     if (!queryResult) return null;

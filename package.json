@@ -1,7 +1,7 @@
 {
   "name": "supplier",
   "productName": "Supplier",
-  "description": "Supreme & Palace Bot",
+  "description": "Supreme Bot",
   "version": "0.7.3",
   "copyright": "Supplier",
   "main": "build/electron.js",
@@ -104,6 +104,7 @@
     "moment": "^2.24.0",
     "npm-check": "^5.9.2",
     "path-to-regexp": "^6.1.0",
+    "playwright-core": "^1.10.0",
     "puppeteer-core": "5",
     "puppeteer-extra": "^3.1.18",
     "puppeteer-extra-plugin-stealth": "^2.7.6",
