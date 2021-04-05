@@ -4,8 +4,8 @@ import { Supreme } from '../../types/Supreme';
 import { Response } from '../browserEngines/interfaces/Response';
 
 export async function parseResponse(this: SupremeTask, resource: Response) {
-  const url = await resource.url();
-  const status = await resource.statusCode();
+  const url = await resource.url;
+  const status = await resource.statusCode;
   if (/.*checkout.json$/.test(url) && status !== 200) {
     this.updateTaskStatus({ message: `${status}. Retrying`, type: TaskStatusType.Error });
     await this.retry();

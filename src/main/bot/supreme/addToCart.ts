@@ -12,7 +12,7 @@ export async function addToCart(this: SupremeTask): Promise<boolean> {
     await button.click();
     await this.lookForModifiedButtons(['continue', 'confirm', 'proceed', 'accept']);
   });
-  const statusCode = await response.statusCode();
+  const statusCode = await response.statusCode;
   if (statusCode !== 200) {
     return this.addToCart();
   }

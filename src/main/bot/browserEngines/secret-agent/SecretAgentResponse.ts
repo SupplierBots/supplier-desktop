@@ -4,10 +4,10 @@ import Resource from '@secret-agent/client/lib/Resource';
 
 export class SecretAgentResponse implements Response {
   constructor(readonly resource: WebsocketResource | Resource) {}
-  async url(): Promise<string> {
-    return this.resource.url;
+  get url(): Promise<string> {
+    return Promise.resolve(this.resource.url);
   }
-  async statusCode(): Promise<number> {
+  get statusCode(): Promise<number> {
     return this.resource.response.statusCode;
   }
   async text(): Promise<string> {

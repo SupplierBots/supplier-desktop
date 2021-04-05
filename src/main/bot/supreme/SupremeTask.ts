@@ -7,7 +7,6 @@ import { RunnerState } from '../../types/RunnerState';
 import { Task } from '../../types/Task';
 import { TaskStatus, TaskStatusType } from '../../types/TaskStatus';
 import { addToCart } from './addToCart';
-import { disableAnimations, waitForTicket } from './agentUtils';
 import { checkout } from './checkout';
 import { getProduct } from './getProduct';
 import { getRemainingStyles } from './getRemainingStyles';
@@ -163,13 +162,22 @@ export class SupremeTask {
     await this.browser.stop();
   }
 
+  public async disableAnimations() {
+    await this.browser.evaluate('jQuery.fx.off = true;');
+  }
+
+  public async waitForTicket() {
+    const script = await this.document.querySelector("script[src*='ticket']");
+    if (!script) return;
+    await this.browser.waitForResponse(/ticket.js/);
+    console.log('Ticket loaded: ' + Date.now());
+  }
+
   public selectSize = selectSize;
   public parseResponse = parseResponse;
   public getRemainingStyles = getRemainingStyles;
   public parseStatus = parseStatus;
   public injectAddressCookie = injectAddressCookie;
-  public disableAnimations = disableAnimations;
-  public waitForTicket = waitForTicket;
   public getProduct = getProduct;
   public selectStyle = selectStyle;
   public loadStylePage = loadStylePage;
