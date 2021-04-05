@@ -45,7 +45,6 @@ class TasksManager {
     // console.log('tokens:');
     // console.log(tokens);
 
-    await this.stopAllTasks();
     this.isScheduled = runner.scheduled;
 
     if (!runner.scheduled) {

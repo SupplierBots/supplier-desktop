@@ -71,14 +71,16 @@ export class PlaywrightHarvester implements Harvester {
 
   async load() {
     this.isReady = false;
-    this.page.goto('https://www.supremenewyork.com/checkout', { waitUntil: 'domcontentloaded' });
-    this.page.evaluate(`setEmail('${this.data.accountEmail}');`);
+    await this.page.goto('https://www.supremenewyork.com/checkout', {
+      waitUntil: 'domcontentloaded',
+    });
+    await this.page.evaluate(`setEmail('${this.data.accountEmail}');`);
     await new Promise(resolve => setTimeout(resolve, 2500));
     this.isReady = true;
   }
 
   async close(): Promise<void> {
-    await this.context.close();
+    await this.page.close();
   }
 
   async getToken(sitekey: string): Promise<string> {

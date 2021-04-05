@@ -20,12 +20,12 @@ let mainWindow: electron.BrowserWindow | null = null;
 
 const installExtensions = async () => {
   const { REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
-  const installExtension = require('electron-devtools-installer');
+  const installer = require('electron-devtools-installer');
   const extensions = [REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS];
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
   for (const name of extensions) {
     try {
-      await installExtension(name, forceDownload);
+      await installer.default(name, forceDownload);
     } catch (e) {
       console.log(`Error installing ${name} extension: ${e.message}`);
     }
