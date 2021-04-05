@@ -4,11 +4,10 @@ const babel = require('@babel/core');
 
 (async () => {
   await createHarvesterCode();
-  await minifyHarvesterPreload();
 })();
 
 async function createHarvesterCode() {
-  const sourcePath = path.resolve(process.cwd(), 'src', 'main', 'bot', 'harvesters');
+  const sourcePath = path.resolve(process.cwd(), 'src', 'main', 'bot', 'harvesters', 'playwright');
   const source = await fs.readFileSync(path.resolve(sourcePath, 'page.html'), {
     encoding: 'UTF-8',
   });
@@ -21,21 +20,4 @@ async function createHarvesterCode() {
             String.fromCharCode(...${encryptedFirstPart}) + sitekey + String.fromCharCode(...${encryptedSecondPart});`;
 
   await fs.promises.writeFile(path.resolve(sourcePath, 'pageContent.ts'), content);
-}
-
-async function minifyHarvesterPreload() {
-  const sourcePath = path.resolve(process.cwd(), 'src', 'main', 'bot', 'harvesters');
-  const source = await fs.readFileSync(path.resolve(sourcePath, 'harvesterPreload.js'), {
-    encoding: 'UTF-8',
-  });
-  const minified = babel.transform(source, {
-    comments: false,
-    minified: true,
-    plugins: ['minify-mangle-names'],
-  });
-
-  await fs.promises.writeFile(
-    path.resolve(process.cwd(), 'public', 'harvesterPreload.js'),
-    minified.code,
-  );
 }

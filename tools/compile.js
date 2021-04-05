@@ -13,7 +13,6 @@ const buildDir = path.resolve(process.cwd(), 'build');
     'index.html',
     'static',
     'preload.js',
-    'harvesterPreload.js',
   ];
 
   const files = await fs.readdir(buildDir);

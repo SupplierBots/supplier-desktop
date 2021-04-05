@@ -93,6 +93,11 @@ const createWindow = () => {
   mainWindow.on('closed', () => (mainWindow = null));
 };
 
+const dispose = async () => {
+  await SecretAgentEngine.dispose();
+  await HarvestersManager.closeAll();
+};
+
 app.whenReady().then(createWindow);
 
 if (!isDev) Menu.setApplicationMenu(menu);
@@ -114,10 +119,9 @@ app.on('login', (event, webContents, request, authInfo, callback) => {
   event.preventDefault();
 });
 
-app.on('before-quit', async () => {
-  await SecretAgentEngine.dispose();
-  await HarvestersManager.closeAll();
-});
+app.on('before-quit', dispose);
+process.on('SIGINT', dispose);
+process.on('SIGTERM', dispose);
 
 IPCMain.registerListeners();
 if (!isDev) IPCMain.setupUpdater();
