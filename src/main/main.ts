@@ -11,8 +11,8 @@ import { IPCMain } from './IPC/IPCMain';
 import { menu } from './menu';
 import { DiscordManager } from './DiscordManager';
 import { config } from '../config';
-import { TasksManager } from './bot/core/TasksManager';
 import { HarvestersManager } from './bot/harvesters/HarvestersManager';
+import { SecretAgentEngine } from './bot/browserEngines/secret-agent/SecretAgentEngine';
 
 export const isDev = process.env.NODE_ENV === 'development';
 
@@ -41,8 +41,6 @@ const createWindow = () => {
     process.env.SHOW_BROWSER = 'true';
     process.env.SA_DISABLE_DEVTOOLS = 'true';
   }
-
-  TasksManager.init();
 
   const launchOptions: BrowserWindowConstructorOptions = {
     width: 1200,
@@ -117,7 +115,7 @@ app.on('login', (event, webContents, request, authInfo, callback) => {
 });
 
 app.on('before-quit', async () => {
-  await TasksManager.dispose();
+  await SecretAgentEngine.dispose();
   await HarvestersManager.closeAll();
 });
 

@@ -21,17 +21,14 @@ export async function injectAddressCookie(this: SupremeTask) {
     country?.value
   }|${email}|${telephone.replace(/ /g, '')}`;
 
-  await this.agent.activeTab.cookieStorage.setItem(
-    'address',
-    encodeURIComponent(value).replace(/%20/g, '+'),
-    {
-      expires:
-        moment()
-          .add(6, 'month')
-          .valueOf() / 1000,
-      httpOnly: false,
-      secure: true,
-      sameSite: 'None',
-    },
-  );
+  await this.browser.setCookie({
+    domain: 'www.supremenewyork.com',
+    path: '/',
+    name: 'address',
+    value: encodeURIComponent(value).replace(/%20/g, '+'),
+    expires: moment().add(6, 'month'),
+    httpOnly: false,
+    secure: true,
+    sameSite: 'None',
+  });
 }

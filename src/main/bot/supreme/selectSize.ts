@@ -24,7 +24,7 @@ export async function selectSize(this: SupremeTask) {
   ).toLowerCase();
 
   if (sizes.includes(sizeToFind)) {
-    await this.selectOption(select, sizeToFind);
+    await select.selectOption(sizeToFind);
     this.item.size = _.capitalize(sizeToFind);
     return true;
   }
@@ -47,7 +47,7 @@ export async function selectSize(this: SupremeTask) {
       break;
   }
   this.item.size = _.capitalize(secondarySize);
-  await this.selectOption(select, secondarySize);
+  await select.selectOption(secondarySize);
   return true;
 }
 

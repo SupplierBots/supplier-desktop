@@ -1,6 +1,5 @@
 import { Proxy } from '../../types/Proxy';
 import moment from 'moment';
-import { Agent, Handler, IAgentCreateOptions, LocationStatus } from 'secret-agent';
 import { IPCMain } from '../../IPC/IPCMain';
 import { Product } from '../../types/Product';
 import { Profile } from '../../types/Profile';
@@ -8,14 +7,7 @@ import { RunnerState } from '../../types/RunnerState';
 import { Task } from '../../types/Task';
 import { TaskStatus, TaskStatusType } from '../../types/TaskStatus';
 import { addToCart } from './addToCart';
-import {
-  disableAnimations,
-  evaluate,
-  fillInput,
-  queryXPath,
-  selectOption,
-  waitForTicket,
-} from './agentUtils';
+import { disableAnimations, waitForTicket } from './agentUtils';
 import { checkout } from './checkout';
 import { getProduct } from './getProduct';
 import { getRemainingStyles } from './getRemainingStyles';
@@ -30,10 +22,11 @@ import { ItemDetails } from '../../types/ItemDetails';
 import { sendWebhook } from './sendWebhook';
 import { reportCheckout } from './reportCheckout';
 import _ from 'lodash';
+import { BrowserEngine } from '../browserEngines/interfaces/BrowserEngine';
 
 export class SupremeTask {
   public constructor(
-    readonly handler: Handler,
+    readonly browser: BrowserEngine,
     readonly details: Task,
     readonly product: Product,
     readonly profile: Profile,
@@ -44,7 +37,6 @@ export class SupremeTask {
     this.region = country === 'USA' || country === 'Canada' ? 'us' : 'eu';
   }
 
-  public agent!: Agent;
   public region: 'us' | 'eu';
   public taskAttempt = 0;
 
@@ -65,7 +57,7 @@ export class SupremeTask {
   public atcTimestamp = moment();
 
   public get document() {
-    return this.agent.document;
+    return this.browser.document;
   }
 
   public async init() {
@@ -76,29 +68,18 @@ export class SupremeTask {
     this.taskAttempt++;
     IPCMain.setTaskActivity(this.details.id, true);
 
-    const launchArgs: IAgentCreateOptions = {
-      showReplay: false,
-      humanEmulatorId: 'basic',
-    };
-
-    console.log(this.getProxyString());
-
-    if (this.proxy) {
-      launchArgs.upstreamProxyUrl = this.getProxyString();
-    }
-
     this.checkoutDelay = _.random(3000, 5000);
-    this.agent = (await this.handler.createAgent(launchArgs)) as Agent;
-    this.agent.on('close', () => {
+    await this.browser.initialize(this.proxy);
+
+    this.browser.onClose(() => {
       IPCMain.setTaskActivity(this.details.id, false);
     });
 
-    await this.agent.activeTab.on('resource', resource => this.parseResponse(resource));
+    await this.browser.onResponse(this.parseResponse.bind(this));
 
-    const loadCommandId = await this.agent.lastCommandId;
-    await this.agent.goto('https://www.supremenewyork.com/shop/all/accessories');
+    await this.browser.load('https://www.supremenewyork.com/shop/all/accessories');
     await this.injectAddressCookie();
-    await this.agent.activeTab.waitForLoad(LocationStatus.DomContentLoaded);
+    await this.browser.waitForDOMContentLoaded();
     console.log('Page loaded: ' + Date.now());
     await this.disableAnimations();
 
@@ -115,7 +96,7 @@ export class SupremeTask {
 
     this.updateTaskMessage('Waiting for product');
     const product = await this.getProduct();
-    await this.waitForTicket(loadCommandId);
+    await this.waitForTicket();
     this.startTimestamp = moment();
     this.updateTaskMessage('Loading product details');
     await this.loadStylePage(product);
@@ -135,22 +116,15 @@ export class SupremeTask {
       }
       this.updateTaskMessage('Waiting for restock');
       this.checkoutDelay = 2500;
-      await this.agent.waitForMillis(1000);
+      await this.browser.waitForMiliseconds(1000);
       this.soldOutStyles = [];
-      const reloadCommand = await this.agent.lastCommandId;
-      await this.agent.reload();
-      await this.waitForTicket(reloadCommand);
+      await this.browser.reload();
+      await this.waitForTicket();
     }
     this.atcTimestamp = moment();
     this.updateTaskMessage('Loading checkout');
     await this.checkout();
     this.submitTimestamp = moment();
-  }
-
-  public getProxyString() {
-    if (!this.proxy) return '';
-    const auth = this.proxy.userPassAuth ? `${this.proxy.username}:${this.proxy.password}@` : '';
-    return `http://${auth}${this.proxy.ipPort}`;
   }
 
   public updateTaskMessage = (message: string) => {
@@ -186,8 +160,7 @@ export class SupremeTask {
   }
 
   public async stop() {
-    await this.agent?.activeTab.off('resource', resource => this.parseResponse(resource));
-    await this.agent?.close();
+    await this.browser.stop();
   }
 
   public selectSize = selectSize;
@@ -195,10 +168,6 @@ export class SupremeTask {
   public getRemainingStyles = getRemainingStyles;
   public parseStatus = parseStatus;
   public injectAddressCookie = injectAddressCookie;
-  public evaluate = evaluate;
-  public queryXPath = queryXPath;
-  public fillInput = fillInput;
-  public selectOption = selectOption;
   public disableAnimations = disableAnimations;
   public waitForTicket = waitForTicket;
   public getProduct = getProduct;

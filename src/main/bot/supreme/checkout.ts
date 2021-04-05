@@ -1,40 +1,34 @@
 import { TaskStatusType } from '../../types/TaskStatus';
-import { LocationStatus } from 'secret-agent';
 import { HarvestersManager } from '../harvesters/HarvestersManager';
 import { selectors } from './selectors';
 import { SupremeTask } from './SupremeTask';
-import { getDataset } from './agentUtils';
 
 export async function checkout(this: SupremeTask) {
-  const checkoutButton = this.document.querySelector(".checkout, [href*='checkout']");
-  await this.agent.waitForElement(checkoutButton, { waitForVisible: true });
-
-  const lastCommandId = await this.agent.activeTab.lastCommandId;
-  await this.agent.interact({ click: checkoutButton });
-  await this.agent.waitForResource({ url: /checkout/ }, { sinceCommandId: lastCommandId });
-  await this.agent.activeTab.waitForLoad(LocationStatus.DomContentLoaded);
-  await this.waitForTicket(lastCommandId);
+  const checkoutButtonSelector = ".checkout, [href*='checkout']";
+  await this.browser.waitForElement(checkoutButtonSelector, { visible: true });
+  const checkoutButton = await this.document.querySelector(checkoutButtonSelector);
+  await this.browser.waitForResponse(/checkout/, async () => {
+    await checkoutButton!.click();
+  });
+  await this.browser.waitForDOMContentLoaded();
+  await this.waitForTicket();
   const addToCartTime = Date.now();
 
-  await this.agent.waitForElement(this.document.querySelector("input[type='text']"), {
-    waitForVisible: true,
+  await this.browser.waitForElement("input[type='text']", {
+    visible: true,
   });
-  const termsLabel = await this.queryXPath(selectors.termsLabel);
-  const bounds = await termsLabel.getBoundingClientRect();
-  const x = await bounds.x;
-  const y = await bounds.y;
-  const height = await bounds.height;
-  const width = await bounds.width;
-  await this.agent.interact({ click: [x + width / 2, y + height / 2] });
-
-  const creditCardNumberInput = await this.queryXPath(selectors.creditCardNumber);
-  await this.fillInput(creditCardNumberInput, this.profile.creditCardNumber.replace(/ /g, ''));
-  const monthSelect = await this.queryXPath(selectors.monthSelect);
-  await this.selectOption(monthSelect, this.profile.month!.value);
-  const yearSelect = await this.queryXPath(selectors.yearSelect);
-  await this.selectOption(yearSelect, this.profile.year!.value);
-  const cvvInput = await this.queryXPath(selectors.cvv);
-  await this.fillInput(cvvInput, this.profile.cvv);
+  const termsLabel = await this.document.queryXPath(selectors.termsLabel);
+  const bounds = await termsLabel!.bounds;
+  const { x, y, height, width } = bounds;
+  await this.browser.click(x + width / 2, y + height / 2);
+  const creditCardNumberInput = await this.document.queryXPath(selectors.creditCardNumber);
+  await creditCardNumberInput?.autofill(this.profile.creditCardNumber.replace(/ /g, ''));
+  const monthSelect = await this.document.queryXPath(selectors.monthSelect);
+  await monthSelect?.selectOption(this.profile.month!.value);
+  const yearSelect = await this.document.queryXPath(selectors.yearSelect);
+  await yearSelect?.selectOption(this.profile.year!.value);
+  const cvvInput = await this.document.queryXPath(selectors.cvv);
+  await cvvInput?.autofill(this.profile.cvv);
 
   const checkoutTime = Date.now() - addToCartTime.valueOf();
 
@@ -57,7 +51,7 @@ export async function checkout(this: SupremeTask) {
   let callback = 'checkoutAfterCaptcha';
 
   if (captcha) {
-    const captchaDataset = await getDataset(captcha);
+    const captchaDataset = await captcha.dataset;
 
     if (captchaDataset.callback) {
       callback = captchaDataset.callback;
@@ -70,8 +64,8 @@ export async function checkout(this: SupremeTask) {
 
   const captchaToken = await HarvestersManager.getCaptchaToken(sitekey);
 
-  await this.evaluate(`$('[id*="g-recaptcha-response"]').html('${captchaToken}');`);
-  await this.evaluate(`${callback}();`);
+  await this.browser.evaluate(`$('[id*="g-recaptcha-response"]').html('${captchaToken}');`);
+  await this.browser.evaluate(`${callback}();`);
   this.updateTaskStatus({
     message: 'Waiting for response',
     type: TaskStatusType.Action,

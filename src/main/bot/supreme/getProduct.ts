@@ -1,16 +1,12 @@
 import { ProductStyle } from './ProductStyle';
 import { SupremeTask } from './SupremeTask';
 import { isMatch } from './isMatch';
-import { LocationStatus } from '@secret-agent/client';
 
 export async function getProduct(this: SupremeTask, refreshCounter = 0): Promise<ProductStyle> {
   const styles: ProductStyle[] = [];
   let matchingProductName: string;
 
-  await this.agent.waitForElement(this.document.querySelector('article div, .inner-article'), {
-    waitForVisible: true,
-  });
-
+  await this.browser.waitForElement('article div, .inner-article', { visible: true });
   const articles = [...(await this.document.querySelectorAll('article div, .inner-article'))];
   await Promise.all(
     articles.map(async article => {
@@ -30,7 +26,8 @@ export async function getProduct(this: SupremeTask, refreshCounter = 0): Promise
       this.item.name = matchingProductName;
       const articleHTML = await article.innerHTML;
       const styleName = await colorElement.innerText;
-      const url = await article.querySelector('a').href;
+      const urlElement = await article.querySelector('a');
+      const url = (await urlElement?.getAttribute('href'))!;
 
       styles.push({
         name: styleName,
@@ -44,22 +41,18 @@ export async function getProduct(this: SupremeTask, refreshCounter = 0): Promise
     const primaryStyle = this.selectStyle(styles);
     return primaryStyle ?? styles[0];
   }
-  await this.agent.waitForMillis(1000);
+  await this.browser.waitForMiliseconds(1000);
   if (refreshCounter >= 5) {
-    const commandId = await this.agent.lastCommandId;
-    await this.agent.reload();
-    await this.agent.activeTab.waitForLoad(LocationStatus.PaintingStable, {
-      sinceCommandId: commandId,
-    });
+    await this.browser.reload();
+    await this.browser.waitForDOMContentLoaded();
     await this.disableAnimations();
     refreshCounter = 0;
   } else {
-    const pathname = await this.document.location.pathname;
-    const categoryLink = this.document.querySelector(`li a[href='${pathname}']`);
-    const timezoneIdle = this.document.querySelector(`#time-zone-name`);
-    await this.agent.waitForElement(categoryLink, { waitForVisible: true });
+    const pathname = await this.browser.pathname;
+    await this.browser.waitForElement(`li a[href='${pathname}']`, { visible: true });
+    const categoryLink = await this.document.querySelector(`li a[href='${pathname}']`);
     try {
-      await this.agent.interact({ click: categoryLink }, { move: timezoneIdle });
+      await categoryLink?.click();
     } catch {}
   }
   return this.getProduct(++refreshCounter);

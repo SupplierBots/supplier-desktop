@@ -8,8 +8,8 @@ import { Proxy } from '../../types/Proxy';
 import { HarvesterData } from '../../types/HarvesterData';
 import { HarvestersManager } from '../harvesters/HarvestersManager';
 import { DiscordManager } from '../../DiscordManager';
-import { Handler } from 'secret-agent';
 import { SupremeTask } from '../supreme/SupremeTask';
+import { SecretAgentEngine } from '../browserEngines/secret-agent/SecretAgentEngine';
 
 class TasksManager {
   public static runner: RunnerState;
@@ -17,16 +17,7 @@ class TasksManager {
   public static isScheduled: boolean = false;
   private static timerID: NodeJS.Timeout;
   private static tasks: SupremeTask[] = [];
-  private static handler: Handler;
   private static proxies: Proxy[];
-
-  public static init() {
-    this.handler = new Handler();
-  }
-
-  public static async dispose() {
-    await this.handler.close();
-  }
 
   public static async start(
     tasks: Task[],
@@ -94,7 +85,14 @@ class TasksManager {
       return;
     }
     try {
-      const supremeTask = new SupremeTask(this.handler, task, product, profile, proxy, this.runner);
+      const supremeTask = new SupremeTask(
+        new SecretAgentEngine(),
+        task,
+        product,
+        profile,
+        proxy,
+        this.runner,
+      );
       this.tasks.push(supremeTask);
       supremeTask.init();
     } catch (ex) {

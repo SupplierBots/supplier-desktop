@@ -1,12 +1,11 @@
-import WebsocketResource from '@secret-agent/client/lib/WebsocketResource';
-import Resource from '@secret-agent/client/lib/Resource';
 import { SupremeTask } from './SupremeTask';
 import { TaskStatusType } from '../../types/TaskStatus';
 import { Supreme } from '../../types/Supreme';
+import { Response } from '../browserEngines/interfaces/Response';
 
-export async function parseResponse(this: SupremeTask, resource: Resource | WebsocketResource) {
-  const url = resource.url;
-  const status = await resource.response.statusCode;
+export async function parseResponse(this: SupremeTask, resource: Response) {
+  const url = await resource.url();
+  const status = await resource.statusCode();
   if (/.*checkout.json$/.test(url) && status !== 200) {
     this.updateTaskStatus({ message: `${status}. Retrying`, type: TaskStatusType.Error });
     await this.retry();

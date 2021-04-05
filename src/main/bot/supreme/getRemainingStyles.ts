@@ -1,4 +1,3 @@
-import { getDataset } from './agentUtils';
 import { SupremeTask } from './SupremeTask';
 
 export async function getRemainingStyles(this: SupremeTask) {
@@ -6,7 +5,7 @@ export async function getRemainingStyles(this: SupremeTask) {
     [
       ...(await this.document.querySelectorAll('li a[data-style-name]:first-child:not(.selected)')),
     ].map(async element => {
-      const { styleName, url, soldOut } = await getDataset(element);
+      const { styleName, url, soldOut } = await element.dataset;
       return {
         url,
         element,
