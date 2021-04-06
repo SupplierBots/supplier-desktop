@@ -7,5 +7,6 @@ export interface Task {
   profile: Option | null;
   proxy: Option | null;
   products: string[];
+  safeMode: boolean;
   status: TaskStatus;
 }

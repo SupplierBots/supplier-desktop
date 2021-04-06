@@ -6,6 +6,7 @@ export const taskValidationSchema = Yup.object().shape({
   id: Yup.string(),
   profile: Yup.object().required(),
   proxy: Yup.object().required(),
+  safeMode: Yup.boolean().required(),
   products: Yup.array().min(1),
 });
 
@@ -14,6 +15,7 @@ export const initialTaskValues: Task = {
   id: '',
   profile: null,
   proxy: null,
+  safeMode: false,
   products: [],
   status: {
     message: 'Inactive',

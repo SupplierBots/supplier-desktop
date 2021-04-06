@@ -43,7 +43,7 @@ import { Product } from '../types/Product';
 import { app } from 'electron';
 import { CheckoutData } from '../types/Checkout';
 import { Proxy } from '../types/Proxy';
-import { TasksManager } from '../bot/core/TasksManager';
+import { TasksManager } from '../bot/TasksManager';
 import { HarvestersManager } from '../bot/harvesters/HarvestersManager';
 import { DiscordManager } from '../DiscordManager';
 import { config } from '../../config';

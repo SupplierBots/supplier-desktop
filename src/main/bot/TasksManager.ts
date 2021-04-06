@@ -1,16 +1,16 @@
-import { TaskStatusType } from './../../types/TaskStatus';
-import { WebhookConfig } from '../../types/WebhookConfig';
-import { Task } from '../../types/Task';
-import { RunnerState } from '../../types/RunnerState';
-import { IPCMain } from '../../IPC/IPCMain';
+import { TaskStatusType } from '../types/TaskStatus';
+import { WebhookConfig } from '../types/WebhookConfig';
+import { Task } from '../types/Task';
+import { RunnerState } from '../types/RunnerState';
+import { IPCMain } from '../IPC/IPCMain';
 import moment, { Moment } from 'moment';
-import { Proxy } from '../../types/Proxy';
-import { HarvesterData } from '../../types/HarvesterData';
-import { HarvestersManager } from '../harvesters/HarvestersManager';
-import { DiscordManager } from '../../DiscordManager';
-import { SupremeTask } from '../supreme/SupremeTask';
-import { SecretAgentEngine } from '../browserEngines/secret-agent/SecretAgentEngine';
-import { PlaywrightEngine } from '../browserEngines/playwright/PlaywrightEngine';
+import { Proxy } from '../types/Proxy';
+import { HarvesterData } from '../types/HarvesterData';
+import { HarvestersManager } from './harvesters/HarvestersManager';
+import { DiscordManager } from '../DiscordManager';
+import { SupremeTask } from './supreme/SupremeTask';
+import { SecretAgentEngine } from './browserEngines/secret-agent/SecretAgentEngine';
+import { PlaywrightEngine } from './browserEngines/playwright/PlaywrightEngine';
 
 class TasksManager {
   public static runner: RunnerState;
@@ -86,7 +86,7 @@ class TasksManager {
     }
     try {
       const supremeTask = new SupremeTask(
-        new PlaywrightEngine(),
+        task.safeMode ? new PlaywrightEngine() : new SecretAgentEngine(),
         task,
         product,
         profile,

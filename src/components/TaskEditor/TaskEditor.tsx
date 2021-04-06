@@ -91,11 +91,6 @@ export const InlineInputsContainer = styled.div`
   justify-content: space-between;
 `;
 
-const StyledSlider = styled(Slider)`
-  margin: 1.25rem 0 1.85rem 0;
-  display: none;
-`;
-
 const ButtonsContainer = styled.div`
   display: flex;
   justify-content: flex-end;
@@ -192,21 +187,13 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
                     onChange={props.setFieldValue}
                     error={!!props.errors.proxy && !!props.touched.proxy}
                   />
+                  <Slider name="safeMode" checked={props.values.safeMode}>
+                    Safe mode
+                  </Slider>
                 </Fieldset>
               </Fieldset>
               <ItemsCounter>
-                {props.values.products.length > 0 && (
-                  <span>
-                    You've selected{' '}
-                    <GradientText>
-                      {props.values.products.length} product
-                      {props.values.products.length > 1 && 's'}
-                    </GradientText>
-                  </span>
-                )}
-                {props.values.products.length === 0 && (
-                  <span>You haven't selected any products</span>
-                )}
+                {props.values.products.length === 0 && <span>You haven't selected product</span>}
               </ItemsCounter>
               <ButtonsContainer>
                 {!isNew && props.dirty && state.tasks.length < 8 && (
