@@ -112,20 +112,12 @@ const Status = styled(Text)<{ type: TaskStatusType }>`
     `};
 `;
 
-const CardinalBypass = styled.span`
-  color: ${colors.darkGrey};
-  text-decoration: line-through;
-  margin-left: auto;
-  margin-right: 2rem;
-`;
-
 interface Props {
   details: TaskType;
 }
 const Task = ({ details }: Props) => {
   const dispatch = useStateDispatch();
   const { isTimerActive } = useStateSelector(state => state.controller);
-  const products = useStateSelector(state => state.products);
 
   const isBrowserActive = () => {
     return isTimerActive || details.isActive;
@@ -146,7 +138,7 @@ const Task = ({ details }: Props) => {
       <WebsiteIconWrapper>
         <SupremeIcon />
       </WebsiteIconWrapper>
-      <Text>{products.find(p => p.id === details.products[0])?.name}</Text>
+      <Text>{details.product && details.product.label}</Text>
       <Text>{details.profile && details.profile.label}</Text>
       <Status type={details.status.type}>{details.status.message}</Status>
       <ActionsContainer>

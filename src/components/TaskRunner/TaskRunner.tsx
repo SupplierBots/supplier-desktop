@@ -14,11 +14,11 @@ import { useStateDispatch, useStateSelector } from 'hooks/typedReduxHooks';
 import { IPCRenderer } from 'main/IPC/IPCRenderer';
 import routes from 'constants/routes';
 import { push } from 'connected-react-router';
-import { setScheduler } from 'store/runner/runnerSlice';
-import { runnerValudationSchema } from './FormData';
+import { setScheduler } from 'store/scheduler/schedulerSlice';
+import { schedulerValudationSchema } from './FormData';
 import Fieldset from 'components/Fieldset/Fieldset';
 import moment, { Moment } from 'moment';
-import { RunnerState } from 'main/types/RunnerState';
+import { SchedulerState } from 'main/types/SchedulerState';
 import { setTimerState } from 'store/controller/controllerSlice';
 import { TaskStatusType } from 'main/types/TaskStatus';
 
@@ -94,8 +94,8 @@ const StyledTimerIcon = styled(TimerIcon)<{ 'data-enabled': boolean }>`
 `;
 
 const StyledStartIcon = styled(StartIcon)<{ 'data-disabled'?: boolean }>`
-  height: 2.1rem;
-  width: 2.1rem;
+  height: 1.8rem;
+  width: 1.8rem;
   margin-top: 0.3rem;
   margin-left: 0.3rem;
   ${({ 'data-disabled': disabled }) =>
@@ -147,12 +147,13 @@ const StyledInputsContainer = styled(InlineInputsContainer)`
 `;
 
 const TaskRunner = () => {
-  const { tasks, harvesters, runner, controller, proxies, webhook } = useStateSelector(
+  const { tasks, harvesters, scheduler, controller, proxies, webhook } = useStateSelector(
     state => state,
   );
   const [intervalID, setIntervalID] = useState<NodeJS.Timeout>();
   const [currentDate, setCurrentDate] = useState<Moment>(moment());
   const [scheduledDate, setScheduledDate] = useState<Moment>(moment());
+  const [processingAction, setProcessingAction] = useState<boolean>(false);
 
   const dispatch = useStateDispatch();
 
@@ -175,18 +176,30 @@ const TaskRunner = () => {
   };
 
   const startTasks = async () => {
-    if (!runner.scheduled) {
-      IPCRenderer.startTasks(getAvailableTasks(), proxies, harvesters, runner, webhook);
+    if (!scheduler.scheduled) {
+      IPCRenderer.startTasks({
+        tasks: getAvailableTasks(),
+        scheduler,
+        proxies,
+        harvesters,
+        webhook,
+      });
       return;
     }
 
     dispatch(setTimerState({ active: true }));
 
-    const date = moment(runner.time, 'DD/MM HH:mm:ss');
+    const date = moment(scheduler.time, 'DD/MM HH:mm:ss');
 
     setScheduledDate(date);
 
-    IPCRenderer.startTasks(getAvailableTasks(), proxies, harvesters, runner, webhook);
+    IPCRenderer.startTasks({
+      tasks: getAvailableTasks(),
+      scheduler,
+      proxies,
+      harvesters,
+      webhook,
+    });
     setCurrentDate(moment());
     setIntervalID(
       setInterval(() => {
@@ -203,7 +216,7 @@ const TaskRunner = () => {
     }
   };
 
-  const handleSubmit = (state: RunnerState, actions: FormikHelpers<RunnerState>) => {
+  const handleSubmit = (state: SchedulerState, actions: FormikHelpers<SchedulerState>) => {
     dispatch(setScheduler({ data: state }));
   };
 
@@ -231,11 +244,11 @@ const TaskRunner = () => {
     <Wrapper>
       <Formik
         enableReinitialize
-        initialValues={runner}
-        validationSchema={runnerValudationSchema}
+        initialValues={scheduler}
+        validationSchema={schedulerValudationSchema}
         onSubmit={handleSubmit}
       >
-        {(props: FormikProps<RunnerState>) => (
+        {(props: FormikProps<SchedulerState>) => (
           <>
             <SubmitOnExit />
             <Scheduler>
@@ -253,7 +266,7 @@ const TaskRunner = () => {
               </Fieldset>
               {isAnyTaskActive() && props.values.scheduled ? (
                 <ScheduledState>
-                  <p>Scheduled for {runner.time}</p>
+                  <p>Scheduled for {scheduler.time}</p>
                   <p>{getRemainingTime()}</p>
                 </ScheduledState>
               ) : (

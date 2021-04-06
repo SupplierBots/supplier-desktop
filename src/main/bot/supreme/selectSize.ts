@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { SupremeTask } from './SupremeTask';
 
 export async function selectSize(this: SupremeTask) {
-  if (this.product.size?.label.includes('None')) return true;
+  if (this.details.size?.label.includes('None')) return true;
 
   const select = await this.document.querySelector(`select:not(#qty)`);
 
@@ -19,7 +19,7 @@ export async function selectSize(this: SupremeTask) {
 
   if (sizes.length === 0) return false;
 
-  const sizeValue = this.product.size!.value;
+  const sizeValue = this.details.size!.value;
   const sizeToFind = sizeValue.includes('SHOE')
     ? convertShoeSize(sizeValue, this.region)
     : sizeValue;
@@ -30,9 +30,9 @@ export async function selectSize(this: SupremeTask) {
     return true;
   }
 
-  if (!this.product.anySize) return false;
+  if (!this.details.anySize) return false;
 
-  const anySizeOption = this.product.anySizeOption!.value;
+  const anySizeOption = this.details.anySizeOption!.value;
   let secondarySize: string;
 
   switch (anySizeOption) {

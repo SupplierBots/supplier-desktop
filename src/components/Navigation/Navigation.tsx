@@ -3,8 +3,7 @@ import styled from 'styled-components';
 import NavigationItem from './NavigationItem';
 
 import { ReactComponent as DashboardIcon } from 'assets/Dashboard.svg';
-import { ReactComponent as TasksIcon } from 'assets/Tasks.svg';
-import { ReactComponent as ProductsIcon } from 'assets/Products.svg';
+import { ReactComponent as TasksIcon } from 'assets/Start.svg';
 import { ReactComponent as ProfilesIcon } from 'assets/Profiles.svg';
 import { ReactComponent as ProxiesIcon } from 'assets/Proxies.svg';
 import { ReactComponent as SettingsIcon } from 'assets/Settings.svg';
@@ -51,14 +50,6 @@ const Navigation = () => {
 
         <NavigationItem link={routes.tasks} name="Tasks">
           <TasksIcon />
-        </NavigationItem>
-
-        <NavigationItem
-          link={routes.products + `/${lastVisited.product}`}
-          disabled={isAnyTaskActive()}
-          name="Products"
-        >
-          <ProductsIcon />
         </NavigationItem>
 
         <NavigationItem

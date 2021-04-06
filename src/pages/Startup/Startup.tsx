@@ -14,7 +14,7 @@ import { setActive, removeBrowser } from 'store/harvesters/harvestersSlice';
 import { setAppDetails, setTimerState } from 'store/controller/controllerSlice';
 import { useStateSelector, useStateDispatch } from 'hooks/typedReduxHooks';
 import { setTaskActivity } from 'store/tasks/tasksSlice';
-import { setScheduler } from 'store/runner/runnerSlice';
+import { setScheduler } from 'store/scheduler/schedulerSlice';
 
 export const StyledParticles = styled(Particles)`
   position: absolute;
@@ -32,7 +32,7 @@ type Props = RouteComponentProps;
 
 const Startup = ({ history }: Props) => {
   const [loading, setLoading] = useState(true);
-  const { harvesters, tasks, runner } = useStateSelector(state => state);
+  const { harvesters, tasks, scheduler } = useStateSelector(state => state);
   const dispatch = useStateDispatch();
 
   const resetState = () => {
@@ -44,11 +44,11 @@ const Startup = ({ history }: Props) => {
     const harvestersToDelete = harvesters.slice(3, 6);
     harvestersToDelete.forEach(h => dispatch(removeBrowser({ id: h.id })));
 
-    if (runner.time.length > 0 && runner.time.length < 10) {
+    if (scheduler.time.length > 0 && scheduler.time.length < 10) {
       dispatch(
         setScheduler({
           data: {
-            ...runner,
+            ...scheduler,
             scheduled: false,
             time: '',
           },

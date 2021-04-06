@@ -6,13 +6,11 @@ import { ReactComponent as RemoveIcon } from 'assets/Remove.svg';
 
 import { UserData } from 'main/types/UserData';
 import uuid from 'uuid/v4';
-import { Product } from 'main/types/Product';
 import { Profile } from 'main/types/Profile';
 import routes from 'constants/routes';
 import { push } from 'connected-react-router';
 import { Proxy } from 'main/types/Proxy';
 import Item from 'components/Item/Item';
-import { addProduct, removeProduct } from 'store/products/productsSlice';
 import { addProfile, removeProfile } from 'store/profiles/profilesSlice';
 import { addProxy, removeProxy } from 'store/proxies/proxiesSlice';
 import {
@@ -28,7 +26,7 @@ import { resetProxy } from 'store/harvesters/harvestersSlice';
 interface Props {
   name: string;
   id: string;
-  type: 'proxies' | 'profiles' | 'products';
+  type: 'proxies' | 'profiles';
   active?: boolean;
 }
 
@@ -88,9 +86,7 @@ const SelectableItem = (props: Props) => {
 
     if (itemToDuplicate) {
       const newItem = { ...itemToDuplicate, id: uuid() };
-      if (props.type === 'products') {
-        dispatch(addProduct({ item: newItem as Product }));
-      }
+
       if (props.type === 'profiles') {
         dispatch(addProfile({ item: newItem as Profile }));
       }
@@ -103,10 +99,7 @@ const SelectableItem = (props: Props) => {
   const removeItem = (event: MouseEvent<HTMLOrSVGElement>) => {
     event.stopPropagation();
     let tasksToRemove: Task[] = [];
-    if (props.type === 'products') {
-      dispatch(removeProduct({ id: props.id }));
-      tasksToRemove.push(...tasks.filter(t => t.products.some(p => p === props.id)));
-    }
+
     if (props.type === 'profiles') {
       dispatch(removeProfile({ id: props.id }));
       tasksToRemove.push(...tasks.filter(t => t.profile?.value === props.id));
@@ -120,9 +113,6 @@ const SelectableItem = (props: Props) => {
     tasksToRemove.forEach(t => dispatch(removeTask({ id: t.id })));
 
     if (props.active) {
-      if (props.type === 'products') {
-        dispatch(setLastVisitedProduct({ id: '' }));
-      }
       if (props.type === 'profiles') {
         dispatch(setLastVisitedProfile({ id: '' }));
       }

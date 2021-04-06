@@ -32,7 +32,6 @@ import {
 import store from 'store/configureStore';
 import { ipcRenderer as ipc } from 'electron-better-ipc';
 import { HarvesterData } from 'main/types/HarvesterData';
-import { Task } from 'main/types/Task';
 import { updateTaskStatus, setTaskActivity } from 'store/tasks/tasksSlice';
 import { setAccountEmail, setActive } from 'store/harvesters/harvestersSlice';
 import { UpdateInfo, UpdateDownloadedEvent } from 'electron-updater';
@@ -47,12 +46,12 @@ import {
   setUpdateError,
 } from 'store/update/updateSlice';
 import { incrementCheckouts } from 'store/statistics/statisticsSlice';
-import { RunnerState } from 'main/types/RunnerState';
 import { setTimerState } from 'store/controller/controllerSlice';
 import { CheckoutData } from 'main/types/Checkout';
 import { reportCheckout } from 'firebase/dropReporter';
-import { Proxy } from 'main/types/Proxy';
 import { TaskStatus } from 'main/types/TaskStatus';
+import { predefinedProducts } from 'main/types/PredefinedProduct';
+import { TasksManagerPayload } from 'main/types/TasksManagerPayload';
 
 export abstract class IPCRenderer {
   private constructor() {}
@@ -98,8 +97,8 @@ export abstract class IPCRenderer {
       return profile;
     });
 
-    ipc.answerMain(GET_PRODUCT, (id: string) => {
-      const product = store.getState().products.find(p => p.id === id);
+    ipc.answerMain(GET_PRODUCT, (name: string) => {
+      const product = predefinedProducts.find(p => p.name === name);
       return product;
     });
 
@@ -156,17 +155,11 @@ export abstract class IPCRenderer {
     ipc.send(WINDOW_CLOSE);
   };
 
-  public static startTasks = (
-    tasks: Task[],
-    proxies: Proxy[],
-    harvesters: HarvesterData[],
-    scheduler: RunnerState,
-    webhook: WebhookConfig,
-  ) => {
-    ipc.send(START_TASKS, tasks, proxies, harvesters, scheduler, webhook);
+  public static startTasks = async (payload: TasksManagerPayload) => {
+    ipc.send(START_TASKS, payload);
   };
 
-  public static stopTasks = () => {
+  public static stopTasks = async () => {
     ipc.send(STOP_TASKS);
   };
 

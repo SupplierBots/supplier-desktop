@@ -27,7 +27,7 @@ const TasksHeader = () => {
       <WebsiteIconWrapper>
         <WebsiteIcon />
       </WebsiteIconWrapper>
-      <Text>Name</Text>
+      <Text>Product</Text>
       <Text>Profile</Text>
       <Text>Status</Text>
       <Text>Actions</Text>

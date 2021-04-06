@@ -6,7 +6,6 @@ export default {
   dashboard: '/dashboard',
   tasks: '/tasks',
   tasksEditor: '/tasks/editor',
-  products: '/products',
   profiles: '/profiles',
   proxies: '/proxies',
   settings: '/settings',

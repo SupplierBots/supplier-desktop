@@ -1,9 +1,8 @@
 import { Proxy } from '../../types/Proxy';
 import moment from 'moment';
 import { IPCMain } from '../../IPC/IPCMain';
-import { Product } from '../../types/Product';
 import { Profile } from '../../types/Profile';
-import { RunnerState } from '../../types/RunnerState';
+import { SchedulerState } from '../../types/SchedulerState';
 import { Task } from '../../types/Task';
 import { TaskStatus, TaskStatusType } from '../../types/TaskStatus';
 import { addToCart } from './addToCart';
@@ -22,15 +21,15 @@ import { sendWebhook } from './sendWebhook';
 import { reportCheckout } from './reportCheckout';
 import _ from 'lodash';
 import { BrowserEngine } from '../browserEngines/interfaces/BrowserEngine';
+import { PredefinedProduct } from '../../types/PredefinedProduct';
 
 export class SupremeTask {
   public constructor(
     readonly browser: BrowserEngine,
     readonly details: Task,
-    readonly product: Product,
     readonly profile: Profile,
     readonly proxy: Proxy | null,
-    readonly runner: RunnerState,
+    readonly scheduler: SchedulerState,
   ) {
     const country = this.profile?.country?.label;
     this.region = country === 'USA' || country === 'Canada' ? 'us' : 'eu';
@@ -38,6 +37,7 @@ export class SupremeTask {
 
   public region: 'us' | 'eu';
   public taskAttempt = 0;
+  public product!: PredefinedProduct;
 
   //Resetable
   public item: ItemDetails = {};
@@ -61,9 +61,9 @@ export class SupremeTask {
   }
 
   public async init() {
-    // const org = this.product.keywords.positive;
-    // this.product.keywords.positive = ['SRASAAS'];
-    // setTimeout(() => (this.product.keywords.positive = org), 15000);
+    const productDetails = await IPCMain.getProduct(this.details.product!.value);
+    if (!productDetails) return;
+    this.product = productDetails;
 
     this.taskAttempt++;
     IPCMain.setTaskActivity(this.details.id, true);
@@ -77,14 +77,14 @@ export class SupremeTask {
       this.retry();
     });
     this.updateTaskMessage('Loading website');
-    await this.browser.load('https://www.supremenewyork.com/shop/all/sweatshirts');
+    await this.browser.load(`https://www.supremenewyork.com/shop/all/${this.product.category}`);
     await this.injectAddressCookie();
     await this.browser.waitForDOMContentLoaded();
     console.log('Page loaded: ' + Date.now());
     await this.disableAnimations();
 
-    if (this.runner.scheduled) {
-      const scheduledDate = moment(this.runner.time, 'DD/MM HH:mm:ss');
+    if (this.scheduler.scheduled) {
+      const scheduledDate = moment(this.scheduler.time, 'DD/MM HH:mm:ss');
       const timeDifference = scheduledDate.valueOf() - moment().valueOf();
       if (timeDifference > 0) {
         this.updateTaskStatus({ message: 'Waiting', type: TaskStatusType.Action });

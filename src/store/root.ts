@@ -11,7 +11,6 @@ import { lastVisitedSlice } from './lastVisited/lastVisitedSlice';
 import { controllerSlice } from './controller/controllerSlice';
 import { profilesSlice } from './profiles/profilesSlice';
 import { proxiesSlice } from './proxies/proxiesSlice';
-import { productsSlice } from './products/productsSlice';
 import { harvestersSlice } from './harvesters/harvestersSlice';
 import { combineReducers } from '@reduxjs/toolkit';
 import { tasksSlice } from './tasks/tasksSlice';
@@ -30,7 +29,7 @@ import { fetchDashboardEpic } from './dashboard/dashboardEpics';
 import { dashboardSlice } from './dashboard/dashboardSlice';
 import { updateSlice } from './update/updateSlice';
 import { statisticsSlice } from './statistics/statisticsSlice';
-import { runnerSlice } from './runner/runnerSlice';
+import { schedulerSlice } from './scheduler/schedulerSlice';
 
 export const history = createMemoryHistory({
   initialEntries: [routes.startup],
@@ -48,13 +47,12 @@ export const rootReducer = combineReducers({
   controller: controllerSlice.reducer,
   profiles: profilesSlice.reducer,
   proxies: proxiesSlice.reducer,
-  products: productsSlice.reducer,
   harvesters: harvestersSlice.reducer,
   tasks: tasksSlice.reducer,
   dashboard: dashboardSlice.reducer,
   update: updateSlice.reducer,
   statistics: statisticsSlice.reducer,
-  runner: runnerSlice.reducer,
+  scheduler: schedulerSlice.reducer,
   webhook: webhookSlice.reducer,
   router: connectRouter(history),
 });

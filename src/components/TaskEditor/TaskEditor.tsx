@@ -1,20 +1,24 @@
 import React, { MouseEvent, useState } from 'react';
 import styled from 'styled-components';
 import Heading from 'components/Heading/Heading';
-import { colors, fonts } from 'theme/main';
+import { colors } from 'theme/main';
 import Card from 'components/Card/Card';
 import Backdrop from 'components/Backdrop/Backdrop';
 import { ReactComponent as CloseIcon } from 'assets/Close.svg';
 import Fieldset from 'components/Fieldset/Fieldset';
-import Input from 'components/Input/Input';
 import { Formik, FormikProps, Form, FormikHelpers } from 'formik';
 import Select from 'components/Select/Select';
 import Slider from 'components/Slider/Slider';
 import Button from 'components/Button/Button';
 import { slideInFromRight } from 'theme/animations';
-import ProductSelector from 'components/ProductSelector/ProductSelector';
 import { Option } from 'main/types/Option';
-import { initialTaskValues, taskValidationSchema } from './FormDetails';
+import {
+  anySizeOptions,
+  initialTaskValues,
+  productsOptions,
+  sizeOptions,
+  taskValidationSchema,
+} from './FormDetails';
 import { Task } from 'main/types/Task';
 import { RouteComponentProps } from 'react-router';
 import routes from 'constants/routes';
@@ -24,6 +28,7 @@ import { TaskStatusType } from 'main/types/TaskStatus';
 import { updateTask, addTask } from 'store/tasks/tasksSlice';
 import { useStateSelector, useStateDispatch } from 'hooks/typedReduxHooks';
 import { UserData } from 'main/types/UserData';
+import KeywordsManager from 'components/KeywordsManager/KeywordsManager';
 
 const StyledHeading = styled(Heading)`
   color: ${colors.lightPurple};
@@ -37,9 +42,9 @@ const StyledHeading = styled(Heading)`
 
 const StyledCard = styled(Card)`
   width: 80rem;
-  height: 60rem;
+  height: 55rem;
   padding: 5rem 7rem;
-  margin-top: 6.5rem;
+  margin-top: 7.5rem;
   z-index: 2000;
 `;
 
@@ -69,13 +74,14 @@ const StyledForm = styled(Form)`
   grid-column-gap: 3.2rem;
 `;
 
-const ItemsCounter = styled.p`
-  color: ${colors.darkGrey};
-  font-size: ${fonts.big};
-  grid-column: 1;
-  justify-self: center;
-  margin-top: 2.4rem;
-  margin-right: 1rem;
+const SlidersContainer = styled.div`
+  display: flex;
+`;
+
+const StyledSlider = styled(Slider)`
+  :first-child {
+    margin-right: 7rem;
+  }
 `;
 
 export const GradientText = styled.span`
@@ -96,7 +102,7 @@ const ButtonsContainer = styled.div`
   justify-content: flex-end;
   grid-row: 3;
   grid-column: 1 / 3;
-  margin-top: 6.5rem;
+  margin-top: 8rem;
   button:not(:last-child) {
     margin-right: 1rem;
   }
@@ -106,7 +112,7 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
   const state = useStateSelector(state => state);
   const [isNew, setIsNew] = useState(match.params.id && match.params.id === 'new');
 
-  const getOptions = (type: 'profiles' | 'products' | 'proxies'): Option[] => {
+  const getOptions = (type: 'profiles' | 'proxies'): Option[] => {
     const dataArr = state[type] as UserData[];
 
     const options = dataArr.map(data => {
@@ -160,43 +166,82 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
             </CloseButton>
             <StyledHeading>Create new task</StyledHeading>
             <StyledForm>
-              <ProductSelector
-                placeholder="Products"
-                onChange={props.setFieldValue}
-                setTouched={props.setFieldTouched}
-                error={!!props.errors.products && !!props.touched.products}
-                value={props.values.products}
-              />
               <Fieldset>
-                <Fieldset>
-                  <Select
-                    name="profile"
-                    placeholder="Profile"
-                    value={props.values.profile}
-                    options={getOptions('profiles')}
-                    onBlur={props.setFieldTouched}
-                    onChange={props.setFieldValue}
-                    error={!!props.errors.profile && !!props.touched.profile}
-                  />
-                  <Select
-                    name="proxy"
-                    placeholder="Proxy"
-                    value={props.values.proxy}
-                    options={[{ value: 'none', label: 'None' }, ...getOptions('proxies')]}
-                    onBlur={props.setFieldTouched}
-                    onChange={props.setFieldValue}
-                    error={!!props.errors.proxy && !!props.touched.proxy}
-                  />
-                  <Slider name="safeMode" checked={props.values.safeMode}>
-                    Safe mode
-                  </Slider>
-                </Fieldset>
+                <Select
+                  name="product"
+                  placeholder="Product"
+                  value={props.values.product}
+                  options={productsOptions}
+                  onBlur={props.setFieldTouched}
+                  onChange={props.setFieldValue}
+                  error={!!props.errors.product && !!props.touched.product}
+                />
+                <KeywordsManager
+                  name="colors"
+                  placeholder="+Another color"
+                  onChange={props.setFieldValue}
+                  setTouched={props.setFieldTouched}
+                  error={!!props.errors.colors && !!props.touched.colors}
+                  description="Press enter or click 'Add'"
+                  values={props.values.colors}
+                  customStyle={`
+                  margin-bottom: .7rem;
+                `}
+                />
               </Fieldset>
-              <ItemsCounter>
-                {props.values.products.length === 0 && <span>You haven't selected product</span>}
-              </ItemsCounter>
+              <Fieldset>
+                <Select
+                  name="size"
+                  placeholder="Size"
+                  value={props.values.size}
+                  options={sizeOptions}
+                  onBlur={props.setFieldTouched}
+                  onChange={props.setFieldValue}
+                  error={!!props.errors.size && !!props.touched.size}
+                />
+                <SlidersContainer>
+                  <StyledSlider name="anySize" checked={props.values.anySize}>
+                    Any Size
+                  </StyledSlider>
+                  <StyledSlider name="anyColor" checked={props.values.anyColor}>
+                    Any Color
+                  </StyledSlider>
+                </SlidersContainer>
+                {props.values.anySize && (
+                  <Select
+                    name="anySizeOption"
+                    placeholder="If entered size not available select"
+                    value={props.values.anySizeOption}
+                    options={anySizeOptions}
+                    onBlur={props.setFieldTouched}
+                    onChange={props.setFieldValue}
+                    error={!!props.errors.anySizeOption && !!props.touched.anySizeOption}
+                  />
+                )}
+                <Select
+                  name="profile"
+                  placeholder="Profile"
+                  value={props.values.profile}
+                  options={getOptions('profiles')}
+                  onBlur={props.setFieldTouched}
+                  onChange={props.setFieldValue}
+                  error={!!props.errors.profile && !!props.touched.profile}
+                />
+                <Select
+                  name="proxy"
+                  placeholder="Proxy"
+                  value={props.values.proxy}
+                  options={[{ value: 'none', label: 'None' }, ...getOptions('proxies')]}
+                  onBlur={props.setFieldTouched}
+                  onChange={props.setFieldValue}
+                  error={!!props.errors.proxy && !!props.touched.proxy}
+                />
+                <Slider name="safeMode" checked={props.values.safeMode}>
+                  Safe mode
+                </Slider>
+              </Fieldset>
               <ButtonsContainer>
-                {!isNew && props.dirty && state.tasks.length < 8 && (
+                {!isNew && props.dirty && state.tasks.length < 6 && (
                   <Button
                     medium
                     secondary
@@ -204,6 +249,7 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
                     animation={slideInFromRight}
                     onClick={async () => {
                       const errors = await props.validateForm();
+                      console.log(errors);
                       if (Object.entries(errors).length !== 0) return;
                       setIsNew(true);
                       props.submitForm();

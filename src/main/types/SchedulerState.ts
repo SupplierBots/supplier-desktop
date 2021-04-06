@@ -1,4 +1,4 @@
-export interface RunnerState {
+export interface SchedulerState {
   scheduled: boolean;
   time: string;
 }

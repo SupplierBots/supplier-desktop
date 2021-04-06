@@ -55,7 +55,7 @@ const StyledCard = styled(Card)`
 `;
 interface Props {
   close: () => void;
-  type: 'proxies' | 'profiles' | 'products';
+  type: 'proxies' | 'profiles';
   modalTitle: string;
   active: string;
 }

@@ -43,7 +43,7 @@ const Description = styled.span`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: ${fonts.regular};
+  font-size: ${fonts.medium};
 `;
 
 interface Keywords {

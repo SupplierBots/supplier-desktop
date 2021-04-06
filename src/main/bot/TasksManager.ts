@@ -1,33 +1,32 @@
 import { TaskStatusType } from '../types/TaskStatus';
-import { WebhookConfig } from '../types/WebhookConfig';
 import { Task } from '../types/Task';
-import { RunnerState } from '../types/RunnerState';
+import { SchedulerState } from '../types/SchedulerState';
 import { IPCMain } from '../IPC/IPCMain';
 import moment, { Moment } from 'moment';
 import { Proxy } from '../types/Proxy';
-import { HarvesterData } from '../types/HarvesterData';
 import { HarvestersManager } from './harvesters/HarvestersManager';
 import { DiscordManager } from '../DiscordManager';
 import { SupremeTask } from './supreme/SupremeTask';
 import { SecretAgentEngine } from './browserEngines/secret-agent/SecretAgentEngine';
 import { PlaywrightEngine } from './browserEngines/playwright/PlaywrightEngine';
+import { TasksManagerPayload } from '../types/TasksManagerPayload';
 
 class TasksManager {
-  public static runner: RunnerState;
+  public static scheduler: SchedulerState;
   public static scheduledDate: Moment = moment();
   public static isScheduled: boolean = false;
   private static timerID: NodeJS.Timeout;
   private static tasks: SupremeTask[] = [];
   private static proxies: Proxy[];
 
-  public static async start(
-    tasks: Task[],
-    proxies: Proxy[],
-    harvesters: HarvesterData[],
-    runner: RunnerState,
-    webhook: WebhookConfig,
-  ) {
-    this.runner = runner;
+  public static async start({
+    tasks,
+    proxies,
+    harvesters,
+    scheduler,
+    webhook,
+  }: TasksManagerPayload) {
+    this.scheduler = scheduler;
     this.proxies = proxies;
 
     DiscordManager.setupWebhook(webhook);
@@ -54,14 +53,14 @@ class TasksManager {
     // console.log('tokens:');
     // console.log(tokens);
 
-    this.isScheduled = runner.scheduled;
+    this.isScheduled = scheduler.scheduled;
 
-    if (!runner.scheduled) {
+    if (!scheduler.scheduled) {
       this.startTasks(tasks);
       return;
     }
 
-    this.scheduledDate = moment(runner.time, 'DD/MM HH:mm:ss');
+    this.scheduledDate = moment(scheduler.time, 'DD/MM HH:mm:ss');
 
     this.timerID = setInterval(async () => {
       if (moment().valueOf() + 60000 >= this.scheduledDate.valueOf()) {
@@ -79,27 +78,27 @@ class TasksManager {
   }
 
   private static async startTask(task: Task, index = 0) {
-    if (!task.profile) return;
+    if (!task.profile || !task.product) return;
 
     IPCMain.updateTaskStatus(task.id, {
       message: 'Preparing',
       type: TaskStatusType.Action,
     });
-    const product = await IPCMain.getProduct(task.products[0]);
     const profile = await IPCMain.getProfile(task.profile?.value);
-    const proxy = task.proxy?.value ? (await IPCMain.getProxy(task.proxy.value)) ?? null : null;
+    const proxy = task.proxy?.value
+      ? this.proxies.find(p => p.id === task.proxy?.value) ?? null
+      : null;
 
-    if (!product || !profile) {
+    if (!profile) {
       return;
     }
     try {
       const supremeTask = new SupremeTask(
         task.safeMode ? new PlaywrightEngine() : new SecretAgentEngine(),
         task,
-        product,
         profile,
         proxy,
-        this.runner,
+        this.scheduler,
       );
       this.tasks.push(supremeTask);
       supremeTask.init();

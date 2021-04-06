@@ -39,7 +39,6 @@ import {
 import { Profile } from '../types/Profile';
 import { TaskStatus } from '../types/TaskStatus';
 import { HarvesterData } from '../types/HarvesterData';
-import { Product } from '../types/Product';
 import { app } from 'electron';
 import { CheckoutData } from '../types/Checkout';
 import { Proxy } from '../types/Proxy';
@@ -47,17 +46,17 @@ import { TasksManager } from '../bot/TasksManager';
 import { HarvestersManager } from '../bot/harvesters/HarvestersManager';
 import { DiscordManager } from '../DiscordManager';
 import { config } from '../../config';
+import { PredefinedProduct } from '../types/PredefinedProduct';
+import { TasksManagerPayload } from 'main/types/TasksManagerPayload';
 
 export abstract class IPCMain {
   private constructor() {}
   public static registerListeners = () => {
     ipc.answerRenderer(CHECK_CHROME, IPCMain.checkChrome);
     ipc.answerRenderer(CHECK_BROWSER_ENGINE, IPCMain.checkBrowserEngine);
+    ipc.on(START_TASKS, (e, payload: TasksManagerPayload) => TasksManager.start(payload));
     ipc.on(DOWNLOAD_BROWSER_ENGINE, () => IPCMain.downloadBrowserEngine());
     ipc.on(SETUP_HARVESTER, (e, data: HarvesterData) => HarvestersManager.setupHarvester(data));
-    ipc.on(START_TASKS, (e, tasks, proxies, harvesters, runner, webhook) =>
-      TasksManager.start(tasks, proxies, harvesters, runner, webhook),
-    );
     ipc.on(STOP_TASKS, e => TasksManager.stopAllTasks());
     ipc.on(WINDOW_MINIMIZE, () => mainWindow?.minimize());
     ipc.on(WINDOW_CLOSE, () => mainWindow?.close());
@@ -111,7 +110,7 @@ export abstract class IPCMain {
 
   public static getProduct = async (id: string) => {
     if (!mainWindow) return;
-    const product = await ipc.callRenderer<string, Product>(mainWindow, GET_PRODUCT, id);
+    const product = await ipc.callRenderer<string, PredefinedProduct>(mainWindow, GET_PRODUCT, id);
     return product;
   };
 
