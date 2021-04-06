@@ -10,6 +10,7 @@ import { HarvestersManager } from '../harvesters/HarvestersManager';
 import { DiscordManager } from '../../DiscordManager';
 import { SupremeTask } from '../supreme/SupremeTask';
 import { SecretAgentEngine } from '../browserEngines/secret-agent/SecretAgentEngine';
+import { PlaywrightEngine } from '../browserEngines/playwright/PlaywrightEngine';
 
 class TasksManager {
   public static runner: RunnerState;
@@ -85,7 +86,7 @@ class TasksManager {
     }
     try {
       const supremeTask = new SupremeTask(
-        new SecretAgentEngine(),
+        new PlaywrightEngine(),
         task,
         product,
         profile,

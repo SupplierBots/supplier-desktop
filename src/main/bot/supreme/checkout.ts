@@ -10,25 +10,23 @@ export async function checkout(this: SupremeTask) {
   await this.browser.waitForResponse(/checkout/, async () => {
     await checkoutButton!.click();
   });
-  await this.browser.waitForDOMContentLoaded();
-  await this.waitForTicket();
+  await this.browser.waitForResourcesLoad();
   const addToCartTime = Date.now();
 
   await this.browser.waitForElement("input[type='text']", {
     visible: true,
   });
-  const termsLabel = await this.document.queryXPath(selectors.termsLabel);
-  const bounds = await termsLabel!.bounds;
-  const { x, y, height, width } = bounds;
-  await this.browser.click(x + width / 2, y + height / 2);
-  const creditCardNumberInput = await this.document.queryXPath(selectors.creditCardNumber);
-  await creditCardNumberInput?.autofill(this.profile.creditCardNumber.replace(/ /g, ''));
+  const terms = await this.document.queryXPath(selectors.termsLabel);
+  await terms?.tickCheckbox();
+  await this.autofillInput(
+    selectors.creditCardNumber,
+    this.profile.creditCardNumber.replace(/ /g, ''),
+  );
   const monthSelect = await this.document.queryXPath(selectors.monthSelect);
   await monthSelect?.selectOption(this.profile.month!.value);
   const yearSelect = await this.document.queryXPath(selectors.yearSelect);
   await yearSelect?.selectOption(this.profile.year!.value);
-  const cvvInput = await this.document.queryXPath(selectors.cvv);
-  await cvvInput?.autofill(this.profile.cvv);
+  await this.autofillInput(selectors.cvv, this.profile.cvv);
 
   const checkoutTime = Date.now() - addToCartTime.valueOf();
 
@@ -47,7 +45,7 @@ export async function checkout(this: SupremeTask) {
   });
 
   const captcha = await this.document.querySelector('.g-recaptcha, #g-recaptcha');
-  let sitekey = '6LeWwRkUAAAAAOBsau7KpuC9AV-6J8mhw4AjC3Xz';
+  this.sitekey = '6LeWwRkUAAAAAOBsau7KpuC9AV-6J8mhw4AjC3Xz';
   let callback = 'checkoutAfterCaptcha';
 
   if (captcha) {
@@ -58,11 +56,11 @@ export async function checkout(this: SupremeTask) {
     }
 
     if (captchaDataset.sitekey) {
-      sitekey = captchaDataset.sitekey;
+      this.sitekey = captchaDataset.sitekey;
     }
   }
 
-  const captchaToken = await HarvestersManager.getCaptchaToken(sitekey);
+  const captchaToken = await HarvestersManager.getCaptchaToken(this.sitekey);
 
   await this.browser.evaluate(`$('[id*="g-recaptcha-response"]').html('${captchaToken}');`);
   await this.browser.evaluate(`${callback}();`);

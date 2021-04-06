@@ -7,6 +7,7 @@ export function selectStyle(this: SupremeTask, styles: ProductStyle[]) {
   const availableStyles = styles.filter(
     style => !style.isSoldOut && !this.soldOutStyles.includes(style.name),
   );
+
   if (availableStyles.length === 0) return null;
   const primaryStyle = availableStyles.find(s => isMatch(s.name, this.product.colors));
   if (primaryStyle || !this.product.anyColor) return primaryStyle ?? null;

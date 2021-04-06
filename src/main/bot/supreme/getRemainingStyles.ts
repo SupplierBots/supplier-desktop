@@ -10,7 +10,7 @@ export async function getRemainingStyles(this: SupremeTask) {
         url,
         element,
         name: styleName,
-        isSoldOut: Boolean(soldOut),
+        isSoldOut: soldOut.toLowerCase() === 'true',
       };
     }),
   );

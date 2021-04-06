@@ -8,6 +8,7 @@ import { Handler, LocationStatus } from 'secret-agent';
 import WebsocketResource from '@secret-agent/client/lib/WebsocketResource';
 import Resource from '@secret-agent/client/lib/Resource';
 import { SecretAgentPageElement } from './SecretAgentPageElement';
+import _ from 'lodash';
 
 export class SecretAgentEngine implements BrowserEngine {
   private static handler?: Handler;
@@ -68,8 +69,8 @@ export class SecretAgentEngine implements BrowserEngine {
   `);
   }
 
-  async load(href: string): Promise<void> {
-    await this.agent.goto(href);
+  async load(url: string): Promise<void> {
+    await this.agent.goto(url);
   }
   async setCookie({ name, value, expires, httpOnly, secure, sameSite }: Cookie): Promise<void> {
     await this.agent.activeTab.cookieStorage.setItem(name, value, {
@@ -107,6 +108,18 @@ export class SecretAgentEngine implements BrowserEngine {
 
   async waitForDOMContentLoaded(): Promise<void> {
     await this.agent.activeTab.waitForLoad(LocationStatus.DomContentLoaded);
+  }
+
+  async waitForResourcesLoad(): Promise<void> {
+    let documentReadyState = await this.getReadyState();
+    while (documentReadyState !== 'complete') {
+      await new Promise(r => setTimeout(r, 100));
+      documentReadyState = await this.getReadyState();
+    }
+  }
+
+  private async getReadyState() {
+    return (await this.agent.getJsValue<string>('document.readyState')).value;
   }
 
   private async queryXPath(selector: string) {

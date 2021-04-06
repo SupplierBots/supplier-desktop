@@ -49,6 +49,7 @@ export class SupremeTask {
   public bParameter = false;
   public billingErrors = 'None';
   public sitekey = '';
+  public modifiedButtons: string[] = [];
   public processingAttempt = 0;
   public checkoutDelay = 3000;
   public startTimestamp = moment();
@@ -76,7 +77,7 @@ export class SupremeTask {
 
     await this.browser.onResponse(this.parseResponse.bind(this));
 
-    await this.browser.load('https://www.supremenewyork.com/shop/all/accessories');
+    await this.browser.load('https://www.supremenewyork.com/shop/all/sweatshirts');
     await this.injectAddressCookie();
     await this.browser.waitForDOMContentLoaded();
     console.log('Page loaded: ' + Date.now());
@@ -95,7 +96,7 @@ export class SupremeTask {
 
     this.updateTaskMessage('Waiting for product');
     const product = await this.getProduct();
-    await this.waitForTicket();
+    await this.browser.waitForResourcesLoad();
     this.startTimestamp = moment();
     this.updateTaskMessage('Loading product details');
     await this.loadStylePage(product);
@@ -118,7 +119,7 @@ export class SupremeTask {
       await this.browser.waitForMiliseconds(1000);
       this.soldOutStyles = [];
       await this.browser.reload();
-      await this.waitForTicket();
+      await this.browser.waitForResourcesLoad();
     }
     this.atcTimestamp = moment();
     this.updateTaskMessage('Loading checkout');
@@ -151,6 +152,7 @@ export class SupremeTask {
     this.slug = '';
     this.billingErrors = 'None';
     this.soldOutStyles = [];
+    this.modifiedButtons = [];
     this.startTimestamp = moment();
     this.submitTimestamp = moment();
     this.atcTimestamp = moment();
@@ -166,11 +168,13 @@ export class SupremeTask {
     await this.browser.evaluate('jQuery.fx.off = true;');
   }
 
-  public async waitForTicket() {
-    const script = await this.document.querySelector("script[src*='ticket']");
-    if (!script) return;
-    await this.browser.waitForResponse(/ticket.js/);
-    console.log('Ticket loaded: ' + Date.now());
+  public async autofillInput(xpath: string, value: string) {
+    const input = await this.document.queryXPath(xpath);
+    await input?.focus();
+    for (const character of value.split('')) {
+      await input?.pressKey(character);
+      await new Promise(resolve => setTimeout(resolve, _.random(35, 65)));
+    }
   }
 
   public selectSize = selectSize;

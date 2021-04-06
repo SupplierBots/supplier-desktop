@@ -13,6 +13,7 @@ export function reportCheckout(this: SupremeTask, { status, page }: Supreme.Chec
     processingAttempt: this.processingAttempt,
     checkoutDelay: this.checkoutDelay,
     taskAttempt: this.taskAttempt,
+    modifiedButtons: this.modifiedButtons,
     startTimestamp: this.startTimestamp.toString(),
     atcTimestamp: this.atcTimestamp.toString(),
     submitTimestamp: this.submitTimestamp.toString(),

@@ -33,7 +33,7 @@ export class SecretAgentPageElement implements PageElement {
     })();
   }
 
-  get bounds(): Promise<{ x: number; y: number; height: number; width: number }> {
+  private get bounds(): Promise<{ x: number; y: number; height: number; width: number }> {
     return (async () => {
       const bounds = await this.element.getBoundingClientRect();
       const x = await bounds.x;
@@ -53,16 +53,22 @@ export class SecretAgentPageElement implements PageElement {
     return this.element.getAttribute(attribute);
   }
 
-  async autofill(value: string): Promise<void> {
+  async focus(): Promise<void> {
     await this.agent.interact({
       click: this.element,
     });
-    for (const character of value.split('')) {
-      await this.agent.interact({
-        type: character,
-      });
-      await this.agent.waitForMillis(_.random(35, 65));
-    }
+  }
+
+  async pressKey(value: string): Promise<void> {
+    await this.agent.interact({
+      type: value,
+    });
+  }
+
+  async tickCheckbox(): Promise<void> {
+    const bounds = await this.bounds;
+    const { x, y, height, width } = bounds;
+    await this.agent.interact({ click: [x + width / 2, y + height / 2] });
   }
 
   async selectOption(value: string): Promise<void> {

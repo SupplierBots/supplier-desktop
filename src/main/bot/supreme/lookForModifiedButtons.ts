@@ -6,6 +6,7 @@ export async function lookForModifiedButtons(this: SupremeTask, names: string[])
   buttons.forEach(async button => {
     const text = await button.innerText;
     if (!_.intersection(text, names)) return;
+    this.modifiedButtons.push(text);
     await button.click();
   });
 }

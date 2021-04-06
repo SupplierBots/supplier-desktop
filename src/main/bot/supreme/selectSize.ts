@@ -11,21 +11,22 @@ export async function selectSize(this: SupremeTask) {
   const sizes = await Promise.all(
     [...(await select.querySelectorAll('option'))].map(async o => {
       const innerText = await o.innerText;
-      return innerText.trim().toLowerCase();
+      return innerText;
     }),
   );
+
+  const sizesLower = sizes.map(s => s.trim().toLowerCase());
 
   if (sizes.length === 0) return false;
 
   const sizeValue = this.product.size!.value;
-  const sizeToFind = (sizeValue.includes('SHOE')
+  const sizeToFind = sizeValue.includes('SHOE')
     ? convertShoeSize(sizeValue, this.region)
-    : sizeValue
-  ).toLowerCase();
+    : sizeValue;
 
-  if (sizes.includes(sizeToFind)) {
-    await select.selectOption(sizeToFind);
-    this.item.size = _.capitalize(sizeToFind);
+  if (sizesLower.includes(sizeToFind.toLowerCase())) {
+    this.item.size = sizeToFind;
+    await select.selectOption(this.item.size);
     return true;
   }
 
@@ -46,8 +47,8 @@ export async function selectSize(this: SupremeTask) {
       secondarySize = _.sample(sizes)!;
       break;
   }
-  this.item.size = _.capitalize(secondarySize);
-  await select.selectOption(secondarySize);
+  this.item.size = secondarySize;
+  await select.selectOption(this.item.size);
   return true;
 }
 

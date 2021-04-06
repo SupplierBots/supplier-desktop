@@ -18,6 +18,7 @@ export interface CheckoutData {
   usedProxy: boolean;
   sitekey: string;
   billingErrors: string;
+  modifiedButtons: string[];
   site: 'desktop' | 'mobile';
   region: 'eu' | 'us';
 }
