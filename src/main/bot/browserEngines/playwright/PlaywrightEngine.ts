@@ -1,4 +1,10 @@
-import { BrowserContext, ChromiumBrowser, Page, Response as EngineResponse } from 'playwright-core';
+import {
+  BrowserContext,
+  ChromiumBrowser,
+  Frame,
+  Page,
+  Response as EngineResponse,
+} from 'playwright-core';
 import { Proxy } from '../../../types/Proxy';
 import { BrowserEngine } from '../interfaces/BrowserEngine';
 import { Cookie } from '../interfaces/Cookie';
@@ -10,7 +16,7 @@ import { PlaywrightResponse } from './PlaywrightResponse';
 import { PlaywrightDocument } from './PlaywrightDocument';
 
 export class PlaywrightEngine implements BrowserEngine {
-  private static browser?: ChromiumBrowser;
+  private static browser: ChromiumBrowser;
   public document!: PlaywrightDocument;
 
   get pathname(): Promise<string> {
@@ -20,8 +26,9 @@ export class PlaywrightEngine implements BrowserEngine {
   private page!: Page;
   private context!: BrowserContext;
   private responsesListener?: (response: EngineResponse) => void;
+  private pathListener?: (frame: Frame) => void;
 
-  async initialize(proxy: Proxy | null): Promise<void> {
+  static async startHandler() {
     if (!PlaywrightEngine.browser) {
       const executablePath = chrome.Launcher.getFirstInstallation();
       const args = ['--disable-blink-features=AutomationControlled'];
@@ -37,6 +44,9 @@ export class PlaywrightEngine implements BrowserEngine {
         executablePath,
       });
     }
+  }
+
+  async initialize(proxy: Proxy | null): Promise<void> {
     const proxyConfig = await this.getProxyConfig(proxy);
     this.context = await PlaywrightEngine.browser.newContext({
       proxy: proxyConfig ?? undefined,
@@ -60,6 +70,10 @@ export class PlaywrightEngine implements BrowserEngine {
     if (this.responsesListener) {
       const listener = this.responsesListener;
       this.page.off('response', listener);
+    }
+    if (this.pathListener) {
+      const listener = this.pathListener;
+      this.page.off('framenavigated', listener);
     }
     await this.context.close();
   }
@@ -129,5 +143,15 @@ export class PlaywrightEngine implements BrowserEngine {
   }
   onClose(callback: () => void): void {
     this.context.on('close', callback);
+  }
+
+  async onPathChange(listenFn: (url: string) => void): Promise<void> {
+    const listener = async (frame: Frame) => {
+      if (frame !== this.page.mainFrame()) return;
+      const pathname = await this.pathname;
+      listenFn(pathname);
+    };
+    this.pathListener = listener;
+    this.page.on('framenavigated', listener);
   }
 }

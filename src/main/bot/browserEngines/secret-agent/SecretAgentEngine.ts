@@ -8,18 +8,22 @@ import { Handler, LocationStatus } from 'secret-agent';
 import WebsocketResource from '@secret-agent/client/lib/WebsocketResource';
 import Resource from '@secret-agent/client/lib/Resource';
 import { SecretAgentPageElement } from './SecretAgentPageElement';
-import _ from 'lodash';
 
 export class SecretAgentEngine implements BrowserEngine {
-  private static handler?: Handler;
+  private static handler: Handler;
   private agent!: Agent;
   public document!: SecretAgentPageElement;
   private responsesListener?: (resource: Resource | WebsocketResource) => Promise<void>;
+  private pathListener?: (resource: Resource | WebsocketResource) => Promise<void>;
+  private lastPathname = '';
 
-  async initialize(proxy: Proxy | null): Promise<void> {
+  static async startHandler() {
     if (!SecretAgentEngine.handler) {
       SecretAgentEngine.handler = new Handler();
     }
+  }
+
+  async initialize(proxy: Proxy | null): Promise<void> {
     const launchArgs: IAgentCreateOptions = {
       showReplay: false,
       humanEmulatorId: 'basic',
@@ -39,6 +43,10 @@ export class SecretAgentEngine implements BrowserEngine {
   async stop(): Promise<void> {
     if (this.responsesListener) {
       const listener = this.responsesListener;
+      await this.agent?.activeTab.off('resource', listener);
+    }
+    if (this.pathListener) {
+      const listener = this.pathListener;
       await this.agent?.activeTab.off('resource', listener);
     }
     await this.agent?.close();
@@ -96,6 +104,18 @@ export class SecretAgentEngine implements BrowserEngine {
       listenFn(new SecretAgentResponse(resource));
     };
     this.responsesListener = listener;
+    await this.agent.activeTab.on('resource', listener);
+  }
+
+  async onPathChange(listenFn: (url: string) => void): Promise<void> {
+    const listener = async (resource: Resource | WebsocketResource) => {
+      if (resource.type !== 'Document') return;
+      const pathname = await this.pathname;
+      if (pathname === this.lastPathname) return;
+      this.lastPathname = pathname;
+      listenFn(pathname);
+    };
+    this.pathListener = listener;
     await this.agent.activeTab.on('resource', listener);
   }
 

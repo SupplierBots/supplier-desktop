@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { TaskStatusType } from '../../types/TaskStatus';
 import { HarvestersManager } from '../harvesters/HarvestersManager';
 import { selectors } from './selectors';
@@ -7,15 +8,17 @@ export async function checkout(this: SupremeTask) {
   const checkoutButtonSelector = ".checkout, [href*='checkout']";
   await this.browser.waitForElement(checkoutButtonSelector, { visible: true });
   const checkoutButton = await this.document.querySelector(checkoutButtonSelector);
-  await this.browser.waitForResponse(/checkout/, async () => {
-    await checkoutButton!.click();
-  });
+  await checkoutButton?.click();
   await this.browser.waitForResourcesLoad();
+
   const addToCartTime = Date.now();
 
   await this.browser.waitForElement("input[type='text']", {
     visible: true,
   });
+
+  const startAutofill = Date.now();
+
   const terms = await this.document.queryXPath(selectors.termsLabel);
   await terms?.tickCheckbox();
   await this.autofillInput(
@@ -27,6 +30,9 @@ export async function checkout(this: SupremeTask) {
   const yearSelect = await this.document.queryXPath(selectors.yearSelect);
   await yearSelect?.selectOption(this.profile.year!.value);
   await this.autofillInput(selectors.cvv, this.profile.cvv);
+
+  console.log(Date.now() - startAutofill);
+  console.log(moment().valueOf() - this.startTimestamp.valueOf());
 
   const checkoutTime = Date.now() - addToCartTime.valueOf();
 

@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { ElementHandle } from 'playwright-core';
 import { PageElement } from '../interfaces/PageElement';
 

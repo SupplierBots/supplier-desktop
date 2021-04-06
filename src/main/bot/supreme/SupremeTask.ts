@@ -76,6 +76,10 @@ export class SupremeTask {
     });
 
     await this.browser.onResponse(this.parseResponse.bind(this));
+    await this.browser.onPathChange(path => {
+      if (path !== '/' && path !== '/shop') return;
+      this.retry();
+    });
 
     await this.browser.load('https://www.supremenewyork.com/shop/all/sweatshirts');
     await this.injectAddressCookie();
@@ -157,7 +161,7 @@ export class SupremeTask {
     this.submitTimestamp = moment();
     this.atcTimestamp = moment();
     await this.stop();
-    await this.init();
+    // await this.init();
   }
 
   public async stop() {

@@ -1,5 +1,5 @@
 export const config = {
-  tasksDebug: true,
+  tasksDebug: false,
   storageVersion: 1,
   registerUrl: 'https://us-central1-safedrop-83b20.cloudfunctions.net/createAccount',
   tutorialUrl: 'https://docs.supplierbot.io/',

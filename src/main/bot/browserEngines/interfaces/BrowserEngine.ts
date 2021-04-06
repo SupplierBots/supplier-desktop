@@ -19,6 +19,7 @@ export interface BrowserEngine {
   waitForDOMContentLoaded(): Promise<void>;
   waitForResourcesLoad(): Promise<void>;
   reload(): Promise<void>;
-  onResponse(listenFn: (event: Response) => void): Promise<void>;
+  onResponse(listenFn: (response: Response) => void): Promise<void>;
+  onPathChange(listenFn: (url: string) => void): Promise<void>;
   onClose(callback: () => void): void;
 }

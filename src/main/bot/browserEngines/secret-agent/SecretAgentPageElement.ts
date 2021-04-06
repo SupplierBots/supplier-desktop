@@ -3,7 +3,6 @@ import { Agent } from '@secret-agent/client';
 import { ISuperNode, ISuperElement } from 'awaited-dom/base/interfaces/super';
 import { KeyboardKeys } from '@secret-agent/client';
 import { IKeyboardKey } from '@secret-agent/core-interfaces/IKeyboardLayoutUS';
-import _ from 'lodash';
 
 export class SecretAgentPageElement implements PageElement {
   constructor(readonly element: ISuperNode | ISuperElement, readonly agent: Agent) {}

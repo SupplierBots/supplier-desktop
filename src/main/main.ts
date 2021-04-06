@@ -13,6 +13,7 @@ import { DiscordManager } from './DiscordManager';
 import { config } from '../config';
 import { HarvestersManager } from './bot/harvesters/HarvestersManager';
 import { SecretAgentEngine } from './bot/browserEngines/secret-agent/SecretAgentEngine';
+import { PlaywrightEngine } from './bot/browserEngines/playwright/PlaywrightEngine';
 
 export const isDev = process.env.NODE_ENV === 'development';
 
