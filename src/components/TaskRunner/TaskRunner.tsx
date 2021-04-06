@@ -21,6 +21,7 @@ import moment, { Moment } from 'moment';
 import { SchedulerState } from 'main/types/SchedulerState';
 import { setTimerState } from 'store/controller/controllerSlice';
 import { TaskStatusType } from 'main/types/TaskStatus';
+import { setProcessingAction } from 'store/tasksManager/tasksManagerSlice';
 
 const ConfigBox = styled.div`
   height: 11rem;
@@ -147,13 +148,18 @@ const StyledInputsContainer = styled(InlineInputsContainer)`
 `;
 
 const TaskRunner = () => {
-  const { tasks, harvesters, scheduler, controller, proxies, webhook } = useStateSelector(
-    state => state,
-  );
+  const {
+    tasks,
+    harvesters,
+    scheduler,
+    controller,
+    proxies,
+    webhook,
+    tasksManager: { processingAction },
+  } = useStateSelector(state => state);
   const [intervalID, setIntervalID] = useState<NodeJS.Timeout>();
   const [currentDate, setCurrentDate] = useState<Moment>(moment());
   const [scheduledDate, setScheduledDate] = useState<Moment>(moment());
-  const [processingAction, setProcessingAction] = useState<boolean>(false);
 
   const dispatch = useStateDispatch();
 
@@ -176,6 +182,8 @@ const TaskRunner = () => {
   };
 
   const startTasks = async () => {
+    if (processingAction) return;
+    dispatch(setProcessingAction({ processingAction: true }));
     if (!scheduler.scheduled) {
       IPCRenderer.startTasks({
         tasks: getAvailableTasks(),
@@ -209,6 +217,8 @@ const TaskRunner = () => {
   };
 
   const stopTasks = async () => {
+    if (processingAction) return;
+    dispatch(setProcessingAction({ processingAction: true }));
     dispatch(setTimerState({ active: false }));
     IPCRenderer.stopTasks();
     if (intervalID) {
@@ -292,14 +302,20 @@ const TaskRunner = () => {
               {!isAnyTaskActive() ? (
                 <ActionButton
                   onClick={startTasks}
-                  data-disabled={getAvailableTasks().length === 0 || harvesters.length === 0}
+                  data-disabled={
+                    getAvailableTasks().length === 0 || harvesters.length === 0 || processingAction
+                  }
                 >
                   <StyledStartIcon
-                    data-disabled={getAvailableTasks().length === 0 || harvesters.length === 0}
+                    data-disabled={
+                      getAvailableTasks().length === 0 ||
+                      harvesters.length === 0 ||
+                      processingAction
+                    }
                   />
                 </ActionButton>
               ) : (
-                <ActionButton onClick={stopTasks}>
+                <ActionButton onClick={stopTasks} data-disabled={processingAction}>
                   <StyledStopIcon />
                 </ActionButton>
               )}

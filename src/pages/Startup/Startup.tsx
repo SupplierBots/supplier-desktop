@@ -15,6 +15,7 @@ import { setAppDetails, setTimerState } from 'store/controller/controllerSlice';
 import { useStateSelector, useStateDispatch } from 'hooks/typedReduxHooks';
 import { setTaskActivity } from 'store/tasks/tasksSlice';
 import { setScheduler } from 'store/scheduler/schedulerSlice';
+import { setProcessingAction } from 'store/tasksManager/tasksManagerSlice';
 
 export const StyledParticles = styled(Particles)`
   position: absolute;
@@ -37,6 +38,7 @@ const Startup = ({ history }: Props) => {
 
   const resetState = () => {
     dispatch(setTimerState({ active: false }));
+    dispatch(setProcessingAction({ processingAction: false }));
     harvesters.forEach(h => {
       dispatch(setActive({ id: h.id, isActive: false }));
     });

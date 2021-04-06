@@ -56,11 +56,13 @@ class TasksManager {
     this.isScheduled = scheduler.scheduled;
 
     if (!scheduler.scheduled) {
-      this.startTasks(tasks);
+      await this.startTasks(tasks);
+      IPCMain.notifyTasksStarted();
       return;
     }
 
     this.scheduledDate = moment(scheduler.time, 'DD/MM HH:mm:ss');
+    IPCMain.notifyTasksStarted();
 
     this.timerID = setInterval(async () => {
       if (moment().valueOf() + 60000 >= this.scheduledDate.valueOf()) {
@@ -72,12 +74,14 @@ class TasksManager {
   }
 
   private static async startTasks(tasks: Task[]) {
-    for (let i = 0; i < tasks.length; i++) {
-      this.startTask(tasks[i], i);
-    }
+    await Promise.all(
+      tasks.map(async task => {
+        await this.startTask(task);
+      }),
+    );
   }
 
-  private static async startTask(task: Task, index = 0) {
+  private static async startTask(task: Task) {
     if (!task.profile || !task.product) return;
 
     IPCMain.updateTaskStatus(task.id, {
@@ -113,6 +117,7 @@ class TasksManager {
     clearInterval(this.timerID);
     await Promise.all(this.tasks.map(task => task.stop()));
     this.tasks = [];
+    IPCMain.notifyTasksStopped();
   }
 }
 

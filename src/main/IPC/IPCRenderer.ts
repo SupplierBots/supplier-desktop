@@ -27,6 +27,8 @@ import {
   ChromeVerifiedPayload,
   CHECK_BROWSER_ENGINE,
   DOWNLOAD_BROWSER_ENGINE,
+  TASKS_STOPPED,
+  TASKS_STARTED,
 } from './IPCEvents';
 
 import store from 'store/configureStore';
@@ -52,6 +54,7 @@ import { reportCheckout } from 'firebase/dropReporter';
 import { TaskStatus } from 'main/types/TaskStatus';
 import { predefinedProducts } from 'main/types/PredefinedProduct';
 import { TasksManagerPayload } from 'main/types/TasksManagerPayload';
+import { setProcessingAction } from 'store/tasksManager/tasksManagerSlice';
 
 export abstract class IPCRenderer {
   private constructor() {}
@@ -60,6 +63,18 @@ export abstract class IPCRenderer {
 
     ipc.on(HARVESTER_STATE_CHANGE, (e, { id, status }: HarvesterStatePayload) => {
       store.dispatch(setActive({ id, isActive: status }));
+    });
+
+    ipc.on(SET_HARVESTER_EMAIL, (e, { id, email }: { id: string; email: string }) => {
+      store.dispatch(setAccountEmail({ id, email }));
+    });
+
+    ipc.on(TASKS_STOPPED, e => {
+      store.dispatch(setProcessingAction({ processingAction: false }));
+    });
+
+    ipc.on(TASKS_STARTED, e => {
+      store.dispatch(setProcessingAction({ processingAction: false }));
     });
 
     ipc.on(SET_HARVESTER_EMAIL, (e, { id, email }: { id: string; email: string }) => {

@@ -30,6 +30,7 @@ import { dashboardSlice } from './dashboard/dashboardSlice';
 import { updateSlice } from './update/updateSlice';
 import { statisticsSlice } from './statistics/statisticsSlice';
 import { schedulerSlice } from './scheduler/schedulerSlice';
+import { tasksManagerSlice } from './tasksManager/tasksManagerSlice';
 
 export const history = createMemoryHistory({
   initialEntries: [routes.startup],
@@ -53,6 +54,7 @@ export const rootReducer = combineReducers({
   update: updateSlice.reducer,
   statistics: statisticsSlice.reducer,
   scheduler: schedulerSlice.reducer,
+  tasksManager: tasksManagerSlice.reducer,
   webhook: webhookSlice.reducer,
   router: connectRouter(history),
 });

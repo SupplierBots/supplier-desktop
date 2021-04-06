@@ -35,6 +35,8 @@ import {
   ChromeVerifiedPayload,
   DOWNLOAD_BROWSER_ENGINE,
   BROWSER_ENGINE_DOWNLOAD_PROGRESS,
+  TASKS_STARTED,
+  TASKS_STOPPED,
 } from './IPCEvents';
 import { Profile } from '../types/Profile';
 import { TaskStatus } from '../types/TaskStatus';
@@ -182,5 +184,13 @@ export abstract class IPCMain {
 
   public static setTaskActivity = (id: string, isActive: boolean) => {
     mainWindow?.webContents.send(SET_TASK_ACTIVITY, { id, isActive });
+  };
+
+  public static notifyTasksStarted = () => {
+    mainWindow?.webContents.send(TASKS_STARTED);
+  };
+
+  public static notifyTasksStopped = () => {
+    mainWindow?.webContents.send(TASKS_STOPPED);
   };
 }
