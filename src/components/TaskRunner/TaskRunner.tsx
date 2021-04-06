@@ -22,6 +22,7 @@ import { SchedulerState } from 'main/types/SchedulerState';
 import { setTimerState } from 'store/controller/controllerSlice';
 import { TaskStatusType } from 'main/types/TaskStatus';
 import { setProcessingAction } from 'store/tasksManager/tasksManagerSlice';
+import { config } from 'config';
 
 const ConfigBox = styled.div`
   height: 11rem;
@@ -157,6 +158,7 @@ const TaskRunner = () => {
     webhook,
     tasksManager: { processingAction },
   } = useStateSelector(state => state);
+
   const [intervalID, setIntervalID] = useState<NodeJS.Timeout>();
   const [currentDate, setCurrentDate] = useState<Moment>(moment());
   const [scheduledDate, setScheduledDate] = useState<Moment>(moment());
@@ -320,10 +322,12 @@ const TaskRunner = () => {
                 </ActionButton>
               )}
               <ActionButton
-                data-disabled={isAnyTaskActive() || tasks.length >= 6}
+                data-disabled={isAnyTaskActive() || tasks.length >= config.maxTasksAmount}
                 onClick={createNewTask}
               >
-                <StyledAddIcon data-disabled={isAnyTaskActive() || tasks.length >= 6} />
+                <StyledAddIcon
+                  data-disabled={isAnyTaskActive() || tasks.length >= config.maxTasksAmount}
+                />
               </ActionButton>
             </ButtonsContainer>
           </>

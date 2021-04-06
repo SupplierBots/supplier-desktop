@@ -29,6 +29,7 @@ import { updateTask, addTask } from 'store/tasks/tasksSlice';
 import { useStateSelector, useStateDispatch } from 'hooks/typedReduxHooks';
 import { UserData } from 'main/types/UserData';
 import KeywordsManager from 'components/KeywordsManager/KeywordsManager';
+import { config } from 'config';
 
 const StyledHeading = styled(Heading)`
   color: ${colors.lightPurple};
@@ -241,7 +242,7 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
                 </Slider>
               </Fieldset>
               <ButtonsContainer>
-                {!isNew && props.dirty && state.tasks.length < 6 && (
+                {!isNew && props.dirty && state.tasks.length < config.maxTasksAmount && (
                   <Button
                     medium
                     secondary

@@ -106,7 +106,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) *
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"config\", function() { return config; });\nconst config = {\n  tasksDebug: false,\n  storageVersion: 1,\n  registerUrl: 'https://us-central1-safedrop-83b20.cloudfunctions.net/createAccount',\n  tutorialUrl: 'https://docs.supplierbot.io/',\n  chromeUrl: 'https://www.google.com/chrome/',\n  changelogUrl: 'https://docs.supplierbot.io/other/changelog',\n  browserEngine: {\n    id: 'chrome-83-0',\n    name: 'chrome',\n    fullVersion: '83.0.4103.61',\n    features: ['headless'],\n    executablePathEnvVar: 'CHROME_83_BIN'\n  }\n};\n\n//# sourceURL=webpack:///./src/config.ts?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"config\", function() { return config; });\nconst config = {\n  tasksDebug: false,\n  storageVersion: 1,\n  maxTasksAmount: 6,\n  registerUrl: 'https://us-central1-safedrop-83b20.cloudfunctions.net/createAccount',\n  tutorialUrl: 'https://docs.supplierbot.io/',\n  chromeUrl: 'https://www.google.com/chrome/',\n  changelogUrl: 'https://docs.supplierbot.io/other/changelog',\n  browserEngine: {\n    id: 'chrome-83-0',\n    name: 'chrome',\n    fullVersion: '83.0.4103.61',\n    features: ['headless'],\n    executablePathEnvVar: 'CHROME_83_BIN'\n  }\n};\n\n//# sourceURL=webpack:///./src/config.ts?");
 
 /***/ }),
 
