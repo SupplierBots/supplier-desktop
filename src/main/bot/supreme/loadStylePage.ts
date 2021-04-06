@@ -10,6 +10,5 @@ export async function loadStylePage(this: SupremeTask, product: ProductStyle) {
   const productImage = await this.document.querySelector('#img-main');
   if (productImage) {
     this.item.image = (await productImage.getAttribute('src'))!.replace(/^\/\//, 'https://');
-    console.log(this.item.image);
   }
 }

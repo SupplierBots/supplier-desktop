@@ -27,11 +27,11 @@ export class PlaywrightEngine implements BrowserEngine {
       const args = ['--disable-blink-features=AutomationControlled'];
 
       if (!config.tasksDebug) {
-        args.push('--window-position=-9999,-9999');
+        args.push('--window-position=9999,9999');
       }
 
       PlaywrightEngine.browser = await chromium.launch({
-        headless: !config.tasksDebug,
+        headless: false,
         ignoreDefaultArgs: ['--disable-component-extensions-with-background-pages'],
         args,
         executablePath,
