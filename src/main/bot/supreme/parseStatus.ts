@@ -80,8 +80,7 @@ export async function parseStatus(this: SupremeTask, checkoutResponse: Supreme.C
     case '404':
     case 'outOfStock':
     case 'failed': {
-      const message =
-        checkoutResponse.status === 'outOfStock' ? 'Size sold out' : 'Failed. Retrying';
+      const message = checkoutResponse.status === 'outOfStock' ? 'Sold out' : 'Failed. Retrying';
 
       this.highTraffic = checkoutResponse.page?.includes('high traffic') ?? false;
       this.bParameter = !!checkoutResponse.b;

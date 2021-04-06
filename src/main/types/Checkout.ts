@@ -19,6 +19,7 @@ export interface CheckoutData {
   sitekey: string;
   billingErrors: string;
   modifiedButtons: string[];
+  safeMode: boolean;
   site: 'desktop' | 'mobile';
   region: 'eu' | 'us';
 }
@@ -26,9 +27,9 @@ export interface CheckoutData {
 export interface CheckoutWebhook {
   id: string;
   profile: Profile;
-  mode: string;
   item: ItemDetails;
   status: Supreme.CheckoutStatus;
+  safeMode: boolean;
 }
 
 export interface Checkout extends CheckoutData {

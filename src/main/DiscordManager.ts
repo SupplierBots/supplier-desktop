@@ -40,7 +40,13 @@ class DiscordManager {
     );
   }
 
-  public static async sendCheckoutWebhook({ status, item, id, profile, mode }: CheckoutWebhook) {
+  public static async sendCheckoutWebhook({
+    status,
+    item,
+    id,
+    profile,
+    safeMode,
+  }: CheckoutWebhook) {
     if (!item || !this.config) return;
     if (status !== 'paid' && this.config.onlySuccess) return;
 
@@ -48,18 +54,15 @@ class DiscordManager {
       .setTitle(this.formatStatus(status))
       .setColor(status === 'paid' ? this.successColor : this.failColor)
       .addField('Date', moment().format('Do MMM YYYY | HH:mm:ss'))
-      .addField('Product', item.name, true);
+      .addField('Product', item.name, true)
+      .addField('Style', item.style, true)
+      .addField('Size', item.size, true)
+      .addField('Safe mode', _.capitalize(safeMode.toString()), true)
+      .addField('Profile', `|| ${profile.name} ||`, true)
+      .addField('Order number', `|| #${id} ||`, true);
 
     if (item.image) {
       message.setThumbnail(item.image);
-    }
-
-    if (item.style !== 'sold-out') {
-      message
-        .addField('Style', item.style, true)
-        .addField('Size', item.size, true)
-        .addField('Profile', `|| ${profile.name} ||`, true)
-        .addField('Order number', `|| #${id} ||`, true);
     }
 
     await this.sendWebhook(message);

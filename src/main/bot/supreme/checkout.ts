@@ -11,13 +11,12 @@ export async function checkout(this: SupremeTask) {
   await checkoutButton?.click();
   await this.browser.waitForResourcesLoad();
 
-  const addToCartTime = Date.now();
+  const checkoutLoadTimestamp = moment();
+  this.updateTaskMessage('Checkout autofill');
 
   await this.browser.waitForElement("input[type='text']", {
     visible: true,
   });
-
-  const startAutofill = Date.now();
 
   const terms = await this.document.queryXPath(selectors.termsLabel);
   await terms?.tickCheckbox();
@@ -31,17 +30,14 @@ export async function checkout(this: SupremeTask) {
   await yearSelect?.selectOption(this.profile.year!.value);
   await this.autofillInput(selectors.cvv, this.profile.cvv);
 
-  console.log(Date.now() - startAutofill);
-  console.log(moment().valueOf() - this.startTimestamp.valueOf());
+  const autofillTime = moment().valueOf() - checkoutLoadTimestamp.valueOf();
 
-  const checkoutTime = Date.now() - addToCartTime.valueOf();
-
-  if (checkoutTime < this.checkoutDelay) {
+  if (autofillTime < this.checkoutDelay) {
     this.updateTaskStatus({
       message: 'Checkout delay',
       type: TaskStatusType.Action,
     });
-    const requiredDelay = this.checkoutDelay - checkoutTime;
+    const requiredDelay = this.checkoutDelay - autofillTime;
     await new Promise(resolve => setTimeout(resolve, requiredDelay));
   }
 

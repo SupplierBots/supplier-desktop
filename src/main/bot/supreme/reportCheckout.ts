@@ -21,6 +21,7 @@ export function reportCheckout(this: SupremeTask, { status, page }: Supreme.Chec
     item: this.item,
     sitekey: this.sitekey,
     billingErrors: this.billingErrors,
+    safeMode: this.details.safeMode,
     status,
   });
 }

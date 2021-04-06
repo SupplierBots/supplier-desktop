@@ -15,7 +15,7 @@ export const initialTaskValues: Task = {
   id: '',
   profile: null,
   proxy: null,
-  safeMode: false,
+  safeMode: true,
   products: [],
   status: {
     message: 'Inactive',

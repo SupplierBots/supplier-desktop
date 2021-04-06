@@ -7,7 +7,7 @@ export function sendWebhook(this: SupremeTask, { status, id }: Supreme.CheckoutR
     id: id ?? 'Unknown',
     status,
     item: this.item,
-    mode: 'Hybrid',
     profile: this.profile,
+    safeMode: this.details.safeMode,
   });
 }

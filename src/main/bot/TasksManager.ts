@@ -33,8 +33,13 @@ class TasksManager {
     DiscordManager.setupWebhook(webhook);
     HarvestersManager.initialize(harvesters);
 
-    await SecretAgentEngine.startHandler();
-    await PlaywrightEngine.startHandler();
+    if (tasks.some(t => !t.safeMode)) {
+      await SecretAgentEngine.startHandler();
+    }
+
+    if (tasks.some(t => t.safeMode)) {
+      await PlaywrightEngine.startHandler();
+    }
 
     // const tokens = await Promise.all([
     //   HarvestersManager.getCaptchaToken(),

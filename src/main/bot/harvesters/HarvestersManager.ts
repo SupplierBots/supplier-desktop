@@ -6,10 +6,11 @@ import { PlaywrightHarvester } from './playwright/PlaywrightHarvester';
 class HarvestersManager {
   private static sitekey = '6LeWwRkUAAAAAOBsau7KpuC9AV-6J8mhw4AjC3Xz';
   private static harvesters: Harvester[] = [];
+  private static isEnabled = false;
 
   public static async initialize(harvestersData: HarvesterData[]) {
     this.harvesters = [];
-
+    HarvestersManager.isEnabled = true;
     await Promise.all(
       harvestersData.map(async (data, index) => {
         const harvester = new PlaywrightHarvester(data, this.sitekey);
@@ -21,8 +22,11 @@ class HarvestersManager {
   }
 
   public static async getCaptchaToken(sitekey = this.sitekey): Promise<string> {
-    const availableHarvester = this.getRandomAvailable();
+    if (!HarvestersManager.isEnabled) {
+      return '';
+    }
 
+    const availableHarvester = this.getRandomAvailable();
     if (!availableHarvester) {
       await new Promise(resolve => setTimeout(resolve, 100));
       return this.getCaptchaToken();
@@ -38,6 +42,7 @@ class HarvestersManager {
   }
 
   public static async closeAll() {
+    HarvestersManager.isEnabled = false;
     await Promise.all(
       this.harvesters.map(async harvester => {
         await harvester.close();

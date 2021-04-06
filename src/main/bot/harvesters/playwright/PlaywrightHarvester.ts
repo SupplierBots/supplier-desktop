@@ -88,10 +88,10 @@ export class PlaywrightHarvester implements Harvester {
       this.sitekey = sitekey;
       await this.load();
     }
-
+    this.page.bringToFront();
     this.isSolving = true;
     await this.page.evaluate('executeCaptcha();');
-    await this.page.waitForFunction(`isTokenReady()`, {
+    await this.page.waitForFunction(`isTokenReady()`, null, {
       timeout: 0,
     });
 

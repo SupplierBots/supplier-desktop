@@ -71,16 +71,12 @@ export class SupremeTask {
     this.checkoutDelay = _.random(3000, 5000);
     await this.browser.initialize(this.proxy);
 
-    this.browser.onClose(() => {
-      IPCMain.setTaskActivity(this.details.id, false);
-    });
-
     await this.browser.onResponse(this.parseResponse.bind(this));
     await this.browser.onPathChange(path => {
       if (path !== '/' && path !== '/shop') return;
       this.retry();
     });
-
+    this.updateTaskMessage('Loading website');
     await this.browser.load('https://www.supremenewyork.com/shop/all/sweatshirts');
     await this.injectAddressCookie();
     await this.browser.waitForDOMContentLoaded();
@@ -100,6 +96,7 @@ export class SupremeTask {
 
     this.updateTaskMessage('Waiting for product');
     const product = await this.getProduct();
+    this.updateTaskMessage('Waiting for resources');
     await this.browser.waitForResourcesLoad();
     this.startTimestamp = moment();
     this.updateTaskMessage('Loading product details');
@@ -160,12 +157,13 @@ export class SupremeTask {
     this.startTimestamp = moment();
     this.submitTimestamp = moment();
     this.atcTimestamp = moment();
-    await this.stop();
-    // await this.init();
+    await this.browser.stop();
+    await this.init();
   }
 
   public async stop() {
     await this.browser.stop();
+    IPCMain.setTaskActivity(this.details.id, false);
   }
 
   public async disableAnimations() {
