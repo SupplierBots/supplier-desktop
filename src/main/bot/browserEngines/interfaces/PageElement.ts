@@ -8,7 +8,7 @@ export interface PageElement {
   focus(): Promise<void>;
   pressKey(value: string): Promise<void>;
   tickCheckbox(): Promise<void>;
-  selectOption(value: string): Promise<void>;
+  selectOptionByLabel(label: string): Promise<void>;
 
   querySelector(selector: string): Promise<PageElement | null>;
   queryXPath(selector: string): Promise<PageElement | null>;

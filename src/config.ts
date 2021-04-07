@@ -1,5 +1,5 @@
 export const config = {
-  tasksDebug: false,
+  tasksDebug: true,
   storageVersion: 1,
   maxTasksAmount: 6,
   registerUrl: 'https://us-central1-safedrop-83b20.cloudfunctions.net/createAccount',

@@ -25,9 +25,9 @@ export async function checkout(this: SupremeTask) {
     this.profile.creditCardNumber.replace(/ /g, ''),
   );
   const monthSelect = await this.document.queryXPath(selectors.monthSelect);
-  await monthSelect?.selectOption(this.profile.month!.value);
+  await monthSelect?.selectOptionByLabel(this.profile.month!.value);
   const yearSelect = await this.document.queryXPath(selectors.yearSelect);
-  await yearSelect?.selectOption(this.profile.year!.value);
+  await yearSelect?.selectOptionByLabel(this.profile.year!.value);
   await this.autofillInput(selectors.cvv, this.profile.cvv);
 
   const autofillTime = moment().valueOf() - checkoutLoadTimestamp.valueOf();

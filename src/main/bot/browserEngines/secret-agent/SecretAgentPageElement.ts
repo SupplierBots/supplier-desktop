@@ -1,8 +1,6 @@
 import { PageElement } from '../interfaces/PageElement';
 import { Agent } from '@secret-agent/client';
 import { ISuperNode, ISuperElement } from 'awaited-dom/base/interfaces/super';
-import { KeyboardKeys } from '@secret-agent/client';
-import { IKeyboardKey } from '@secret-agent/core-interfaces/IKeyboardLayoutUS';
 
 export class SecretAgentPageElement implements PageElement {
   constructor(readonly element: ISuperNode | ISuperElement, readonly agent: Agent) {}
@@ -70,21 +68,23 @@ export class SecretAgentPageElement implements PageElement {
     await this.agent.interact({ click: [x + width / 2, y + height / 2] });
   }
 
-  async selectOption(value: string): Promise<void> {
-    await this.agent.interact({
-      click: this.element,
-    });
-
-    for (const character of value.split('')) {
-      const code = character as IKeyboardKey;
-      await this.agent.interact({
-        keyPress: KeyboardKeys[code],
-      });
-    }
-
-    await this.agent.interact({
-      keyPress: KeyboardKeys.Enter,
-    });
+  async selectOptionByLabel(label: string): Promise<void> {
+    const options = await Promise.all(
+      [...(await this.element.querySelectorAll('option'))].map(async o => {
+        const label = await o.innerText;
+        return { label, element: o };
+      }),
+    );
+    const option = options.find(o => o.label.trim().toLowerCase() === label.toLowerCase());
+    if (!option) return;
+    await this.agent.interact(
+      {
+        click: this.element,
+      },
+      {
+        click: option.element,
+      },
+    );
   }
 
   async click(): Promise<void> {

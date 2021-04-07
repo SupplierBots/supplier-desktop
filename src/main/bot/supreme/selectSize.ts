@@ -11,11 +11,12 @@ export async function selectSize(this: SupremeTask) {
   const sizes = await Promise.all(
     [...(await select.querySelectorAll('option'))].map(async o => {
       const innerText = await o.innerText;
-      return innerText;
+      return {
+        name: innerText,
+        nameLower: innerText.trim().toLowerCase(),
+      };
     }),
   );
-
-  const sizesLower = sizes.map(s => s.trim().toLowerCase());
 
   if (sizes.length === 0) return false;
 
@@ -24,16 +25,22 @@ export async function selectSize(this: SupremeTask) {
     ? convertShoeSize(sizeValue, this.region)
     : sizeValue;
 
-  if (sizesLower.includes(sizeToFind.toLowerCase())) {
-    this.item.size = sizeToFind;
-    await select.selectOption(this.item.size);
+  const primarySize = sizes.find(s => s.nameLower === sizeToFind.toLowerCase());
+
+  if (primarySize) {
+    this.item.size = primarySize.name;
+    await select.selectOptionByLabel(primarySize.name);
     return true;
   }
 
   if (!this.details.anySize) return false;
 
   const anySizeOption = this.details.anySizeOption!.value;
-  let secondarySize: string;
+
+  let secondarySize: {
+    name: string;
+    nameLower: string;
+  };
 
   switch (anySizeOption) {
     case 'largest':
@@ -47,8 +54,8 @@ export async function selectSize(this: SupremeTask) {
       secondarySize = _.sample(sizes)!;
       break;
   }
-  this.item.size = secondarySize;
-  await select.selectOption(this.item.size);
+  this.item.size = secondarySize.name;
+  await select.selectOptionByLabel(secondarySize.name);
   return true;
 }
 

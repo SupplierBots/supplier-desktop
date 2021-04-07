@@ -38,8 +38,16 @@ export class PlaywrightPageElement implements PageElement {
     await this.element.press(value);
   }
 
-  async selectOption(value: string): Promise<void> {
-    await this.element.selectOption({ label: value });
+  async selectOptionByLabel(label: string): Promise<void> {
+    const options = await Promise.all(
+      [...(await this.element.$$('option'))].map(async o => {
+        const label = await o.innerText();
+        return { label, element: o };
+      }),
+    );
+    const option = options.find(o => o.label.trim().toLowerCase() === label.toLowerCase());
+    if (!option) return;
+    await this.element.selectOption(option.element);
   }
   async querySelector(selector: string): Promise<PageElement | null> {
     const queryResult = await this.element.$(selector);
