@@ -23,6 +23,7 @@ import _ from 'lodash';
 import { BrowserEngine } from '../browserEngines/interfaces/BrowserEngine';
 import { Product } from '../../types/Product';
 import { scanOtherCategories } from './scanOtherCategories';
+import { Delays } from 'main/types/Delays';
 
 export class SupremeTask {
   public constructor(
@@ -39,6 +40,7 @@ export class SupremeTask {
   public region: 'us' | 'eu';
   public taskAttempt = 0;
   public product!: Product;
+  public delays!: Delays;
   public category!: string;
   public get categoryLink() {
     return this.category.toLowerCase().replace('/', '_');
@@ -67,18 +69,19 @@ export class SupremeTask {
 
   public async init() {
     const productDetails = await IPCMain.getProduct(this.details.product!.value);
-    if (!productDetails) return;
+    const delays = await IPCMain.getDelays();
+    if (!productDetails || !delays) return;
     this.product = productDetails;
+    this.delays = delays;
 
     if (!this.category) {
-      // this.category = productDetails.category;
-      this.category = 'jeacpolicje';
+      this.category = this.product.category;
     }
 
     this.taskAttempt++;
     IPCMain.setTaskActivity(this.details.id, true);
 
-    this.checkoutDelay = _.random(3000, 5000);
+    this.checkoutDelay = _.random(this.delays.minCheckout, this.delays.maxCheckout);
     await this.browser.initialize(this.proxy);
 
     await this.browser.onResponse(this.parseResponse.bind(this));
@@ -126,8 +129,8 @@ export class SupremeTask {
         continue;
       }
       this.updateTaskMessage('Waiting for restock');
-      this.checkoutDelay = 2500;
-      await this.browser.waitForMiliseconds(1000);
+      this.checkoutDelay = this.delays.restocksCheckout;
+      await this.browser.waitForMiliseconds(this.delays.refresh);
       this.soldOutStyles = [];
       await this.browser.reload();
       await this.browser.waitForResourcesLoad();

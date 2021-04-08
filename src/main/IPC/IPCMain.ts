@@ -37,6 +37,7 @@ import {
   BROWSER_ENGINE_DOWNLOAD_PROGRESS,
   TASKS_STARTED,
   TASKS_STOPPED,
+  GET_DELAYS,
 } from './IPCEvents';
 import { Profile } from '../types/Profile';
 import { TaskStatus } from '../types/TaskStatus';
@@ -50,6 +51,7 @@ import { DiscordManager } from '../DiscordManager';
 import { config } from '../../config';
 import { Product } from '../types/Product';
 import { TasksManagerPayload } from 'main/types/TasksManagerPayload';
+import { Delays } from 'main/types/Delays';
 
 export abstract class IPCMain {
   private constructor() {}
@@ -108,6 +110,12 @@ export abstract class IPCMain {
     if (!mainWindow) return;
     const proxy = await ipc.callRenderer<string, Proxy>(mainWindow, GET_PROXY, id);
     return proxy;
+  };
+
+  public static getDelays = async () => {
+    if (!mainWindow) return;
+    const delays = await ipc.callRenderer<null, Delays>(mainWindow, GET_DELAYS);
+    return delays;
   };
 
   public static getProduct = async (id: string) => {

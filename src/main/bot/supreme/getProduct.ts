@@ -47,7 +47,7 @@ export async function getProduct(this: SupremeTask, refreshCounter = 0): Promise
     const primaryStyle = this.selectStyle(styles);
     return primaryStyle ?? styles[0];
   }
-  await this.browser.waitForMiliseconds(1000);
+  await this.browser.waitForMiliseconds(this.delays.refresh);
   if (refreshCounter >= 5 || articles.length === 0) {
     const scannedCategory = await this.scanOtherCategories();
     if (scannedCategory) {

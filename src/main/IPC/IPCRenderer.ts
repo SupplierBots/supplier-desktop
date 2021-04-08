@@ -29,6 +29,7 @@ import {
   DOWNLOAD_BROWSER_ENGINE,
   TASKS_STOPPED,
   TASKS_STARTED,
+  GET_DELAYS,
 } from './IPCEvents';
 
 import store from 'store/configureStore';
@@ -115,9 +116,13 @@ export abstract class IPCRenderer {
       return store.getState().products[name];
     });
 
-    ipc.answerMain(GET_PROXY, (id: string) => {
-      const proxy = store.getState().proxies.find(p => p.id === id);
-      return proxy;
+    ipc.answerMain(GET_DELAYS, () => {
+      const delays = store.getState().delays;
+      return delays;
+    });
+
+    ipc.answerMain(GET_PRODUCT, (name: string) => {
+      return store.getState().products[name];
     });
 
     ipc.on(UPDATE_AVAILABLE, (e, info: UpdateInfo) => {

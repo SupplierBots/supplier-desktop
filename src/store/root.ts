@@ -33,6 +33,8 @@ import { schedulerSlice } from './scheduler/schedulerSlice';
 import { tasksManagerSlice } from './tasksManager/tasksManagerSlice';
 import { fetchProductsEpic } from './products/productsEpics';
 import { productsSlice } from './products/productsSlice';
+import { delaysSlice } from './delays/delaysSlice';
+import { fetchDelaysEpic } from './delays/delaysEpics';
 
 export const history = createMemoryHistory({
   initialEntries: [routes.startup],
@@ -60,6 +62,7 @@ export const rootReducer = combineReducers({
   tasksManager: tasksManagerSlice.reducer,
   webhook: webhookSlice.reducer,
   products: productsSlice.reducer,
+  delays: delaysSlice.reducer,
   router: connectRouter(history),
 });
 
@@ -71,6 +74,7 @@ export const rootEpic: Epic = combineEpics(
   authMonitorEpic,
   fetchDashboardEpic,
   fetchProductsEpic,
+  fetchDelaysEpic,
 );
 
 const key = String.fromCharCode(
