@@ -29,7 +29,6 @@ export const fetchProductsEpic = (action$: StoreObservable, state$: StateObserva
           const parsedProducts = newProducts.map(product => ({
             ...product,
             createdAt: product.createdAt.seconds * 1000,
-            category: product.category.toLowerCase().replace('/', '_'),
           }));
 
           const allProducts = [...productsInUse, ...parsedProducts];

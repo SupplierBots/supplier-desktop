@@ -1,5 +1,5 @@
 export namespace Supreme {
-  interface Product {
+  export interface Product {
     name: string;
     id: number;
     image_url: string;

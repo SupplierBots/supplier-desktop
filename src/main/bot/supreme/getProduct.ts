@@ -2,7 +2,6 @@ import { ProductStyle } from './ProductStyle';
 import { SupremeTask } from './SupremeTask';
 import { isMatch } from './isMatch';
 import { IPCMain } from '../../IPC/IPCMain';
-import moment from 'moment';
 
 export async function getProduct(this: SupremeTask, refreshCounter = 0): Promise<ProductStyle> {
   const productDetails = await IPCMain.getProduct(this.details.product!.value);
@@ -13,7 +12,7 @@ export async function getProduct(this: SupremeTask, refreshCounter = 0): Promise
   const styles: ProductStyle[] = [];
   let matchingProductName: string;
 
-  await this.browser.waitForElement('article div, .inner-article', { visible: true });
+  await this.browser.waitForElement('li a', { visible: true });
   const articles = [...(await this.document.querySelectorAll('article div, .inner-article'))];
   await Promise.all(
     articles.map(async article => {
@@ -49,8 +48,12 @@ export async function getProduct(this: SupremeTask, refreshCounter = 0): Promise
     return primaryStyle ?? styles[0];
   }
   await this.browser.waitForMiliseconds(1000);
-  if (refreshCounter >= 5) {
-    await this.browser.reload();
+  if (refreshCounter >= 5 || articles.length === 0) {
+    const scannedCategory = await this.scanOtherCategories();
+    if (scannedCategory) {
+      this.category = scannedCategory;
+    }
+    await this.browser.load(`https://www.supremenewyork.com/shop/all/${this.categoryLink}`);
     await this.browser.waitForDOMContentLoaded();
     await this.disableAnimations();
     refreshCounter = 0;

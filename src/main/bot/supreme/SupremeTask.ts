@@ -22,6 +22,7 @@ import { reportCheckout } from './reportCheckout';
 import _ from 'lodash';
 import { BrowserEngine } from '../browserEngines/interfaces/BrowserEngine';
 import { Product } from '../../types/Product';
+import { scanOtherCategories } from './scanOtherCategories';
 
 export class SupremeTask {
   public constructor(
@@ -38,6 +39,10 @@ export class SupremeTask {
   public region: 'us' | 'eu';
   public taskAttempt = 0;
   public product!: Product;
+  public category!: string;
+  public get categoryLink() {
+    return this.category.toLowerCase().replace('/', '_');
+  }
 
   //Resetable
   public item: ItemDetails = {};
@@ -65,6 +70,11 @@ export class SupremeTask {
     if (!productDetails) return;
     this.product = productDetails;
 
+    if (!this.category) {
+      // this.category = productDetails.category;
+      this.category = 'jeacpolicje';
+    }
+
     this.taskAttempt++;
     IPCMain.setTaskActivity(this.details.id, true);
 
@@ -77,7 +87,7 @@ export class SupremeTask {
       this.retry();
     });
     this.updateTaskMessage('Loading website');
-    await this.browser.load(`https://www.supremenewyork.com/shop/all/${this.product.category}`);
+    await this.browser.load(`https://www.supremenewyork.com/shop/all/${this.categoryLink}`);
     await this.injectAddressCookie();
     await this.browser.waitForDOMContentLoaded();
     console.log('Page loaded: ' + Date.now());
@@ -192,4 +202,5 @@ export class SupremeTask {
   public checkout = checkout;
   public sendWebhook = sendWebhook;
   public reportCheckout = reportCheckout;
+  public scanOtherCategories = scanOtherCategories;
 }
