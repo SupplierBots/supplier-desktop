@@ -35,6 +35,7 @@ import { fetchProductsEpic } from './products/productsEpics';
 import { productsSlice } from './products/productsSlice';
 import { delaysSlice } from './delays/delaysSlice';
 import { fetchDelaysEpic } from './delays/delaysEpics';
+import { instanceSlice } from './instance/instanceSlice';
 
 export const history = createMemoryHistory({
   initialEntries: [routes.startup],
@@ -63,6 +64,7 @@ export const rootReducer = combineReducers({
   webhook: webhookSlice.reducer,
   products: productsSlice.reducer,
   delays: delaysSlice.reducer,
+  instance: instanceSlice.reducer,
   router: connectRouter(history),
 });
 

@@ -8,13 +8,13 @@ import { userLoggedOut } from 'store/auth/authSlice';
 import { StoreObservable } from 'store/root';
 import { setDelays } from './delaysSlice';
 
-export const fetchProducts = createAction('delays/fetch');
+export const fetchDelays = createAction('delays/fetch');
 
 const delaysRef = firestore.collection('global').doc('delays');
 
 export const fetchDelaysEpic = (action$: StoreObservable) =>
   action$.pipe(
-    filter(fetchProducts.match),
+    filter(fetchDelays.match),
     switchMap(() =>
       docData<Delays>(delaysRef).pipe(
         takeUntil(action$.pipe(filter(userLoggedOut.match))),

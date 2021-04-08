@@ -1,6 +1,6 @@
 export const config = {
-  tasksDebug: true,
-  storageVersion: 1,
+  tasksDebug: false,
+  storageVersion: 3,
   maxTasksAmount: 6,
   registerUrl: 'https://us-central1-safedrop-83b20.cloudfunctions.net/createAccount',
   tutorialUrl: 'https://docs.supplierbot.io/',

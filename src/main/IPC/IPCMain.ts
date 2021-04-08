@@ -140,23 +140,22 @@ export abstract class IPCMain {
 
   private static checkBrowserEngine = () => IPCMain.getEngineFetcher().isInstalled;
 
-  private static downloadBrowserEngine = () => {
+  private static downloadBrowserEngine = async () => {
     const engineFetcher = IPCMain.getEngineFetcher();
     let prevPercentage = 0;
-    engineFetcher.download(async (downloadedBytes: number, totalBytes: number) => {
+    await engineFetcher.download(async (downloadedBytes: number, totalBytes: number) => {
       const status = {
         progress: Math.round((downloadedBytes / totalBytes) * 100),
         done: downloadedBytes === totalBytes,
       };
 
-      if (status.progress > prevPercentage || status.done) {
+      if (status.progress > prevPercentage && !status.done) {
         prevPercentage = status.progress;
-        if (status.done) {
-          await validateHostRequirements(engineFetcher.toJSON());
-        }
         mainWindow?.webContents.send(BROWSER_ENGINE_DOWNLOAD_PROGRESS, status);
       }
     });
+    await validateHostRequirements(engineFetcher.toJSON());
+    mainWindow?.webContents.send(BROWSER_ENGINE_DOWNLOAD_PROGRESS, { progress: 100, done: true });
   };
 
   public static updateTaskStatus = (id: string, status: TaskStatus) => {
