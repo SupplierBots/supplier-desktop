@@ -8,6 +8,7 @@ import { Handler, LocationStatus } from 'secret-agent';
 import WebsocketResource from '@secret-agent/client/lib/WebsocketResource';
 import Resource from '@secret-agent/client/lib/Resource';
 import { SecretAgentPageElement } from './SecretAgentPageElement';
+import moment from 'moment';
 
 export class SecretAgentEngine implements BrowserEngine {
   private static handler: Handler;
@@ -121,8 +122,22 @@ export class SecretAgentEngine implements BrowserEngine {
 
   async waitForResponse(url: string | RegExp, callBefore?: () => Promise<void>): Promise<Response> {
     const lastCommandId = await this.agent.lastCommandId;
+    const initTimestamp = moment();
     await callBefore?.();
-    const [resource] = await this.agent.waitForResource({ url }, { sinceCommandId: lastCommandId });
+    const [resource] = await this.agent.waitForResource(
+      {
+        url,
+        filterFn: async (resource, done) => {
+          const responseTimestamp = moment(await resource.response.timestamp);
+          if (responseTimestamp.valueOf() >= initTimestamp.valueOf()) {
+            done();
+            return true;
+          }
+          return false;
+        },
+      },
+      { sinceCommandId: lastCommandId },
+    );
     return new SecretAgentResponse(resource);
   }
 

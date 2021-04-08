@@ -1,4 +1,4 @@
-import React, { MouseEvent, useState } from 'react';
+import React, { MouseEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Heading from 'components/Heading/Heading';
 import { colors } from 'theme/main';
@@ -15,7 +15,6 @@ import { Option } from 'main/types/Option';
 import {
   anySizeOptions,
   initialTaskValues,
-  productsOptions,
   sizeOptions,
   taskValidationSchema,
 } from './FormDetails';
@@ -172,7 +171,10 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
                   name="product"
                   placeholder="Product"
                   value={props.values.product}
-                  options={productsOptions}
+                  options={Object.keys(state.products).map(p => ({
+                    value: p,
+                    label: p,
+                  }))}
                   onBlur={props.setFieldTouched}
                   onChange={props.setFieldValue}
                   error={!!props.errors.product && !!props.touched.product}

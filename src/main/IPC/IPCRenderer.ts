@@ -52,7 +52,6 @@ import { setTimerState } from 'store/controller/controllerSlice';
 import { CheckoutData } from 'main/types/Checkout';
 import { reportCheckout } from 'firebase/dropReporter';
 import { TaskStatus } from 'main/types/TaskStatus';
-import { predefinedProducts } from 'main/types/PredefinedProduct';
 import { TasksManagerPayload } from 'main/types/TasksManagerPayload';
 import { setProcessingAction } from 'store/tasksManager/tasksManagerSlice';
 
@@ -113,8 +112,7 @@ export abstract class IPCRenderer {
     });
 
     ipc.answerMain(GET_PRODUCT, (name: string) => {
-      const product = predefinedProducts.find(p => p.name === name);
-      return product;
+      return store.getState().products[name];
     });
 
     ipc.answerMain(GET_PROXY, (id: string) => {

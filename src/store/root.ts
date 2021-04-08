@@ -31,6 +31,8 @@ import { updateSlice } from './update/updateSlice';
 import { statisticsSlice } from './statistics/statisticsSlice';
 import { schedulerSlice } from './scheduler/schedulerSlice';
 import { tasksManagerSlice } from './tasksManager/tasksManagerSlice';
+import { fetchProductsEpic } from './products/productsEpics';
+import { productsSlice } from './products/productsSlice';
 
 export const history = createMemoryHistory({
   initialEntries: [routes.startup],
@@ -40,6 +42,7 @@ export const history = createMemoryHistory({
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof rootReducer>;
 export type StoreObservable = Observable<ReturnType<AppDispatch>>;
+export type StateObservable = Observable<RootState>;
 
 export const rootReducer = combineReducers({
   auth: authSlice.reducer,
@@ -56,6 +59,7 @@ export const rootReducer = combineReducers({
   scheduler: schedulerSlice.reducer,
   tasksManager: tasksManagerSlice.reducer,
   webhook: webhookSlice.reducer,
+  products: productsSlice.reducer,
   router: connectRouter(history),
 });
 
@@ -66,6 +70,7 @@ export const rootEpic: Epic = combineEpics(
   logoutEpic,
   authMonitorEpic,
   fetchDashboardEpic,
+  fetchProductsEpic,
 );
 
 const key = String.fromCharCode(

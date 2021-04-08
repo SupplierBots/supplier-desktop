@@ -15,6 +15,7 @@ import {
 
 import { userLoggedOut } from 'store/auth/authSlice';
 import moment from 'moment';
+import { Timestamp } from 'main/types/Timestamp';
 export const fetchDashboardData = createAction('dashboard/fetchDashboardData');
 
 const supremeDroplistsRef = firestore
@@ -40,11 +41,6 @@ const palaceTimesRef = firestore
 const messagesRef = firestore.doc('dashboard/messages');
 
 const urlRegex = /^(?:http(s)?:\/\/)[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/;
-
-export interface Timestamp {
-  seconds: number;
-  nanoseconds: number;
-}
 
 const information$ = docData<DashboardInformation>(messagesRef).pipe(
   map(information => setInformation({ information })),

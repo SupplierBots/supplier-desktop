@@ -14,6 +14,7 @@ import { FirebaseError } from 'firebase';
 import axios, { AxiosResponse } from 'axios';
 import { config } from 'config';
 import { fetchDashboardData } from 'store/dashboard/dashboardEpics';
+import { fetchProducts } from 'store/products/productsEpics';
 
 export const loginAttempt = createAction<{ credentials: LoginCredentials }>('auth/loginAttempt');
 export const retreiveLicense = createAction<{ uid: string }>('auth/retreiveLicense');
@@ -97,6 +98,7 @@ export const licenseEpic = (action$: StoreObservable) =>
           }
           return concat(
             of(fetchDashboardData()),
+            of(fetchProducts()),
             from(
               firestore
                 .doc(`users/${payload.uid}`)

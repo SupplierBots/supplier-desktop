@@ -21,7 +21,7 @@ import { sendWebhook } from './sendWebhook';
 import { reportCheckout } from './reportCheckout';
 import _ from 'lodash';
 import { BrowserEngine } from '../browserEngines/interfaces/BrowserEngine';
-import { PredefinedProduct } from '../../types/PredefinedProduct';
+import { Product } from '../../types/Product';
 
 export class SupremeTask {
   public constructor(
@@ -37,7 +37,7 @@ export class SupremeTask {
 
   public region: 'us' | 'eu';
   public taskAttempt = 0;
-  public product!: PredefinedProduct;
+  public product!: Product;
 
   //Resetable
   public item: ItemDetails = {};
@@ -95,13 +95,13 @@ export class SupremeTask {
     this.updateTaskStatus({ message: 'Page loaded', type: TaskStatusType.Action });
 
     this.updateTaskMessage('Waiting for product');
-    const product = await this.getProduct();
+    const primaryStyle = await this.getProduct();
     this.updateTaskMessage('Waiting for resources');
     await this.browser.waitForResourcesLoad();
     this.startTimestamp = moment();
     this.updateTaskMessage('Loading product details');
-    await this.loadStylePage(product);
-    this.item.style = product.name;
+    await this.loadStylePage(primaryStyle);
+    this.item.style = primaryStyle.name;
 
     let atcSuccess = false;
     while (!atcSuccess) {

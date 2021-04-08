@@ -2,7 +2,6 @@ import * as Yup from 'yup';
 import { Task } from 'main/types/Task';
 import { TaskStatusType } from 'main/types/TaskStatus';
 import { Option } from 'main/types/Option';
-import { predefinedProducts } from '../../main/types/PredefinedProduct';
 
 export const taskValidationSchema = Yup.object().shape({
   id: Yup.string(),
@@ -42,11 +41,6 @@ export const initialTaskValues: Task = {
     type: TaskStatusType.Inactive,
   },
 };
-
-export const productsOptions: Option[] = predefinedProducts.map(p => ({
-  value: p.name,
-  label: p.name,
-}));
 
 export const sizeOptions: Option[] = [
   { value: 'None', label: 'None / One-Size' },

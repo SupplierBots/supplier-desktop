@@ -48,7 +48,7 @@ import { TasksManager } from '../bot/TasksManager';
 import { HarvestersManager } from '../bot/harvesters/HarvestersManager';
 import { DiscordManager } from '../DiscordManager';
 import { config } from '../../config';
-import { PredefinedProduct } from '../types/PredefinedProduct';
+import { Product } from '../types/Product';
 import { TasksManagerPayload } from 'main/types/TasksManagerPayload';
 
 export abstract class IPCMain {
@@ -112,7 +112,7 @@ export abstract class IPCMain {
 
   public static getProduct = async (id: string) => {
     if (!mainWindow) return;
-    const product = await ipc.callRenderer<string, PredefinedProduct>(mainWindow, GET_PRODUCT, id);
+    const product = await ipc.callRenderer<string, Product>(mainWindow, GET_PRODUCT, id);
     return product;
   };
 

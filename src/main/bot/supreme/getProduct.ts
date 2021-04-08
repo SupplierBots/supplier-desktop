@@ -1,8 +1,15 @@
 import { ProductStyle } from './ProductStyle';
 import { SupremeTask } from './SupremeTask';
 import { isMatch } from './isMatch';
+import { IPCMain } from '../../IPC/IPCMain';
+import moment from 'moment';
 
 export async function getProduct(this: SupremeTask, refreshCounter = 0): Promise<ProductStyle> {
+  const productDetails = await IPCMain.getProduct(this.details.product!.value);
+  if (productDetails) {
+    this.product = productDetails;
+  }
+
   const styles: ProductStyle[] = [];
   let matchingProductName: string;
 
@@ -48,12 +55,15 @@ export async function getProduct(this: SupremeTask, refreshCounter = 0): Promise
     await this.disableAnimations();
     refreshCounter = 0;
   } else {
-    const pathname = await this.browser.pathname;
-    await this.browser.waitForElement(`li a[href='${pathname}']`, { visible: true });
-    const categoryLink = await this.document.querySelector(`li a[href='${pathname}']`);
     try {
-      await categoryLink?.click();
+      const pathname = await this.browser.pathname;
+      await this.browser.waitForElement(`li a[href='${pathname}']`, { visible: true });
+      const categoryLink = await this.document.querySelector(`li a[href='${pathname}']`);
+      const pathRegex = new RegExp(pathname);
+      await this.browser.waitForResponse(pathRegex, async () => {
+        await categoryLink?.click();
+      });
     } catch {}
   }
-  return this.getProduct(++refreshCounter);
+  return await this.getProduct(++refreshCounter);
 }
