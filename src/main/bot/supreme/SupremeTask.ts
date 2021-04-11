@@ -86,7 +86,7 @@ export class SupremeTask {
 
     await this.browser.onResponse(this.parseResponse.bind(this));
     await this.browser.onPathChange(path => {
-      if (path !== '/' && path !== '/shop') return;
+      if (path !== '/' && path !== '/shop' && !path.includes('cart')) return;
       this.retry();
     });
     this.updateTaskMessage('Loading website');
