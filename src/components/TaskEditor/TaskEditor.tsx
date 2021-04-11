@@ -239,9 +239,6 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
                   onChange={props.setFieldValue}
                   error={!!props.errors.proxy && !!props.touched.proxy}
                 />
-                <Slider name="safeMode" checked={props.values.safeMode}>
-                  Safe mode
-                </Slider>
               </Fieldset>
               <ButtonsContainer>
                 {!isNew && props.dirty && state.tasks.length < config.maxTasksAmount && (

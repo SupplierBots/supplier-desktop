@@ -6,14 +6,13 @@ import electron, {
   powerSaveBlocker,
 } from 'electron';
 
+import { dialog } from 'electron';
 import path from 'path';
 import { IPCMain } from './IPC/IPCMain';
 import { menu } from './menu';
 import { DiscordManager } from './DiscordManager';
 import { config } from '../config';
 import { HarvestersManager } from './bot/harvesters/HarvestersManager';
-import { SecretAgentEngine } from './bot/browserEngines/secret-agent/SecretAgentEngine';
-import { PlaywrightEngine } from './bot/browserEngines/playwright/PlaywrightEngine';
 
 export const isDev = process.env.NODE_ENV === 'development';
 
@@ -95,7 +94,6 @@ const createWindow = () => {
 };
 
 const dispose = async () => {
-  await SecretAgentEngine.dispose();
   await HarvestersManager.closeAll();
 };
 
@@ -123,6 +121,10 @@ app.on('login', (event, webContents, request, authInfo, callback) => {
 app.on('before-quit', dispose);
 process.on('SIGINT', dispose);
 process.on('SIGTERM', dispose);
+
+process.on('uncaughtException', function(err) {
+  dialog.showErrorBox(err.message.toString(), err.stack?.toString() ?? '');
+});
 
 IPCMain.registerListeners();
 if (!isDev) IPCMain.setupUpdater();

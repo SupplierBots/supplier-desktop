@@ -7,7 +7,6 @@ import { Proxy } from '../types/Proxy';
 import { HarvestersManager } from './harvesters/HarvestersManager';
 import { DiscordManager } from '../DiscordManager';
 import { SupremeTask } from './supreme/SupremeTask';
-import { SecretAgentEngine } from './browserEngines/secret-agent/SecretAgentEngine';
 import { PlaywrightEngine } from './browserEngines/playwright/PlaywrightEngine';
 import { TasksManagerPayload } from '../types/TasksManagerPayload';
 
@@ -32,13 +31,7 @@ class TasksManager {
     DiscordManager.setupWebhook(webhook);
     HarvestersManager.initialize(harvesters);
 
-    if (tasks.some(t => !t.safeMode)) {
-      await SecretAgentEngine.startHandler();
-    }
-
-    if (tasks.some(t => t.safeMode)) {
-      await PlaywrightEngine.startHandler();
-    }
+    await PlaywrightEngine.startHandler();
 
     // const tokens = await Promise.all([
     //   HarvestersManager.getCaptchaToken(),
@@ -98,7 +91,7 @@ class TasksManager {
     }
     try {
       const supremeTask = new SupremeTask(
-        task.safeMode ? new PlaywrightEngine() : new SecretAgentEngine(),
+        new PlaywrightEngine(),
         task,
         profile,
         proxy,

@@ -13,6 +13,5 @@ export interface Task {
   isActive: boolean;
   profile: Option | null;
   proxy: Option | null;
-  safeMode: boolean;
   status: TaskStatus;
 }

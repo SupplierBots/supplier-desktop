@@ -7,7 +7,6 @@ export const taskValidationSchema = Yup.object().shape({
   id: Yup.string(),
   profile: Yup.object().required(),
   proxy: Yup.object().required(),
-  safeMode: Yup.boolean().required(),
   product: Yup.object().required(),
   colors: Yup.object().shape({
     positive: Yup.array(),
@@ -35,7 +34,6 @@ export const initialTaskValues: Task = {
   anySizeOption: null,
   profile: null,
   proxy: null,
-  safeMode: true,
   status: {
     message: 'Inactive',
     type: TaskStatusType.Inactive,

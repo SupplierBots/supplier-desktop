@@ -40,13 +40,7 @@ class DiscordManager {
     );
   }
 
-  public static async sendCheckoutWebhook({
-    status,
-    item,
-    id,
-    profile,
-    safeMode,
-  }: CheckoutWebhook) {
+  public static async sendCheckoutWebhook({ status, item, id, profile }: CheckoutWebhook) {
     if (!item || !this.config) return;
     if (status !== 'paid' && this.config.onlySuccess) return;
 
@@ -57,7 +51,6 @@ class DiscordManager {
       .addField('Product', item.name, true)
       .addField('Style', item.style, true)
       .addField('Size', item.size, true)
-      .addField('Safe mode', _.capitalize(safeMode.toString()), true)
       .addField('Profile', `|| ${profile.name} ||`, true)
       .addField('Order number', `|| #${id} ||`, true);
 
