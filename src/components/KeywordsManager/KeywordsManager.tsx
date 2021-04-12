@@ -113,7 +113,6 @@ const KeywordsManager = ({
       return false;
     }
     const keyword = matches[1].trim().toLowerCase();
-    console.log(keyword);
     if (!list.includes(keyword)) {
       add([...list, keyword]);
       setValue('');
@@ -143,7 +142,6 @@ const KeywordsManager = ({
     setList: Dispatch<React.SetStateAction<string[]>>,
   ) => {
     setList(list.filter(keyword => keyword !== keywordToRemove));
-    console.log(customStyle);
   };
 
   const handleKeyPress = (e: KeyboardEvent<HTMLDivElement>) => {

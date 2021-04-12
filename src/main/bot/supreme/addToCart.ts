@@ -4,8 +4,8 @@ export async function addToCart(this: SupremeTask): Promise<boolean> {
   const button = await this.document.querySelector('[type="submit"], [value*="add to"]');
   if (!button) return false;
 
-  const selectedSite = await this.selectSize();
-  if (!selectedSite) return false;
+  const selectedSize = await this.selectSize();
+  if (!selectedSize) return false;
 
   this.updateTaskMessage('Adding to cart');
   const response = await this.browser.waitForResponse(/add/, async () => {

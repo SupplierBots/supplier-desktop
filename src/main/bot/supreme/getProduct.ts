@@ -44,8 +44,10 @@ export async function getProduct(this: SupremeTask, refreshCounter = 0): Promise
     }),
   );
   if (styles.length > 0) {
-    const primaryStyle = this.selectStyle(styles);
-    return primaryStyle ?? styles[0];
+    const primaryStyle = this.selectStyle(styles, true);
+    if (primaryStyle) {
+      return primaryStyle;
+    }
   }
   await this.browser.waitForMiliseconds(this.delays.refresh);
   if (refreshCounter >= 5 || articles.length === 0) {

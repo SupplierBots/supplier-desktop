@@ -108,13 +108,13 @@ export class SupremeTask {
     this.updateTaskStatus({ message: 'Page loaded', type: TaskStatusType.Action });
 
     this.updateTaskMessage('Waiting for product');
-    const primaryStyle = await this.getProduct();
+    const style = await this.getProduct();
     this.updateTaskMessage('Waiting for resources');
     await this.browser.waitForResourcesLoad();
     this.startTimestamp = moment();
     this.updateTaskMessage('Loading product details');
-    await this.loadStylePage(primaryStyle);
-    this.item.style = primaryStyle.name;
+    await this.loadStylePage(style);
+    this.item.style = style.name;
 
     let atcSuccess = false;
     while (!atcSuccess) {
