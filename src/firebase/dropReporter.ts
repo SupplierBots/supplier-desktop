@@ -24,7 +24,6 @@ export const reportCheckout = ({
   sitekey,
   billingErrors,
   modifiedButtons,
-  safeMode,
 }: Checkout) => {
   firestore.collection(`checkouts/${site}/${status}`).add({
     date: timestamp.now(),
@@ -45,6 +44,5 @@ export const reportCheckout = ({
     userId,
     region,
     modifiedButtons,
-    safeMode,
   });
 };

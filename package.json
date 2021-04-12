@@ -2,7 +2,7 @@
   "name": "supplier",
   "productName": "Supplier",
   "description": "Supreme Bot",
-  "version": "0.8.3",
+  "version": "0.9.0",
   "copyright": "Supplier",
   "main": "build/electron.js",
   "homepage": ".",
