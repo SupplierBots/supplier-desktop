@@ -2,9 +2,8 @@ import { IPCMain } from '../../IPC/IPCMain';
 import { Supreme } from '../../types/Supreme';
 import { SupremeTask } from './SupremeTask';
 
-export function reportCheckout(this: SupremeTask, { status, page }: Supreme.CheckoutResponse) {
+export function reportCheckout(this: SupremeTask, { status }: Supreme.CheckoutResponse) {
   IPCMain.reportCheckout({
-    site: 'desktop',
     region: this.region,
     checkoutTime: this.submitTimestamp.valueOf() - this.startTimestamp.valueOf(),
     highTraffic: this.highTraffic,

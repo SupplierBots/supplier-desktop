@@ -51,6 +51,7 @@ class DiscordManager {
       .addField('Product', item.name, true)
       .addField('Style', item.style, true)
       .addField('Size', item.size, true)
+      .addField('Version', 'Desktop', true)
       .addField('Profile', `|| ${profile.name} ||`, true)
       .addField('Order number', `|| #${id} ||`, true);
 

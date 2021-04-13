@@ -7,7 +7,6 @@ const timestamp = firebase.firestore.Timestamp;
 export const reportCheckout = ({
   status,
   region,
-  site,
   checkoutTime,
   item,
   userId,
@@ -25,7 +24,7 @@ export const reportCheckout = ({
   billingErrors,
   modifiedButtons,
 }: Checkout) => {
-  firestore.collection(`checkouts/${site}/${status}`).add({
+  firestore.collection(`checkouts/desktop/${status}`).add({
     date: timestamp.now(),
     startTimestamp: timestamp.fromDate(moment(startTimestamp).toDate()),
     atcTimestamp: timestamp.fromDate(moment(atcTimestamp).toDate()),

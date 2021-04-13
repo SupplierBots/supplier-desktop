@@ -19,7 +19,6 @@ export interface CheckoutData {
   sitekey: string;
   billingErrors: string;
   modifiedButtons: string[];
-  site: 'desktop' | 'mobile';
   region: 'eu' | 'us';
 }
 
