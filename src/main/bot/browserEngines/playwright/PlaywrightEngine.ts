@@ -16,7 +16,8 @@ import { PlaywrightResponse } from './PlaywrightResponse';
 import { PlaywrightDocument } from './PlaywrightDocument';
 
 export class PlaywrightEngine implements BrowserEngine {
-  private static browser: ChromiumBrowser;
+  private static proxyBrowser: ChromiumBrowser;
+  private static localhostBrowser: ChromiumBrowser;
   public document!: PlaywrightDocument;
 
   get pathname(): Promise<string> {
@@ -28,27 +29,40 @@ export class PlaywrightEngine implements BrowserEngine {
   private responsesListener?: (response: EngineResponse) => void;
   private pathListener?: (frame: Frame) => void;
 
-  static async startHandler() {
-    if (!PlaywrightEngine.browser) {
-      const executablePath = chrome.Launcher.getFirstInstallation();
-      const args = ['--disable-blink-features=AutomationControlled'];
-
-      if (!config.tasksDebug) {
-        args.push('--window-position=9999,9999');
-      }
-
-      PlaywrightEngine.browser = await chromium.launch({
-        headless: false,
-        ignoreDefaultArgs: ['--disable-component-extensions-with-background-pages'],
-        args,
-        executablePath,
-      });
+  static async startProxyHandler() {
+    if (!PlaywrightEngine.proxyBrowser) {
+      PlaywrightEngine.proxyBrowser = await PlaywrightEngine.createBrowser(true);
     }
+  }
+
+  static async startLocalhostHandler() {
+    if (!PlaywrightEngine.localhostBrowser) {
+      PlaywrightEngine.localhostBrowser = await PlaywrightEngine.createBrowser();
+    }
+  }
+
+  static async createBrowser(supportsProxies = false) {
+    const executablePath = chrome.Launcher.getFirstInstallation();
+    const args = ['--disable-blink-features=AutomationControlled'];
+
+    if (!config.tasksDebug) {
+      args.push('--window-position=9999,9999');
+    }
+
+    const browser = await chromium.launch({
+      headless: false,
+      ignoreDefaultArgs: ['--disable-component-extensions-with-background-pages'],
+      args,
+      executablePath,
+      proxy: supportsProxies ? { server: 'per-context' } : undefined,
+    });
+    return browser;
   }
 
   async initialize(proxy: Proxy | null): Promise<void> {
     const proxyConfig = await this.getProxyConfig(proxy);
-    this.context = await PlaywrightEngine.browser.newContext({
+    const browser = proxy ? PlaywrightEngine.proxyBrowser : PlaywrightEngine.localhostBrowser;
+    this.context = await browser.newContext({
       proxy: proxyConfig ?? undefined,
       viewport: null,
     });

@@ -31,7 +31,12 @@ class TasksManager {
     DiscordManager.setupWebhook(webhook);
     HarvestersManager.initialize(harvesters);
 
-    await PlaywrightEngine.startHandler();
+    if (tasks.some(t => t.proxy?.value !== 'none')) {
+      await PlaywrightEngine.startProxyHandler();
+    }
+    if (tasks.some(t => t.proxy?.value === 'none')) {
+      await PlaywrightEngine.startLocalhostHandler();
+    }
 
     // const tokens = await Promise.all([
     //   HarvestersManager.getCaptchaToken(),

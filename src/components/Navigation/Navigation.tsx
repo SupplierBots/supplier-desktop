@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { MouseEvent } from 'react';
 import styled from 'styled-components';
 import NavigationItem from './NavigationItem';
 
@@ -9,9 +9,12 @@ import { ReactComponent as ProxiesIcon } from 'assets/Proxies.svg';
 import { ReactComponent as SettingsIcon } from 'assets/Settings.svg';
 import { ReactComponent as HelpIcon } from 'assets/Help.svg';
 import { ReactComponent as DownloadIcon } from 'assets/Download.svg';
+import { ReactComponent as LogoutIcon } from 'assets/Logout.svg';
 import routes from 'constants/routes';
-import { useStateSelector } from 'hooks/typedReduxHooks';
+import { useStateDispatch, useStateSelector } from 'hooks/typedReduxHooks';
 import { config } from 'config';
+import { resetCredentials } from 'store/authPersist/authPersistSlice';
+import { initiateLogout } from 'store/auth/authEpics';
 
 const Wrapper = styled.nav``;
 
@@ -29,6 +32,9 @@ const Navigation = () => {
 
   const isAnyTaskActive = () =>
     isTimerActive || (router.location.pathname.includes('tasks') && browsers.some(b => b.isActive));
+
+  const dispatch = useStateDispatch();
+  const uid = useStateSelector(state => state.auth.uid);
 
   return (
     <Wrapper>
@@ -74,6 +80,17 @@ const Navigation = () => {
 
         <NavigationItem external link={config.tutorialUrl} name="Help">
           <HelpIcon />
+        </NavigationItem>
+        <NavigationItem
+          name="Logout"
+          link="logout"
+          customAction={(e: MouseEvent) => {
+            e.preventDefault();
+            dispatch(resetCredentials());
+            dispatch(initiateLogout({ uid }));
+          }}
+        >
+          <LogoutIcon />
         </NavigationItem>
       </NavigationList>
     </Wrapper>

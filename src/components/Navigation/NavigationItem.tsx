@@ -3,7 +3,6 @@ import styled, { css } from 'styled-components';
 import { NavLink } from 'react-router-dom';
 import { colors, fonts } from 'theme/main';
 import { shell } from 'electron';
-import { config } from 'config';
 
 //Unfortunately kind of tricky way to style it:
 //svgs with gradients, react-router and styled-components don't like each other
@@ -15,7 +14,7 @@ interface Props {
   alwaysActive?: boolean;
   external?: boolean;
   disabled?: boolean;
-  click?: (url: string) => void;
+  customAction?: (e: MouseEvent) => void;
 }
 
 const StyledNavLink = styled(NavLink)<{ disabled?: boolean; 'data-active'?: boolean }>`
@@ -84,16 +83,25 @@ const StyledNavLink = styled(NavLink)<{ disabled?: boolean; 'data-active'?: bool
 `;
 
 const NavigationName = styled.span`
-  /* margin-top: 0.2rem; */
   font-size: 1.55rem;
 `;
 
-const NavigationItem = ({ link, children, external, disabled, name, alwaysActive }: Props) => {
-  const additionalProps = external && {
-    onClick: (e: MouseEvent) => {
-      e.preventDefault();
-      shell.openExternal(config.tutorialUrl);
-    },
+const NavigationItem = ({
+  link,
+  children,
+  external,
+  disabled,
+  name,
+  alwaysActive,
+  customAction,
+}: Props) => {
+  const additionalProps = (external || customAction) && {
+    onClick:
+      customAction ??
+      ((e: MouseEvent) => {
+        e.preventDefault();
+        shell.openExternal(link);
+      }),
   };
 
   return (

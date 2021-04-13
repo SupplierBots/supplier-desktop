@@ -4,7 +4,7 @@ import { Proxy } from 'main/types/Proxy';
 export const proxyValidationSchema = Yup.object().shape({
   ipPort: Yup.string()
     .required('Required')
-    .matches(/.*:.*/, 'Incorrect format'),
+    .matches(/.*:\d+$/, 'Incorrect format'),
   userPassAuth: Yup.boolean(),
   username: Yup.string().when('userPassAuth', {
     is: true,

@@ -1,14 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { ReactComponent as LogoutIcon } from 'assets/Logout.svg';
+import { ReactComponent as InstagramIcon } from 'assets/Instagram.svg';
 import { ReactComponent as DiscordIcon } from 'assets/Discord.svg';
 import { ReactComponent as TwitterIcon } from 'assets/Twitter.svg';
 import { colors } from 'theme/main';
 import { shell } from 'electron';
-import { useStateDispatch, useStateSelector } from 'hooks/typedReduxHooks';
-import { initiateLogout } from 'store/auth/authEpics';
-import { resetCredentials } from 'store/authPersist/authPersistSlice';
 
 const Wrapper = styled.div`
   display: flex;
@@ -34,22 +31,14 @@ const ExternalLink = styled.a`
 `;
 
 const ExternalLinksBox = () => {
-  const dispatch = useStateDispatch();
-  const uid = useStateSelector(state => state.auth.uid);
-
   return (
     <Wrapper>
-      <ExternalLink
-        onClick={() => {
-          dispatch(resetCredentials());
-          dispatch(initiateLogout({ uid }));
-        }}
-      >
-        <LogoutIcon />
-      </ExternalLink>
-
       <ExternalLink onClick={() => shell.openExternal('https://discordapp.com/')}>
         <DiscordIcon />
+      </ExternalLink>
+
+      <ExternalLink onClick={() => shell.openExternal('https://www.instagram.com/supplierbot/')}>
+        <InstagramIcon />
       </ExternalLink>
 
       <ExternalLink onClick={() => shell.openExternal('https://twitter.com/safedropbot')}>
