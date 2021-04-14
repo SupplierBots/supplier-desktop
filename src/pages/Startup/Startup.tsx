@@ -70,10 +70,10 @@ const Startup = ({ history }: Props) => {
         executablePath,
         version,
       } = await IPCRenderer.checkIfChromeInstalled();
-      const isBrowserEngineInstalled = await IPCRenderer.checkIfBrowserEngineInstalled();
+
       setLoading(false);
 
-      if (isChromeInstalled && isBrowserEngineInstalled) {
+      if (isChromeInstalled) {
         dispatch(setAppDetails({ path: executablePath, version }));
         history.push(routes.login);
       } else {
