@@ -2,11 +2,9 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import InlineLogo from 'components/InlineLogo/InlineLogo';
 import { colors, fonts } from 'theme/main';
-import ProgressBar from 'components/ProgressBar/ProgressBar';
 import { RouteComponentProps } from 'react-router';
-import { ipcRenderer as ipc, IpcRendererEvent, shell } from 'electron';
+import { shell } from 'electron';
 import { IPCRenderer } from 'main/IPC/IPCRenderer';
-import { StyledSpinner } from 'pages/Update/Update';
 import { config } from 'config';
 import Button from 'components/Button/Button';
 import { ReactComponent as ChromeLogo } from 'assets/Chrome.svg';
@@ -14,7 +12,6 @@ import ButtonsContainer from 'components/ButtonsContainer/ButtonsContainer';
 import routes from 'constants/routes';
 import { setAppDetails } from 'store/controller/controllerSlice';
 import { useStateDispatch } from 'hooks/typedReduxHooks';
-import { BROWSER_ENGINE_DOWNLOAD_PROGRESS } from 'main/IPC/IPCEvents';
 
 const Wrapper = styled.div`
   display: flex;
@@ -73,78 +70,31 @@ const MissingChromeInfo = styled.div`
   text-align: center;
 `;
 
-const DownloadProgressInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-top: 25rem;
-`;
-
-const DownloadMessage = styled(ProgressMessage)`
-  margin-bottom: 1rem;
-`;
-
-const InstallingSpinner = styled(StyledSpinner)`
-  margin-top: 15rem;
-`;
-
 type Props = RouteComponentProps;
 
 const Downloader = ({ history }: Props) => {
-  const [isInstalling, setIsInstalling] = useState(true);
-  const [isDownloadingEngine, setIsDownloadingEngine] = useState(false);
-  const [isChromeInstalled, setIsChromeInstalled] = useState(false);
-  const [downloadProgress, setDownloadProgress] = useState(0);
+  const [isVerifying, setIsVerifying] = useState(true);
 
   const dispatch = useStateDispatch();
 
   const verifyDependencies = async () => {
-    setIsInstalling(true);
+    setIsVerifying(true);
     const { success, executablePath, version } = await IPCRenderer.checkIfChromeInstalled();
     await new Promise(r => setTimeout(r, 1000));
 
-    setIsChromeInstalled(success);
-
     if (!success) {
-      setIsInstalling(false);
+      setIsVerifying(false);
       return;
     }
 
-    const isEngineInstalled = await IPCRenderer.checkIfBrowserEngineInstalled();
-
-    if (!isEngineInstalled) {
-      downloadBrowserEngine();
-      return;
-    }
     dispatch(setAppDetails({ path: executablePath, version }));
     history.push(routes.login);
   };
 
-  const downloadBrowserEngine = () => {
-    setIsInstalling(true);
-    setIsDownloadingEngine(true);
-    IPCRenderer.downloadBrowserEngine();
-    ipc.on(BROWSER_ENGINE_DOWNLOAD_PROGRESS, handleDownloadProgress);
-  };
-
-  const handleDownloadProgress = (
-    e: IpcRendererEvent,
-    status: { done: boolean; progress: number },
-  ) => {
-    setDownloadProgress(status.progress);
-    if (!status.done) return;
-    ipc.removeListener(BROWSER_ENGINE_DOWNLOAD_PROGRESS, handleDownloadProgress);
-    setIsDownloadingEngine(false);
-    verifyDependencies();
-  };
-
-  useEffect(downloadBrowserEngine, []);
-
   return (
     <Wrapper>
       <InlineLogo />
-      {!isInstalling && !isChromeInstalled && (
+      {!isVerifying && (
         <>
           <MissingChromeInfo>
             <StyledChromeLogo />
@@ -160,13 +110,6 @@ const Downloader = ({ history }: Props) => {
             </Button>
           </StyledButtonsContainer>
         </>
-      )}
-      {isInstalling && !isDownloadingEngine && <InstallingSpinner />}
-      {isDownloadingEngine && (
-        <DownloadProgressInfo>
-          <DownloadMessage>Downloading remaining files ({downloadProgress}%)</DownloadMessage>
-          <ProgressBar progressPercentage={downloadProgress} />
-        </DownloadProgressInfo>
       )}
 
       <TutorialMessage>
