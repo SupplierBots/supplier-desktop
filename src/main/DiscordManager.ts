@@ -27,14 +27,15 @@ class DiscordManager {
     this.setupWebhook(config);
     this.sendWebhook(
       new MessageEmbed()
-        .setTitle('Successfully configured webhook!')
+        .setTitle('Successfully configured desktop webhook!')
+        .setThumbnail(DiscordManager.logoUrl)
         .setColor(this.successColor)
         .addField('Success only', _.capitalize(config.onlySuccess.toString()))
         .addField(
           'Message',
           config.onlySuccess
-            ? 'If you want to receive all checkout messages, please disable ` Success Only ` option in the bot'
-            : 'If you only want to receive notifications about successful checkouts, please enable ` Success Only ` option in the bot',
+            ? 'If you want to receive notifications about all checkout messages disable ` Success Only ` option'
+            : 'If you want to receive notifications only about successful checkouts enable ` Success Only ` option',
         )
         .addField('Date', moment().format('Do MMM YYYY | HH:mm:ss')),
     );
@@ -94,7 +95,7 @@ class DiscordManager {
       avatarURL: this.logoUrl,
       embeds: [
         message
-          .setFooter(`Supplier ${app.getVersion()}`, this.logoUrl)
+          .setFooter(`Supplier Desktop ${app.getVersion()}`, this.logoUrl)
           .setTimestamp(moment().toDate()),
       ],
     });

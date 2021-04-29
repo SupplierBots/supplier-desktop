@@ -103,7 +103,9 @@ export namespace Supreme {
     | 'cardinal_queued'
     | 'blocked_country'
     | 'canada'
-    | 'blacklisted';
+    | 'blacklisted'
+    | 'ddci'
+    | 'ccaf';
   export interface CheckoutResponse {
     status: CheckoutStatus;
 

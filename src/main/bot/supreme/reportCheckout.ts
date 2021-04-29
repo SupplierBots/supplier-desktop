@@ -16,10 +16,13 @@ export function reportCheckout(this: SupremeTask, { status }: Supreme.CheckoutRe
     startTimestamp: this.startTimestamp.toString(),
     atcTimestamp: this.atcTimestamp.toString(),
     submitTimestamp: this.submitTimestamp.toString(),
+    finishedTimestamp: this.finishedTimestamp.toString(),
     usedProxy: this.proxy !== null,
     item: this.item,
     sitekey: this.sitekey,
     billingErrors: this.billingErrors,
     status,
+    captchaToken: this.captchaToken,
+    cca: this.cca,
   });
 }

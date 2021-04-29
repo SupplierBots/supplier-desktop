@@ -70,10 +70,21 @@ export async function parseStatus(this: SupremeTask, checkoutResponse: Supreme.C
       await this.stop();
       break;
     }
-    case 'cca': {
+    case 'cca':
+    case 'ccaf': {
       const { acs_url } = checkoutResponse;
       this.cardinalURL = acs_url ?? '';
       this.updateTaskStatus({ message: 'Loading 3D Secure', type: TaskStatusType.Action });
+      this.cca = true;
+      await this.browser.evaluate(`
+            $.post("/checkout/${this.slug}/cardinal.json", $("#checkout_form").serialize()).done(function(e) {
+                if (e.status === "failed")
+                    return $("body").removeClass("checkout_page").addClass("cart-confirm"),
+                    $("#content").replaceWith(e.page);
+                if (e.status === "cardinal_queued")
+                    return window.pollOrderStatus(e.slug)
+            })
+      `);
       break;
     }
     case '500':

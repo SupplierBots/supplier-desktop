@@ -62,8 +62,9 @@ export async function checkout(this: SupremeTask) {
     }
   }
 
+  this.finishedTimestamp = moment();
   const captchaToken = await HarvestersManager.getCaptchaToken(this.sitekey);
-
+  this.captchaToken = captchaToken;
   await this.browser.evaluate(`$('[id*="g-recaptcha-response"]').html('${captchaToken}');`);
   await this.browser.evaluate(`${callback}();`);
   this.updateTaskStatus({

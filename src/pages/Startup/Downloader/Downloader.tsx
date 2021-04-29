@@ -73,7 +73,7 @@ const MissingChromeInfo = styled.div`
 type Props = RouteComponentProps;
 
 const Downloader = ({ history }: Props) => {
-  const [isVerifying, setIsVerifying] = useState(true);
+  const [isVerifying, setIsVerifying] = useState(false);
 
   const dispatch = useStateDispatch();
 

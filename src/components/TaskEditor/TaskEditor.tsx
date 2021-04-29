@@ -213,7 +213,7 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
                 {props.values.anySize && (
                   <Select
                     name="anySizeOption"
-                    placeholder="If entered size not available select"
+                    placeholder="If selected size not available choose"
                     value={props.values.anySizeOption}
                     options={anySizeOptions}
                     onBlur={props.setFieldTouched}

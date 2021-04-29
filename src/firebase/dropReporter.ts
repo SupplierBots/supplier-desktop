@@ -23,12 +23,18 @@ export const reportCheckout = ({
   sitekey,
   billingErrors,
   modifiedButtons,
+  finishedTimestamp,
+  cca,
+  captchaToken,
 }: Checkout) => {
   firestore.collection(`checkouts/desktop/${status}`).add({
     date: timestamp.now(),
     startTimestamp: timestamp.fromDate(moment(startTimestamp).toDate()),
     atcTimestamp: timestamp.fromDate(moment(atcTimestamp).toDate()),
     submitTimestamp: timestamp.fromDate(moment(submitTimestamp).toDate()),
+    finishedTimestamp: timestamp.fromDate(moment(finishedTimestamp).toDate()),
+    cca,
+    captchaToken,
     queued,
     processingAttempt,
     checkoutDelay,

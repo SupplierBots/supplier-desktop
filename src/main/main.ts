@@ -6,7 +6,6 @@ import electron, {
   powerSaveBlocker,
 } from 'electron';
 
-import { dialog } from 'electron';
 import path from 'path';
 import { IPCMain } from './IPC/IPCMain';
 import { menu } from './menu';
@@ -121,10 +120,6 @@ app.on('login', (event, webContents, request, authInfo, callback) => {
 app.on('before-quit', dispose);
 process.on('SIGINT', dispose);
 process.on('SIGTERM', dispose);
-
-process.on('uncaughtException', function(err) {
-  dialog.showErrorBox(err.message.toString(), err.stack?.toString() ?? '');
-});
 
 IPCMain.registerListeners();
 if (!isDev) IPCMain.setupUpdater();

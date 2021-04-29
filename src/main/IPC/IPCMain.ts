@@ -42,7 +42,7 @@ import {
 import { Profile } from '../types/Profile';
 import { TaskStatus } from '../types/TaskStatus';
 import { HarvesterData } from '../types/HarvesterData';
-import { app } from 'electron';
+import { app, dialog } from 'electron';
 import { CheckoutData } from '../types/Checkout';
 import { Proxy } from '../types/Proxy';
 import { TasksManager } from '../bot/TasksManager';

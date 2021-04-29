@@ -6,7 +6,7 @@ import { Response } from '../browserEngines/interfaces/Response';
 export async function parseResponse(this: SupremeTask, resource: Response) {
   const url = await resource.url;
   const status = await resource.statusCode;
-  if (/.*checkout.json$/.test(url) && status !== 200) {
+  if (/.*checkout.json/.test(url) && status !== 200) {
     this.updateTaskStatus({ message: `${status}. Retrying`, type: TaskStatusType.Error });
     await this.retry();
     return;
@@ -24,7 +24,7 @@ export async function parseResponse(this: SupremeTask, resource: Response) {
     return;
   }
 
-  if (/.*(checkout|status).json$/.test(url)) {
+  if (/.*(checkout|status).json/.test(url)) {
     const checkoutResponse = (await resource.json()) as Supreme.CheckoutResponse;
     if (!checkoutResponse.status) return;
 

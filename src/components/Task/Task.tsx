@@ -71,11 +71,6 @@ const Action = styled.div<{ disabled?: boolean }>`
     `};
 `;
 
-const StyledRemoveIcon = styled(RemoveIcon)`
-  &:first-child {
-    height: 1.4rem;
-  }
-`;
 const ActionsContainer = styled.div`
   display: flex;
   align-items: center;
@@ -146,7 +141,7 @@ const Task = ({ details }: Props) => {
           <EditIcon onClick={editTask} />
         </Action>
         <Action disabled={isBrowserActive()}>
-          <StyledRemoveIcon onClick={deleteTask} />
+          <RemoveIcon onClick={deleteTask} />
         </Action>
       </ActionsContainer>
     </Wrapper>

@@ -15,6 +15,9 @@ export interface CheckoutData {
   startTimestamp: string;
   atcTimestamp: string;
   submitTimestamp: string;
+  finishedTimestamp: string;
+  cca: boolean;
+  captchaToken: string;
   usedProxy: boolean;
   sitekey: string;
   billingErrors: string;

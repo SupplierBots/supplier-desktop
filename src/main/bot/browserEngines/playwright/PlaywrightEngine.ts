@@ -68,6 +68,17 @@ export class PlaywrightEngine implements BrowserEngine {
     });
     this.page = await this.context.newPage();
     this.document = new PlaywrightDocument(this.page);
+
+    this.page.setDefaultTimeout(0);
+
+    await this.page.route('**', route => {
+      const url = route.request().url();
+      if (url.includes('cardinalcommerce') && url.includes('StepUp')) {
+        route.abort();
+        return;
+      }
+      route.continue();
+    });
   }
 
   async getProxyConfig(proxy: Proxy | null) {

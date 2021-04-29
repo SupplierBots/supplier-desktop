@@ -41,7 +41,7 @@ export const StyledSpinner = styled(Spinner)`
   margin-left: 2rem;
 `;
 
-const Changelog = styled.span`
+const ExternalLink = styled.span`
   cursor: pointer;
   color: transparent;
   background: ${colors.mainGradient45};
@@ -85,9 +85,9 @@ const Update = () => {
         </ProgressMessage>
         <TutorialMessage>
           In the meantime you can read{' '}
-          <Changelog onClick={() => shell.openExternal(config.changelogUrl)}>
-            release notes
-          </Changelog>
+          <ExternalLink onClick={() => shell.openExternal(config.tutorialUrl)}>
+            detailed tutorial
+          </ExternalLink>
         </TutorialMessage>
       </Wrapper>
     </>

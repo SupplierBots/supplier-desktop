@@ -54,14 +54,17 @@ export class SupremeTask {
   public queued = false;
   public highTraffic = false;
   public bParameter = false;
+  public cca = false;
   public billingErrors = 'None';
   public sitekey = '';
-  public modifiedButtons: string[] = [];
+  public captchaToken = '';
   public processingAttempt = 0;
+  public modifiedButtons: string[] = [];
   public checkoutDelay = 3000;
   public startTimestamp = moment();
   public submitTimestamp = moment();
   public atcTimestamp = moment();
+  public finishedTimestamp = moment();
 
   public get document() {
     return this.browser.document;
@@ -85,9 +88,9 @@ export class SupremeTask {
     await this.browser.initialize(this.proxy);
 
     await this.browser.onResponse(this.parseResponse.bind(this));
-    await this.browser.onPathChange(path => {
+    await this.browser.onPathChange(async path => {
       if (path !== '/' && path !== '/shop' && !path.includes('cart')) return;
-      this.retry();
+      return await this.retry();
     });
     this.updateTaskMessage('Loading website');
     await this.browser.load(`https://www.supremenewyork.com/shop/all/${this.categoryLink}`);
@@ -162,14 +165,17 @@ export class SupremeTask {
     this.queued = false;
     this.highTraffic = false;
     this.bParameter = false;
+    this.cca = false;
     this.cardinalURL = '';
     this.slug = '';
+    this.captchaToken = '';
     this.billingErrors = 'None';
     this.soldOutStyles = [];
     this.modifiedButtons = [];
     this.startTimestamp = moment();
     this.submitTimestamp = moment();
     this.atcTimestamp = moment();
+    this.finishedTimestamp = moment();
     await this.browser.stop();
     await this.init();
   }

@@ -2,7 +2,7 @@
   "name": "supplier",
   "productName": "Supplier",
   "description": "Supreme Bot",
-  "version": "0.9.2",
+  "version": "0.9.7",
   "copyright": "Supplier",
   "main": "build/electron.js",
   "homepage": ".",
@@ -57,7 +57,11 @@
       "electronUpdaterCompatibility": ">= 2.16"
     },
     "win": {
-      "publisherName": "Supplier Patryk Heljasi�ski",
+      "publisherName": [
+        "Supplier Patryk Heljasi�ski",
+        "Supplier Patryk Heljasinski",
+        "Supplier Patryk Heljasiński"
+      ],
       "target": "nsis",
       "electronUpdaterCompatibility": ">= 2.16"
     },
