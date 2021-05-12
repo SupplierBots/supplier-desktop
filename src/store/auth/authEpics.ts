@@ -96,9 +96,6 @@ export const licenseEpic = (action$: StoreObservable, state$: StateObservable<Ro
       docData<License>(firestore.doc(`users/${payload.uid}/readonly/license`)).pipe(
         first(),
         switchMap(license => {
-          if (!license || license.expirationDate < Date.now()) {
-            return concat(of(userLoggedOut()), of(setAuthError({ error: 'License Expired' })));
-          }
           return concat(
             of(fetchDashboardData()),
             of(fetchProducts()),
@@ -111,7 +108,7 @@ export const licenseEpic = (action$: StoreObservable, state$: StateObservable<Ro
                   await firestore.doc(`users/${payload.uid}`).get()
                 ).data() as RemoteUserData;
                 if (userData?.instances) {
-                  const { maxInstances } = (await firestore.doc(`global/desktop`).get()).data() as {
+                  const { maxInstances } = (await firestore.doc(`desktop/config`).get()).data() as {
                     maxInstances: number;
                   };
                   const activeInstances = userData.instances as string[];

@@ -3,9 +3,9 @@ export const config = {
   storageVersion: 3,
   maxTasksAmount: 6,
   registerUrl: 'https://us-central1-safedrop-83b20.cloudfunctions.net/createAccount',
-  tutorialUrl: 'https://docs.supplierbot.io/',
+  tutorialUrl: 'https://docs.supplierbots.io/',
   chromeUrl: 'https://www.google.com/chrome/',
-  changelogUrl: 'https://docs.supplierbot.io/other/changelog',
+  changelogUrl: 'https://docs.supplierbots.io/other/changelog',
   browserEngine: {
     id: 'chrome-83-0',
     name: 'chrome',

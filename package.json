@@ -2,15 +2,15 @@
   "name": "supplier",
   "productName": "Supplier",
   "description": "Supreme Bot",
-  "version": "0.9.7",
+  "version": "0.9.9",
   "copyright": "Supplier",
   "main": "build/electron.js",
   "homepage": ".",
   "private": true,
   "author": {
     "name": "Supplier",
-    "email": "contact@supplierbot.io",
-    "url": "https://supplierbot.io"
+    "email": "contact@supplierbots.io",
+    "url": "https://www.supplierbots.io"
   },
   "scripts": {
     "start": "NODE_ENV=development yarn build-main && concurrently \"cross-env BROWSER=none craco start\" \"wait-on http://localhost:3000 && electron .\" --kill-others",

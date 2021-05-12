@@ -10,7 +10,7 @@ import { setDelays } from './delaysSlice';
 
 export const fetchDelays = createAction('delays/fetch');
 
-const delaysRef = firestore.collection('global').doc('delays');
+const delaysRef = firestore.collection('desktop').doc('delays');
 
 export const fetchDelaysEpic = (action$: StoreObservable) =>
   action$.pipe(

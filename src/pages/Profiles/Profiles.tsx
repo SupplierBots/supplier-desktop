@@ -30,7 +30,6 @@ import { InlineInputsContainer } from 'components/TaskEditor/TaskEditor';
 import { setLastVisitedProfile } from 'store/lastVisited/lastVisitedSlice';
 import { addProfile, updateProfile } from 'store/profiles/profilesSlice';
 import { useStateDispatch, useStateSelector } from 'hooks/typedReduxHooks';
-import { incrementCreatedProducts } from 'store/statistics/statisticsSlice';
 
 const Wrapper = styled.div`
   display: grid;
@@ -49,6 +48,10 @@ const StyledHeading = styled(Heading)`
 
 const StyledForm = styled(Form)`
   height: 100%;
+`;
+
+const ProfileNameExplanation = styled.p`
+  font-size: 1.3rem;
 `;
 
 const Profiles = ({ match, history }: RouteComponentProps<{ id: string }>) => {
@@ -196,6 +199,10 @@ const Profiles = ({ match, history }: RouteComponentProps<{ id: string }>) => {
                 <Input type="text" name="cvv" placeholder="CVV" />
                 <StyledHeading>Other</StyledHeading>
                 <Input type="text" name="name" placeholder="Profile Name" />
+                <ProfileNameExplanation>
+                  Profile name is only for your usage to easily differentiate this set of data from
+                  the others.
+                </ProfileNameExplanation>
               </Card>
               <ButtonsContainer>
                 {profiles.length > 0 && (

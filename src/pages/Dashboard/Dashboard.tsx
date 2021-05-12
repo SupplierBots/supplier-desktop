@@ -7,7 +7,6 @@ import SelloutTime from 'components/SelloutTime/SelloutTime';
 import Statistics from 'components/Staistics/Statistics';
 import { fonts, colors } from 'theme/main';
 import { useStateSelector, useStateDispatch } from 'hooks/typedReduxHooks';
-import moment from 'moment';
 import { push } from 'connected-react-router';
 import routes from 'constants/routes';
 
@@ -71,15 +70,10 @@ const Dashboard = () => {
   const { news, tips, contactEmail } = useStateSelector(s => s.dashboard);
   const update = useStateSelector(s => s.update);
   const { version } = useStateSelector(s => s.controller);
-  const license = useStateSelector(s => s.auth.license);
   const { supreme, palace } = useStateSelector(s => s.dashboard.droplists);
   const times = useStateSelector(s => s.dashboard.selloutTimes);
   const { createdProducts, checkouts } = useStateSelector(s => s.statistics);
   const dispatch = useStateDispatch();
-
-  const getLicenseDate = () => moment(license?.expirationDate ?? moment.now());
-  const getDaysLeft = () => getLicenseDate().diff(moment.now(), 'days');
-  const isLifetime = () => getDaysLeft() > 3000;
 
   return (
     <Wrapper>
@@ -113,13 +107,7 @@ const Dashboard = () => {
         >
           {version} ({update.isUpdateAvailable ? `Download ${update.number} update!` : 'latest'})
         </Statistics>
-        {isLifetime() ? (
-          <Statistics name="License">Lifetime</Statistics>
-        ) : (
-          <Statistics name="License">
-            {getLicenseDate().format('Do MMMM YYYY')} ({getDaysLeft()} days left)
-          </Statistics>
-        )}
+        <Statistics name="License">Lifetime</Statistics>
 
         <ContactDescription>
           <p>Did you notice some bugs?</p>

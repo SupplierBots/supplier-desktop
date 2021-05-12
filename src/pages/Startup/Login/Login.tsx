@@ -156,7 +156,7 @@ const Login = ({ history }: Props) => {
                   <Contact>
                     <p>Do you have any questions?</p>
                     <Email>
-                      Contact us: <GradientText>contact@supplierbot.io</GradientText>
+                      Contact us: <GradientText>contact@supplierbots.io</GradientText>
                     </Email>
                   </Contact>
                   <StyledButton

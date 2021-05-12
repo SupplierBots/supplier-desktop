@@ -33,7 +33,7 @@ const initialState: DashboardState = {
   news: "Couldn't retreive last message. Please check your connection.",
   tips:
     'We recommend to schedule your task. Bot will be able to preload some resources, which saves time during the drop',
-  contactEmail: 'contact@supplierbot.io',
+  contactEmail: 'contact@supplierbots.io',
   droplists: {
     supreme: [
       {
