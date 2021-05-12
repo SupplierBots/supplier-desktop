@@ -2,7 +2,7 @@
   "name": "supplier",
   "productName": "Supplier",
   "description": "Supreme Bot",
-  "version": "0.9.9",
+  "version": "1.0.0",
   "copyright": "Supplier",
   "main": "build/electron.js",
   "homepage": ".",
@@ -43,7 +43,7 @@
     ]
   },
   "build": {
-    "appId": "com.supplier.bot.io",
+    "appId": "io.supplierbots.desktop",
     "productName": "Supplier",
     "copyright": "Copyright © 2020 ${author}",
     "afterSign": "tools/notarization/notarize.js",
@@ -53,7 +53,7 @@
       "gatekeeperAssess": false,
       "entitlements": "tools/notarization/entitlements.mac.plist",
       "entitlementsInherit": "tools/notarization/entitlements.mac.plist",
-      "category": "supplier.bot.io",
+      "category": "supplierbots.io",
       "electronUpdaterCompatibility": ">= 2.16"
     },
     "win": {
@@ -76,7 +76,7 @@
     },
     "publish": {
       "provider": "spaces",
-      "name": "supplier",
+      "name": "supplierbots",
       "region": "nyc3"
     }
   },
