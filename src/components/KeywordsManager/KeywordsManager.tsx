@@ -108,7 +108,7 @@ const KeywordsManager = ({
     regex: RegExp,
   ): boolean => {
     setTouched(name, true);
-    const matches = regex.exec(value);
+    const matches = regex.exec(value.replace('+', ''));
     if (!matches || !matches[1]) {
       return false;
     }
@@ -126,7 +126,7 @@ const KeywordsManager = ({
   };
 
   const handleNewKeyword = () => {
-    const positiveKeywordRegex = /^\+(.+)/;
+    const positiveKeywordRegex = /^(.+)/;
     const negativeKeywordRegex = /^-(.+)/;
     const multiKeywordRegex = /(.+ \| .+)/;
 

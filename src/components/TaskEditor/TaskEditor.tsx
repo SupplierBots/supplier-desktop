@@ -181,7 +181,7 @@ const TaskEditor = ({ history, match }: RouteComponentProps<{ id: string }>) => 
                 />
                 <KeywordsManager
                   name="colors"
-                  placeholder="+Another color"
+                  placeholder="Another color"
                   onChange={props.setFieldValue}
                   setTouched={props.setFieldTouched}
                   error={!!props.errors.colors && !!props.touched.colors}
